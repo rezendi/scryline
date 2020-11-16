@@ -5,24 +5,28 @@
 		// const data = await res.json();
 		let mock = { title : "Test Timeline", entries: [
 			{
+				id: 1,
 				group: "2008",
 				label: "2 Feb",
 				title: "",
 				content: "Attends the Philadelphia Museum School of Industrial Art. Studies design with Alexey Brodovitch, art director at Harper's Bazaar, and works as his assistant."
 			},
 			{
+				id: 2,
 				group: "2008",
 				label: "1 Sept",
 				title: "The part of my life in University of Pennsylvania",
 				content: "Started from University of Pennsylvania. This is an important stage of my career. Here I worked in the local magazine. The experience greatly affected me."
 			},
 			{
+				id: 3,
 				group: "2014",
 				label: "July",
 				title: "",
 				content: "Travels to France, Italy, Spain, and Peru. After completing fashion editorial in Lima, prolongs stay to make portraits of local people in a daylight studio."
 			},
 			{
+				id: 4,
 				group: "2016",
 				label: "August",
 				title: "",
@@ -39,10 +43,35 @@
 	}
 </script>
 
-<script lang="ts">import type { endsWith } from "*.gif";
-	import type { parse } from "path";
-	export let line: { title: string, entries: [{string: any }]};
-	let currentGroup: string;
+<script lang="ts">
+import type { parse } from "path";
+import {flip} from 'svelte/animate';
+let hovering = -1;
+
+export let line: { title: string, entries: [{string: any }]};
+
+const drop = (event, target) => {
+    event.dataTransfer.dropEffect = 'move'; 
+    const start = parseInt(event.dataTransfer.getData("text/plain"));
+    const newTracklist = line.entries;
+
+    if (start < target) {
+      newTracklist.splice(target + 1, 0, newTracklist[start]);
+      newTracklist.splice(start, 1);
+    } else {
+      newTracklist.splice(target, 0, newTracklist[start]);
+      newTracklist.splice(start + 1, 1);
+    }
+    line.entries = newTracklist
+    hovering = null
+  }
+
+  const dragstart = (event, i) => {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.dropEffect = 'move';
+    const start = i;
+    event.dataTransfer.setData('text/plain', start);
+  }
 </script>
 
 <style>
@@ -151,21 +180,26 @@ p:last-child{
 
   <div class="page">
 	<div class="timeline">
-		{#each line.entries as entry}
-				<div class="timeline_group">
-					<span class="timeline_year label" aria-hidden="true">{entry.group}</span>
-					<div class="timeline_cards">
-						<div class="timeline_card card">
-						<header class="card_header">
-							<div class="label">{entry.label}</div>
-							<h3 class="card_title r-title">{entry.title}</h3>
-						</header>
-						<div class="card_content">
+		<div class="timeline_cards">
+			{#each line.entries as entry, i (entry.id)}
+				<div class="timeline_card card"
+					animate:flip
+					draggable={true}
+					on:dragstart={event => dragstart(event, i)}
+					on:drop|preventDefault={event => drop(event, i)}
+					ondragover="return false"
+					on:dragenter={() => hovering = i}
+					class:is-active={hovering === i}
+				>
+					<header class="card_header">
+						<div class="label">{entry.label}</div>
+						<h3 class="card_title r-title">{entry.title}</h3>
+					</header>
+					<div class="card_content">
 						<p>{entry.content}</p>
-						</div>
-					</div>
 					</div>
 				</div>
-		{/each}
+			{/each}
+		</div>
 	</div>
   </div>

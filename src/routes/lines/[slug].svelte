@@ -1,43 +1,51 @@
 <script context="module" lang="ts">
 	export async function preload({ params }) {
-		// the `slug` parameter is available because
-		// this file is called [slug].svelte
+		// the `slug` parameter is available because this file is called [slug].svelte
 		const res = await this.fetch(`lines/${params.slug}.json`);
-		const data = await res.json();
+		// const data = await res.json();
+		let mock = { title : "Test Timeline", entries: [
+			{
+				group: "2008",
+				label: "2 Feb",
+				title: "",
+				content: "Attends the Philadelphia Museum School of Industrial Art. Studies design with Alexey Brodovitch, art director at Harper's Bazaar, and works as his assistant."
+			},
+			{
+				group: "2008",
+				label: "1 Sept",
+				title: "The part of my life in University of Pennsylvania",
+				content: "Started from University of Pennsylvania. This is an important stage of my career. Here I worked in the local magazine. The experience greatly affected me."
+			},
+			{
+				group: "2014",
+				label: "July",
+				title: "",
+				content: "Travels to France, Italy, Spain, and Peru. After completing fashion editorial in Lima, prolongs stay to make portraits of local people in a daylight studio."
+			},
+			{
+				group: "2016",
+				label: "August",
+				title: "",
+				content: "Upon moving to Brooklyn that summer, I began photographing weddings in Chicago."
+			},
+		]};
+		const data = mock;
 
 		if (res.status === 200) {
-			return { post: data };
+			return { line: data };
 		} else {
 			this.error(res.status, data.message);
 		}
 	}
 </script>
 
-<script lang="ts">
-	export let post: { slug: string; title: string, html: any };
+<script lang="ts">import type { endsWith } from "*.gif";
+	import type { parse } from "path";
+	export let line: { title: string, entries: [{string: any }]};
+	let currentGroup: string;
 </script>
 
 <style>
-
-.text{
-  display: var(--textDisplay, inline-flex);
-  font-size: var(--textFontSize, 1rem);
-}
-
-.time{
-  display: var(--timeDisplay, inline-flex);
-  padding: var(--timePadding, .25rem 1.25rem .25rem);
-  background-color: var(--timeBackgroundColor, #f0f0f0);
-
-  font-size: var(--timeFontSize, .75rem);
-  font-weight: var(--timeFontWeight, 700);
-  text-transform: var(--timeTextTransform, uppercase);
-  color: var(--timeColor, currentColor);
-}
-
-.time__month{
-  margin-left: var(--timelineMounthMarginLeft, .25em);
-}
 
 /* card component */
 
@@ -49,14 +57,28 @@
   background-color: var(--timelineCardBackgroundColor, #fff);
 }
 
-.card__content{
+.card_title{
+  --rTitleMarginTop: var(--cardTitleMarginTop, 1rem);
+  font-size: var(--cardTitleFontSize, 1.25rem);
+  margin-top: var(--rTitleMarginTop, 0) !important;
+  margin-bottom: var(--rTitleMarginBottom, 0) !important;
+}
+
+.card_content{
   margin-top: var(--cardContentMarginTop, .5rem);
 }
 
-.card__title{
-  --rTitleMarginTop: var(--cardTitleMarginTop, 1rem);
-  font-size: var(--cardTitleFontSize, 1.25rem);
+.label{
+  display: var(--timeDisplay, inline-flex);
+  padding: var(--timePadding, .25rem 1.25rem .25rem);
+  background-color: var(--timeBackgroundColor, #f0f0f0);
+
+  font-size: var(--timeFontSize, .75rem);
+  font-weight: var(--timeFontWeight, 700);
+  text-transform: var(--timeTextTransform, uppercase);
+  color: var(--timeColor, currentColor);
 }
+
 
 /* timeline */
 
@@ -72,7 +94,7 @@
   --timelineMainColor: #4557bb;
 }
 
-.timeline__year{
+.timeline_year{
   margin-bottom: 1.25rem; /* 1 */
   --timePadding: var(--timelineYearPadding, .5rem 1.5rem);
   --timeColor: var(--uiTimelineSecondaryColor);
@@ -80,7 +102,7 @@
   --timeFontWeight: var(--timelineYearFontWeight, 400);
 }
 
-.timeline__cards{
+.timeline_cards{
   display: var(--timeloneCardsDisplay, grid);
   grid-row-gap: var(--timeloneCardsGap, 1.5rem);
   overflow: hidden;
@@ -88,21 +110,20 @@
   padding-bottom: .25rem; /* 1 */
 }
 
-.timeline__card{
+.timeline_card{
   position: relative;
   margin-left: var(--timelineCardLineGap, 1rem);
 }
 
-.timeline__card::before{
+.timeline_card::before{
   content: "";
-  width: 100%;
+  width: 3%;
   height: var(--timelineCardLineWidth, 2px);
   background-color: var(--timelineCardLineBackgroundColor, var(--uiTimelineMainColor));
 
   position: absolute;
   top: var(--timelineCardLineTop, 1rem);
-  left: -50%;
-  z-index: -1;
+  left: -3%;
 }
 
 p{
@@ -125,70 +146,26 @@ p:last-child{
 </style>
 
 <svelte:head>
-	<title>{post.title}</title>
+	<title>{line.title}</title>
 </svelte:head>
 
   <div class="page">
 	<div class="timeline">
-	  <div class="timeline__group">
-		<span class="timeline__year time" aria-hidden="true">2008</span>
-		<div class="timeline__cards">
-		  <div class="timeline__card card">
-			<header class="card__header">
-			  <time class="time" datetime="2008-02-02">
-				<span class="time__day">2</span>
-				<span class="time__month">Feb</span>
-			  </time>
-			</header>
-			<div class="card__content">
-			  <p>Attends the Philadelphia Museum School of Industrial Art. Studies design with Alexey Brodovitch, art director at Harper's Bazaar, and works as his assistant.</p>
-			</div>
-		  </div>
-		  <div class="timeline__card card">
-			<header class="card__header">
-			  <time class="time" datetime="2008-09-01">
-				<span class="time__day">1</span>
-				<span class="time__month">Sept</span>
-			  </time>
-			  <h3 class="card__title r-title">The part of my life in University of Pennsylvania</h3>
-			</header>
-			<div class="card__content">
-			  <p>Started from University of Pennsylvania. This is an important stage of my career. Here I worked in the local magazine. The experience greatly affected me</p>
-			</div>
-		  </div>
-		</div>
-	  </div>
-	  <div class="timeline__group">
-		<span class="timeline__year time" aria-hidden="true">2014</span>
-		<div class="timeline__cards">
-		  <div class="timeline__card card">
-			<header class="card__header">
-			  <time class="time" datetime="2008-07-14">
-				<span class="time__day">14</span>
-				<span class="time__month">Jul</span>
-			  </time>
-			</header>
-			<div class="card__content">
-			  <p>Travels to France, Italy, Spain, and Peru. After completing fashion editorial in Lima, prolongs stay to make portraits of local people in a daylight studio</p>
-			</div>
-		  </div>
-		</div>
-	  </div>
-	  <div class="timeline__group">
-		<span class="timeline__year time" aria-hidden="true">2016</span>
-		<div class="timeline__cards">
-		  <div class="timeline__card card">
-			<header class="card__header">
-			  <time class="time" datetime="2008-08-18">
-				<span class="time__day">28</span>
-				<span class="time__month">Aug</span>
-			  </time>          
-			</header>
-			<div class="card__content">
-			  <p>Upon moving to Brooklyn that summer, I began photographing weddings in Chicago</p>
-			</div>
-		  </div>
-		</div>
-	  </div>
+		{#each line.entries as entry}
+				<div class="timeline_group">
+					<span class="timeline_year label" aria-hidden="true">{entry.group}</span>
+					<div class="timeline_cards">
+						<div class="timeline_card card">
+						<header class="card_header">
+							<div class="label">{entry.label}</div>
+							<h3 class="card_title r-title">{entry.title}</h3>
+						</header>
+						<div class="card_content">
+						<p>{entry.content}</p>
+						</div>
+					</div>
+					</div>
+				</div>
+		{/each}
 	</div>
   </div>

@@ -46,11 +46,12 @@
 <script lang="ts">
 import type { parse } from "path";
 import {flip} from 'svelte/animate';
+import { listen } from "svelte/internal";
 let hovering = -1;
-let currentGroup:string;
 
 export let line: { title: string, entries: [{string: any }]};
 
+/* drag and drop */
 const drop = (event, target) => {
     event.dataTransfer.dropEffect = 'move'; 
     const start = parseInt(event.dataTransfer.getData("text/plain"));
@@ -60,111 +61,53 @@ const drop = (event, target) => {
       newList.splice(target + 1, 0, newList[start]);
       newList.splice(start, 1);
     } else {
-		newList.splice(target, 0, newList[start]);
-		newList.splice(start + 1, 1);
+      newList.splice(target, 0, newList[start]);
+      newList.splice(start + 1, 1);
     }
     line.entries = newList
     hovering = null
-  }
+}
 
-  const dragStart = (event, i) => {
+const dragStart = (event, i) => {
     event.dataTransfer.effectAllowed = 'move';
     event.dataTransfer.dropEffect = 'move';
     const start = i;
     event.dataTransfer.setData('text/plain', start);
-  }
+}
+
+/* adding */
+let oldUrl: string = '';
+let newUrl: string = '';
+
+const addUrl = () => {
+    let existing = line.entries.filter(entry => entry.content==newUrl);
+    if (newUrl.trim().length < 8 || existing.length > 0) {
+      return;
+    }
+    let ids = line.entries.map(entry => entry.id);
+    let maxId = ids.reduce((a,b) => {return a < b ? b : a}, 0);
+    let newEntry = {
+      id: maxId + 1,
+      group: "",
+      label: "",
+      title: "",
+      content: newUrl
+    };
+    const newList = line.entries;
+    newList.unshift(newEntry);
+    line.entries = newList;
+    newUrl = '';
+}
+
+const urlChanged = () => {
+    if (Math.abs(newUrl.length - oldUrl.length) > 1) {
+        addUrl();
+    }
+    oldUrl = newUrl
+}
 </script>
 
 <style>
-
-/* card component */
-
-.card{
-  padding: var(--timelineCardPadding, 1.5rem 1.5rem 1.25rem);
-  border-radius: var(--timelineCardBorderRadius, 2px);
-  border-left: var(--timelineCardBorderLeftWidth, 3px) solid var(--timelineCardBorderLeftColor, var(--uiTimelineMainColor));
-  box-shadow: var(--timelineCardBoxShadow, 0 1px 3px 0 rgba(0, 0, 0, .12), 0 1px 2px 0 rgba(0, 0, 0, .24));
-  background-color: var(--timelineCardBackgroundColor, #fff);
-}
-
-.card_title{
-  --rTitleMarginTop: var(--cardTitleMarginTop, 1rem);
-  font-size: var(--cardTitleFontSize, 1.25rem);
-  margin-top: var(--rTitleMarginTop, 0) !important;
-  margin-bottom: var(--rTitleMarginBottom, 0) !important;
-}
-
-.card_content{
-  margin-top: var(--cardContentMarginTop, .5rem);
-}
-
-.label{
-  display: var(--timeDisplay, inline-flex);
-  padding: var(--timePadding, .25rem 1.25rem .25rem);
-  background-color: var(--timeBackgroundColor, #f0f0f0);
-
-  font-size: var(--timeFontSize, .75rem);
-  font-weight: var(--timeFontWeight, 700);
-  text-transform: var(--timeTextTransform, uppercase);
-  color: var(--timeColor, currentColor);
-}
-
-
-/* timeline */
-
-.timeline{
-  display: var(--timelineDisplay, grid);
-  grid-row-gap: var(--timelineGroupsGap, 2rem);
-  --uiTimelineMainColor: var(--timelineMainColor, #222);
-  --uiTimelineSecondaryColor: var(--timelineSecondaryColor, #fff);
-
-  border-left: var(--timelineLineWidth, 3px) solid var(--timelineLineBackgroundColor, var(--uiTimelineMainColor));
-  padding-top: 1rem;
-  padding-bottom: 1.5rem;
-  --timelineMainColor: #4557bb;
-}
-
-.timeline_year{
-  margin-bottom: 1.25rem; /* 1 */
-  --timePadding: var(--timelineYearPadding, .5rem 1.5rem);
-  --timeColor: var(--uiTimelineSecondaryColor);
-  --timeBackgroundColor: var(--uiTimelineMainColor);
-  --timeFontWeight: var(--timelineYearFontWeight, 400);
-}
-
-.timeline_cards{
-  display: var(--timeloneCardsDisplay, grid);
-  grid-row-gap: var(--timeloneCardsGap, 1.5rem);
-  overflow: hidden;
-  padding-top: .25rem; /* 1 */
-  padding-bottom: .25rem; /* 1 */
-}
-
-.timeline_card{
-  position: relative;
-  margin-left: var(--timelineCardLineGap, 1rem);
-}
-
-.timeline_card::before{
-  content: "";
-  width: 3%;
-  height: var(--timelineCardLineWidth, 2px);
-  background-color: var(--timelineCardLineBackgroundColor, var(--uiTimelineMainColor));
-  position: absolute;
-  top: var(--timelineCardLineTop, 1rem);
-  left: -3%;
-}
-
-p{
-  margin-top: 0;
-  margin-bottom: 1rem;
-  line-height: 1.5;
-}
-
-p:last-child{
-  margin-bottom: 0;
-}
-
 .page{
   max-width: 47rem;
   padding: 1rem 2rem 3rem;
@@ -172,6 +115,10 @@ p:last-child{
   margin-right: auto;
 }
 
+.header {
+  display:flex;
+  justify-content:flex-end;
+}
 </style>
 
 <svelte:head>
@@ -179,32 +126,36 @@ p:last-child{
 </svelte:head>
 
   <div class="page">
-	<div class="timeline">
-		<div class="timeline_cards">
-      {#each line.entries as entry, i (entry.id)}
-        <div class="timeline_element"
-          animate:flip
-          draggable={true}
-          on:dragstart={event => dragStart(event, i)}
-          on:drop|preventDefault={event => drop(event, i)}
-          ondragover="return false"
-          on:dragenter={() => hovering = i}
-          class:is-active={hovering === i}
-        >
-          {#if i==0 || entry.group != line.entries[i-1].group}
-            <div class="timeline_year label">{entry.group}</div>
-          {/if}
-          <div class="timeline_card card">
-            <header class="card_header">
-              <div class="label">{entry.label}</div>
-              <h3 class="card_title r-title">{entry.title}</h3>
-            </header>
-            <div class="card_content">
-              <p>{entry.content}</p>
+    <div class="header">
+      <span/>
+      <input class="adder" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
+    </div>
+    <div class="timeline">
+      <div class="timeline_cards">
+        {#each line.entries as entry, i (entry.id)}
+          <div class="timeline_element"
+            animate:flip
+            draggable={true}
+            on:dragstart={event => dragStart(event, i)}
+            on:drop|preventDefault={event => drop(event, i)}
+            ondragover="return false"
+            on:dragenter={() => hovering = i}
+            class:is-active={hovering === i}
+          >
+            {#if i==0 || entry.group != line.entries[i-1].group}
+              <div class="timeline_year card_label">{entry.group}</div>
+            {/if}
+            <div class="timeline_card card">
+              <header class="card_header">
+                <div class="card_label">{entry.label}</div>
+                <h3 class="card_title r-title">{entry.title}</h3>
+              </header>
+              <div class="card_content">
+                <p>{entry.content}</p>
+              </div>
             </div>
           </div>
-        </div>
-			{/each}
-		</div>
-	</div>
+        {/each}
+      </div>
+    </div>
   </div>

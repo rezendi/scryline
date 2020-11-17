@@ -47,26 +47,27 @@
 import type { parse } from "path";
 import {flip} from 'svelte/animate';
 let hovering = -1;
+let currentGroup:string;
 
 export let line: { title: string, entries: [{string: any }]};
 
 const drop = (event, target) => {
     event.dataTransfer.dropEffect = 'move'; 
     const start = parseInt(event.dataTransfer.getData("text/plain"));
-    const newTracklist = line.entries;
+    const newList = line.entries;
 
     if (start < target) {
-      newTracklist.splice(target + 1, 0, newTracklist[start]);
-      newTracklist.splice(start, 1);
+      newList.splice(target + 1, 0, newList[start]);
+      newList.splice(start, 1);
     } else {
-      newTracklist.splice(target, 0, newTracklist[start]);
-      newTracklist.splice(start + 1, 1);
+		newList.splice(target, 0, newList[start]);
+		newList.splice(start + 1, 1);
     }
-    line.entries = newTracklist
+    line.entries = newList
     hovering = null
   }
 
-  const dragstart = (event, i) => {
+  const dragStart = (event, i) => {
     event.dataTransfer.effectAllowed = 'move';
     event.dataTransfer.dropEffect = 'move';
     const start = i;
@@ -149,7 +150,6 @@ const drop = (event, target) => {
   width: 3%;
   height: var(--timelineCardLineWidth, 2px);
   background-color: var(--timelineCardLineBackgroundColor, var(--uiTimelineMainColor));
-
   position: absolute;
   top: var(--timelineCardLineTop, 1rem);
   left: -3%;
@@ -181,24 +181,29 @@ p:last-child{
   <div class="page">
 	<div class="timeline">
 		<div class="timeline_cards">
-			{#each line.entries as entry, i (entry.id)}
-				<div class="timeline_card card"
-					animate:flip
-					draggable={true}
-					on:dragstart={event => dragstart(event, i)}
-					on:drop|preventDefault={event => drop(event, i)}
-					ondragover="return false"
-					on:dragenter={() => hovering = i}
-					class:is-active={hovering === i}
-				>
-					<header class="card_header">
-						<div class="label">{entry.label}</div>
-						<h3 class="card_title r-title">{entry.title}</h3>
-					</header>
-					<div class="card_content">
-						<p>{entry.content}</p>
-					</div>
-				</div>
+      {#each line.entries as entry, i (entry.id)}
+        <div class="timeline_element"
+          animate:flip
+          draggable={true}
+          on:dragstart={event => dragStart(event, i)}
+          on:drop|preventDefault={event => drop(event, i)}
+          ondragover="return false"
+          on:dragenter={() => hovering = i}
+          class:is-active={hovering === i}
+        >
+          {#if i==0 || entry.group != line.entries[i-1].group}
+            <div class="timeline_year label">{entry.group}</div>
+          {/if}
+          <div class="timeline_card card">
+            <header class="card_header">
+              <div class="label">{entry.label}</div>
+              <h3 class="card_title r-title">{entry.title}</h3>
+            </header>
+            <div class="card_content">
+              <p>{entry.content}</p>
+            </div>
+          </div>
+        </div>
 			{/each}
 		</div>
 	</div>

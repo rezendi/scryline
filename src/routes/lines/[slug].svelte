@@ -2,41 +2,11 @@
 	export async function preload({ params }) {
 		// the `slug` parameter is available because this file is called [slug].svelte
 		const res = await this.fetch(`lines/${params.slug}.json`);
-		// const data = await res.json();
-		let mock = { title : "Test Timeline", entries: [
-			{
-				id: 1,
-				group: "2008",
-				label: "2 Feb",
-				title: "",
-				content: "Attends the Philadelphia Museum School of Industrial Art. Studies design with Alexey Brodovitch, art director at Harper's Bazaar, and works as his assistant."
-			},
-			{
-				id: 2,
-				group: "2008",
-				label: "1 Sept",
-				title: "The part of my life in University of Pennsylvania",
-				content: "Started from University of Pennsylvania. This is an important stage of my career. Here I worked in the local magazine. The experience greatly affected me."
-			},
-			{
-				id: 3,
-				group: "2014",
-				label: "July",
-				title: "",
-				content: "Travels to France, Italy, Spain, and Peru. After completing fashion editorial in Lima, prolongs stay to make portraits of local people in a daylight studio."
-			},
-			{
-				id: 4,
-				group: "2016",
-				label: "August",
-				title: "",
-				content: "Upon moving to Brooklyn that summer, I began photographing weddings in Chicago."
-			},
-		]};
-		const data = mock;
+		const data = await res.json();
+		const mock = { title : "Test Timeline", entries: []};
 
 		if (res.status === 200) {
-			return { line: data };
+			return { line: mock };
 		} else {
 			this.error(res.status, data.message);
 		}
@@ -49,10 +19,24 @@
   import { listen } from "svelte/internal";
   let hovering = -1;
 
-  export let line: { title: string, entries: [{string: any }]};
+  export let line: { id:number, slug:string, title: string, entries: [{
+    id: number,
+    group?: string,
+    tags?: string,
+    url?: string,
+    time?: number,
+    author?: string,
+    source?: string,
+    logo?: string,
+    image?: string,
+    title?: string,
+    summary?: string,
+    comments?: string
+  }]};
 
   /* drag and drop */
   const drop = (event, target) => {
+    console.log("drop");
       event.dataTransfer.dropEffect = 'move'; 
       const start = parseInt(event.dataTransfer.getData("text/plain"));
       const newList = line.entries;
@@ -69,6 +53,7 @@
   }
 
   const dragStart = (event, i) => {
+    console.log("start");
       event.dataTransfer.effectAllowed = 'move';
       event.dataTransfer.dropEffect = 'move';
       const start = i;
@@ -80,7 +65,7 @@
   let newUrl: string = '';
 
   const addUrl = () => {
-      let existing = line.entries.filter(entry => entry.content==newUrl);
+      let existing = line.entries.filter(entry => entry.url==newUrl);
       if (newUrl.trim().length < 8 || existing.length > 0) {
         return;
       }
@@ -89,9 +74,9 @@
       let newEntry = {
         id: maxId + 1,
         group: "",
-        label: "",
+        tags: "",
         title: "",
-        content: newUrl
+        url: newUrl
       };
       const newList = line.entries;
       newList.unshift(newEntry);
@@ -149,7 +134,7 @@
             draggable={true}
             on:dragstart={event => dragStart(event, i)}
             on:drop|preventDefault={event => drop(event, i)}
-            ondragover="return false"
+            on:dragover={() => hovering = i}
             on:dragenter={() => hovering = i}
             class:is-active={hovering === i}
           >
@@ -158,11 +143,11 @@
             {/if}
             <div class="timeline_card card">
               <header class="card_header">
-                <div class="card_label">{entry.label}</div>
+                <div class="card_label">{entry.tags}</div>
                 <h3 class="card_title r-title">{entry.title}</h3>
               </header>
               <div class="card_content">
-                <p>{entry.content}</p>
+                <p>{entry.url}</p>
               </div>
             </div>
           </div>

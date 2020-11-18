@@ -17,7 +17,8 @@
     "js-yaml": "^3.14.0",
     "node-fetch": "^2.6.1",
     "polka": "next",
-    "sirv": "^1.0.0"
+    "sirv": "^1.0.0",
+    "slugify": "^1.4.6"
   },
   "devDependencies": {
     "sapper": "^0.28.0",

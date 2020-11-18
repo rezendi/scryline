@@ -1,13 +1,14 @@
 <script context="module" lang="ts">
-	export function preload() {
-		return this.fetch(`lines.json`).then((r: { json: () => any; }) => r.json()).then((posts: { slug: string; title: string, html: any }[]) => {
-			return { posts };
-		});
+	export async function preload() {
+		let response = await this.fetch('lines/index.json');
+		let json = await response.json();
+		let posts: { slug: string; sha: string }[] = json;
+		return { posts };
 	}
 </script>
 
 <script lang="ts">
-	export let posts: { slug: string; title: string, html: any }[];
+	export let posts: { slug: string; sha: string }[];
 </script>
 
 <style>
@@ -25,10 +26,6 @@
 
 <ul>
 	{#each posts as post}
-		<!-- we're using the non-standard `rel=prefetch` attribute to
-				tell Sapper to load the data for the page as soon as
-				the user hovers over the link or taps it, instead of
-				waiting for the 'click' event -->
-		<li><a rel="prefetch" href="lines/{post.slug}">{post.title}</a></li>
+		<li><a rel="prefetch" href="lines/{post.slug}">{post.slug}</a></li>
 	{/each}
 </ul>

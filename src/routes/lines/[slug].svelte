@@ -1,12 +1,12 @@
 <script context="module" lang="ts">
 	export async function preload({ params }) {
-		// the `slug` parameter is available because this file is called [slug].svelte
+    // the `slug` parameter is available because this file is called [slug].svelte
+    console.log("slug", params.slug);
 		const res = await this.fetch(`lines/${params.slug}.json`);
-		const data = await res.json();
-		const mock = { title : "Test Timeline", entries: []};
+    const data = await res.json();
 
 		if (res.status === 200) {
-			return { line: mock };
+      return { line : data }
 		} else {
 			this.error(res.status, data.message);
 		}
@@ -14,15 +14,15 @@
 </script>
 
 <script lang="ts">
-  import type { parse } from "path";
+  import type { log } from "console";
+import type { parse } from "path";
   import {flip} from 'svelte/animate';
   import { listen } from "svelte/internal";
   let hovering = -1;
 
-  export let line: { id:number, slug:string, title: string, entries: [{
+  export let line: { id:number, slug:string, title: string, sha: string, entries: [{
     id: number,
-    group?: string,
-    tags?: string,
+    chapter?: string,
     url?: string,
     time?: number,
     author?: string,
@@ -32,6 +32,7 @@
     title?: string,
     summary?: string,
     comments?: string
+    tags?: string,
   }]};
 
   /* drag and drop */
@@ -123,6 +124,7 @@
 
   <div class="page">
     <button on:click={save}>Save</button>
+    <input bind:value={line.title} placeholder="Title"/>
     <div class="header">
       <input class="adder" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
     </div>
@@ -138,8 +140,8 @@
             on:dragenter={() => hovering = i}
             class:is-active={hovering === i}
           >
-            {#if i==0 || entry.group != line.entries[i-1].group}
-              <div class="timeline_year card_label">{entry.group}</div>
+            {#if i==0 || entry.chapter != line.entries[i-1].chapter}
+              <div class="timeline_chapter card_label">{entry.chapter}</div>
             {/if}
             <div class="timeline_card card">
               <header class="card_header">

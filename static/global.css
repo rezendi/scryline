@@ -68,7 +68,7 @@ a {
 	--timelineMainColor: #4557bb;
   }
   
-  .timeline_year{
+  .timeline_chapter{
 	margin-bottom: 1.25rem; /* 1 */
 	--timePadding: var(--timelineYearPadding, .5rem 1.5rem);
 	--timeColor: var(--uiTimelineSecondaryColor);

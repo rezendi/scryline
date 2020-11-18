@@ -44,67 +44,78 @@
 </script>
 
 <script lang="ts">
-import type { parse } from "path";
-import {flip} from 'svelte/animate';
-import { listen } from "svelte/internal";
-let hovering = -1;
+  import type { parse } from "path";
+  import {flip} from 'svelte/animate';
+  import { listen } from "svelte/internal";
+  let hovering = -1;
 
-export let line: { title: string, entries: [{string: any }]};
+  export let line: { title: string, entries: [{string: any }]};
 
-/* drag and drop */
-const drop = (event, target) => {
-    event.dataTransfer.dropEffect = 'move'; 
-    const start = parseInt(event.dataTransfer.getData("text/plain"));
-    const newList = line.entries;
+  /* drag and drop */
+  const drop = (event, target) => {
+      event.dataTransfer.dropEffect = 'move'; 
+      const start = parseInt(event.dataTransfer.getData("text/plain"));
+      const newList = line.entries;
 
-    if (start < target) {
-      newList.splice(target + 1, 0, newList[start]);
-      newList.splice(start, 1);
-    } else {
-      newList.splice(target, 0, newList[start]);
-      newList.splice(start + 1, 1);
-    }
-    line.entries = newList
-    hovering = null
-}
+      if (start < target) {
+        newList.splice(target + 1, 0, newList[start]);
+        newList.splice(start, 1);
+      } else {
+        newList.splice(target, 0, newList[start]);
+        newList.splice(start + 1, 1);
+      }
+      line.entries = newList
+      hovering = null
+  }
 
-const dragStart = (event, i) => {
-    event.dataTransfer.effectAllowed = 'move';
-    event.dataTransfer.dropEffect = 'move';
-    const start = i;
-    event.dataTransfer.setData('text/plain', start);
-}
+  const dragStart = (event, i) => {
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.dropEffect = 'move';
+      const start = i;
+      event.dataTransfer.setData('text/plain', start);
+  }
 
-/* adding */
-let oldUrl: string = '';
-let newUrl: string = '';
+  /* adding */
+  let oldUrl: string = '';
+  let newUrl: string = '';
 
-const addUrl = () => {
-    let existing = line.entries.filter(entry => entry.content==newUrl);
-    if (newUrl.trim().length < 8 || existing.length > 0) {
-      return;
-    }
-    let ids = line.entries.map(entry => entry.id);
-    let maxId = ids.reduce((a,b) => {return a < b ? b : a}, 0);
-    let newEntry = {
-      id: maxId + 1,
-      group: "",
-      label: "",
-      title: "",
-      content: newUrl
-    };
-    const newList = line.entries;
-    newList.unshift(newEntry);
-    line.entries = newList;
-    newUrl = '';
-}
+  const addUrl = () => {
+      let existing = line.entries.filter(entry => entry.content==newUrl);
+      if (newUrl.trim().length < 8 || existing.length > 0) {
+        return;
+      }
+      let ids = line.entries.map(entry => entry.id);
+      let maxId = ids.reduce((a,b) => {return a < b ? b : a}, 0);
+      let newEntry = {
+        id: maxId + 1,
+        group: "",
+        label: "",
+        title: "",
+        content: newUrl
+      };
+      const newList = line.entries;
+      newList.unshift(newEntry);
+      line.entries = newList;
+      newUrl = '';
+  }
 
-const urlChanged = () => {
-    if (Math.abs(newUrl.length - oldUrl.length) > 1) {
-        addUrl();
-    }
-    oldUrl = newUrl
-}
+  const urlChanged = () => {
+      if (Math.abs(newUrl.length - oldUrl.length) > 1) {
+          addUrl();
+      }
+      oldUrl = newUrl
+  }
+
+  const save = async () => {
+    console.log("save");
+    let response = await fetch('lines/save.json', {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(line)
+    });
+    let json = await response.json();
+    console.log("got", json);
+  }
 </script>
 
 <style>
@@ -126,8 +137,8 @@ const urlChanged = () => {
 </svelte:head>
 
   <div class="page">
+    <button on:click={save}>Save</button>
     <div class="header">
-      <span/>
       <input class="adder" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
     </div>
     <div class="timeline">

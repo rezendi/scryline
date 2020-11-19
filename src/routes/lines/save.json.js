@@ -4,7 +4,7 @@ const yaml = require('js-yaml');
 const slugify = require('slugify');
 
 export async function post(req, res, next) {
-	console.log("saving to", process.env.GITHUB_PATH);
+	console.log("saving");
 	res.writeHead(200, {
 		'Content-Type': 'application/json'
 	});
@@ -13,7 +13,7 @@ export async function post(req, res, next) {
 	let slug = slugify(title, {lower: true, strict: true, locale: 'en'});
 	data.slug = slug;
 	let yamlData = yaml.safeDump(data);
-	console.log("yaml", yamlData);
+	// console.log("yaml", yamlData);
 
 	let owner = process.env.GITHUB_ACCOUNT;
 	let repo = process.env.GITHUB_REPO;

@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	export async function preload({ params }) {
     // the `slug` parameter is available because this file is called [slug].svelte
-    console.log("slug", params.slug);
+    // console.log("slug", params.slug);
 		const res = await this.fetch(`lines/${params.slug}.json`);
     const data = await res.json();
 
@@ -20,7 +20,7 @@ import type { parse } from "path";
   import { listen } from "svelte/internal";
   let hovering = -1;
 
-  export let line: { id:number, slug:string, title: string, sha: string, entries: [{
+  export let line: { id:number, slug:string, title: string, sha: string, entries: {
     id: number,
     chapter?: string,
     url?: string,
@@ -33,9 +33,10 @@ import type { parse } from "path";
     summary?: string,
     comments?: string
     tags?: string,
-  }]};
+  }[]};
 
   /* drag and drop */
+
   const drop = (event, target) => {
     console.log("drop");
       event.dataTransfer.dropEffect = 'move'; 
@@ -54,7 +55,7 @@ import type { parse } from "path";
   }
 
   const dragStart = (event, i) => {
-    console.log("start");
+    console.log("drag");
       event.dataTransfer.effectAllowed = 'move';
       event.dataTransfer.dropEffect = 'move';
       const start = i;
@@ -92,6 +93,18 @@ import type { parse } from "path";
       oldUrl = newUrl
   }
 
+  /* deleting */
+
+  const deleteEntry = (event) => {
+    if (confirm("Are you sure you want to delete this card?")) {
+      const toDelete = event.target.getAttribute("data-entry-id");
+      console.log("delete", toDelete);
+      const newList = line.entries.filter(e => `${e.id}` !== toDelete);
+      console.log("newList", newList);
+      line.entries = newList;
+    }
+  }
+
   const save = async () => {
     console.log("save");
     let response = await fetch('lines/save.json', {
@@ -100,7 +113,7 @@ import type { parse } from "path";
         body: JSON.stringify(line)
     });
     let json = await response.json();
-    console.log("got", json);
+    // console.log("got", json);
   }
 </script>
 
@@ -115,6 +128,15 @@ import type { parse } from "path";
 .header {
   display:flex;
   justify-content:flex-end;
+}
+
+.hide-button {
+    float: right;
+    border: 0;
+    background-color: #fff;
+    margin-top: -18px;
+    margin-right: -15px;
+    font-size: 11px;
 }
 </style>
 
@@ -133,17 +155,18 @@ import type { parse } from "path";
         {#each line.entries as entry, i (entry.id)}
           <div class="timeline_element"
             animate:flip
+            class:is-active={hovering === i}
             draggable={true}
             on:dragstart={event => dragStart(event, i)}
             on:drop|preventDefault={event => drop(event, i)}
-            on:dragover={() => hovering = i}
             on:dragenter={() => hovering = i}
-            class:is-active={hovering === i}
+            ondragover="return false"
           >
             {#if i==0 || entry.chapter != line.entries[i-1].chapter}
               <div class="timeline_chapter card_label">{entry.chapter}</div>
             {/if}
             <div class="timeline_card card">
+              <button class="hide-button" data-entry-id={entry.id} on:click={deleteEntry}>X</button>
               <header class="card_header">
                 <div class="card_label">{entry.tags}</div>
                 <h3 class="card_title r-title">{entry.title}</h3>

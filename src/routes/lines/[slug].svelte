@@ -15,14 +15,15 @@
 
 <script lang="ts">
   import type { log } from "console";
-import type { parse } from "path";
-  import {flip} from 'svelte/animate';
+  import type { parse } from "path";
+  import { flip } from 'svelte/animate';
   import { listen } from "svelte/internal";
+
   let hovering = -1;
 
-  export let line: { id:number, slug:string, title: string, sha: string, entries: {
+  export let line: { id:number, slug:string, title:string, sha:string, entries: {
     id: number,
-    chapter?: string,
+    originalUrl?: string,
     url?: string,
     time?: number,
     author?: string,
@@ -33,6 +34,7 @@ import type { parse } from "path";
     summary?: string,
     comments?: string
     tags?: string,
+    chapter?: string,
   }[]};
 
   /* drag and drop */
@@ -66,20 +68,21 @@ import type { parse } from "path";
   let oldUrl: string = '';
   let newUrl: string = '';
 
-  const addUrl = () => {
+  const addUrl = async () => {
       let existing = line.entries.filter(entry => entry.url==newUrl);
       if (newUrl.trim().length < 8 || existing.length > 0) {
         return;
       }
       let ids = line.entries.map(entry => entry.id);
       let maxId = ids.reduce((a,b) => {return a < b ? b : a}, 0);
-      let newEntry = {
-        id: maxId + 1,
-        group: "",
-        tags: "",
-        title: "",
-        url: newUrl
-      };
+      console.log("fetching", newUrl);
+      let response = await fetch('/pager.json', {
+        headers: { "X-URL": newUrl },
+      });
+      let vals = await response.json();
+      console.log("got", vals);
+      let newEntry = { id: maxId + 1, originalUrl:newUrl, ...vals };
+      console.log("newEntry", newEntry);
       const newList = line.entries;
       newList.unshift(newEntry);
       line.entries = newList;
@@ -98,16 +101,14 @@ import type { parse } from "path";
   const deleteEntry = (event) => {
     if (confirm("Are you sure you want to delete this card?")) {
       const toDelete = event.target.getAttribute("data-entry-id");
-      console.log("delete", toDelete);
       const newList = line.entries.filter(e => `${e.id}` !== toDelete);
-      console.log("newList", newList);
       line.entries = newList;
     }
   }
 
   const save = async () => {
     console.log("save");
-    let response = await fetch('lines/save.json', {
+    let response = await fetch('/save.json', {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(line)

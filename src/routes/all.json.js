@@ -9,7 +9,6 @@ export async function get(req, res, next) {
 	let repo = process.env.GITHUB_REPO;
 	let path = `${process.env.GITHUB_PATH}`;
 
-	console.log("about to fetch", path);
 	let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
         method: 'GET',
         headers: {
@@ -19,7 +18,6 @@ export async function get(req, res, next) {
 		},
 	});
 	let json = await response.json();
-	console.log("json", json);
 	let retval = json.map(entry => { return {
 		slug: entry.name.slice(0,-5),
 		sha: entry.sha

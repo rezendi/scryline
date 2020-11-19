@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
 	export async function preload() {
-		let response = await this.fetch('lines/index.json');
+		let response = await this.fetch('/all.json');
 		let json = await response.json();
 		let posts: { slug: string; sha: string }[] = json;
 		return { posts };

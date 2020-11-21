@@ -23,38 +23,13 @@ a {
 
 /* cards */
 
-.card{
+  .card{
 	padding: var(--timelineCardPadding, 1.5rem 1.5rem 1.25rem);
-	border-radius: var(--timelineCardBorderRadius, 2px);
+	border-radius: var(--timelineCardBorderRadius, 4px);
 	border-left: var(--timelineCardBorderLeftWidth, 3px) solid var(--timelineCardBorderLeftColor, var(--uiTimelineMainColor));
 	box-shadow: var(--timelineCardBoxShadow, 0 1px 3px 0 rgba(0, 0, 0, .12), 0 1px 2px 0 rgba(0, 0, 0, .24));
 	background-color: var(--timelineCardBackgroundColor, #fff);
   }
-  
-  .card_title{
-	--rTitleMarginTop: var(--cardTitleMarginTop, 1rem);
-	font-size: var(--cardTitleFontSize, 1.25rem);
-	margin-top: var(--rTitleMarginTop, 0) !important;
-	margin-bottom: var(--rTitleMarginBottom, 0) !important;
-  }
-  
-  .card_content{
-	margin-top: var(--cardContentMarginTop, .5rem);
-  }
-  
-  .card_label{
-	display: var(--timeDisplay, inline-flex);
-	padding: var(--timePadding, .25rem 1.25rem .25rem);
-	background-color: var(--timeBackgroundColor, #f0f0f0);
-  
-	font-size: var(--timeFontSize, .75rem);
-	font-weight: var(--timeFontWeight, 700);
-	text-transform: var(--timeTextTransform, uppercase);
-	color: var(--timeColor, currentColor);
-  }
-  
-  
-  /* timeline */
   
   .timeline{
 	display: var(--timelineDisplay, grid);

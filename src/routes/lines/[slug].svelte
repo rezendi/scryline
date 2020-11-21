@@ -14,13 +14,11 @@
 </script>
 
 <script lang="ts">
-  import type { log } from "console";
-  import type { parse } from "path";
   import { flip } from 'svelte/animate';
-  import { listen } from "svelte/internal";
   import Card from "../../components/Card.svelte";
   import chrono from 'chrono-node';
-
+  import Modal from 'svelte-simple-modal';
+  
   let hovering = -1;
 
   export let line: { id:number, slug:string, title:string, sha:string, entries: {
@@ -127,7 +125,6 @@
         body: JSON.stringify(line)
     });
     let json = await response.json();
-    // console.log("got", json);
   }
 </script>
 
@@ -149,6 +146,7 @@
 	<title>{line.title}</title>
 </svelte:head>
 
+<Modal>
   <div class="page">
     <button on:click={save}>Save</button>
     <input bind:value={line.title} placeholder="Title"/>
@@ -176,3 +174,4 @@
       </div>
     </div>
   </div>
+</Modal>

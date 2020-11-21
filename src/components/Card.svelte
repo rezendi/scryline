@@ -22,10 +22,32 @@
     function getTitle() {
       return entry.title.replace(` | ${entry.source}`, "");
     }
-</script>
+
+    import { getContext } from 'svelte';
+    const { open } = getContext('simple-modal');
+    import Comment from './Comment.svelte';
+
+    function doCommentary() {
+      open (
+        Comment,
+        {
+          onCancel,
+          onOK
+        },
+        {
+          closeButton: false,
+          closeOnOuterClick: false,
+        }
+      );
+    }
+
+    const onCancel = (text, inline) => {}
+	
+  	const onOK = (text, inline) => {}
+  </script>
 
 <style>
-.hide-button {
+.hide_button {
     float: right;
     border: 0;
     background-color: #fff;
@@ -78,10 +100,22 @@
 .card_summary {
   font-style:italic;
 }
+
+.card_commentary {
+  padding-bottom:5px;
+}
+
+.comment_button {
+  float:right;
+  border: 0;
+  background-color: #fff;
+  margin-right: -22px;
+}
+
 </style>
 
 <div class="timeline_card card">
-    <button class="hide-button" data-entry-id={entry.id} on:click={doDelete}>X</button>
+    <button class="hide_button" data-entry-id={entry.id} on:click={doDelete}>X</button>
     <header class="card_header">
       {#if entry.tags}<div class="card_label">{entry.tags}</div>{/if}
       <a class="card_title" href="{entry.url}">{getTitle()}</a>
@@ -97,4 +131,7 @@
       </div>
     </div>
     <div class="card_summary">{entry.summary}</div>
+    <div class="card_commentary">
+      <button class="comment_button" on:click={doCommentary}>+</button>
+    </div>
   </div>

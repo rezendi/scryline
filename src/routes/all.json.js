@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const base64 = require('base-64');
+const base64 = require('universal-base64');
 
 export async function get(req, res, next) {
 	res.writeHead(200, {

@@ -18,6 +18,7 @@
   import type { parse } from "path";
   import { flip } from 'svelte/animate';
   import { listen } from "svelte/internal";
+  import Card from "../../components/Card.svelte";
 
   let hovering = -1;
 
@@ -25,7 +26,7 @@
     id: number,
     originalUrl?: string,
     url?: string,
-    time?: number,
+    when?: number,
     author?: string,
     source?: string,
     logo?: string,
@@ -79,10 +80,9 @@
       let response = await fetch('/pager.json', {
         headers: { "X-URL": newUrl },
       });
-      let vals = await response.json();
-      console.log("got", vals);
-      let newEntry = { id: maxId + 1, originalUrl:newUrl, ...vals };
-      console.log("newEntry", newEntry);
+      let metadata = await response.json();
+      let newEntry = { id: maxId + 1, ...metadata };
+      console.log("got", newEntry);
       const newList = line.entries;
       newList.unshift(newEntry);
       line.entries = newList;
@@ -100,7 +100,8 @@
 
   const deleteEntry = (event) => {
     if (confirm("Are you sure you want to delete this card?")) {
-      const toDelete = event.target.getAttribute("data-entry-id");
+      console.log("target", event.detail.id);
+      const toDelete = event.detail.id;
       const newList = line.entries.filter(e => `${e.id}` !== toDelete);
       line.entries = newList;
     }
@@ -166,16 +167,7 @@
             {#if i==0 || entry.chapter != line.entries[i-1].chapter}
               <div class="timeline_chapter card_label">{entry.chapter}</div>
             {/if}
-            <div class="timeline_card card">
-              <button class="hide-button" data-entry-id={entry.id} on:click={deleteEntry}>X</button>
-              <header class="card_header">
-                <div class="card_label">{entry.tags}</div>
-                <h3 class="card_title r-title">{entry.title}</h3>
-              </header>
-              <div class="card_content">
-                <p>{entry.url}</p>
-              </div>
-            </div>
+            <Card entry={entry} on:delete={deleteEntry}/>
           </div>
         {/each}
       </div>

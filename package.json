@@ -10,15 +10,24 @@
     "validate": "svelte-check --ignore src/node_modules/@sapper"
   },
   "dependencies": {
-    "base-64": "^1.0.0",
     "body-parser": "^1.19.0",
     "compression": "^1.7.1",
     "dotenv": "^8.2.0",
     "js-yaml": "^3.14.0",
+    "metascraper": "^5.14.22",
+    "metascraper-author": "^5.14.22",
+    "metascraper-date": "^5.14.22",
+    "metascraper-description": "^5.14.22",
+    "metascraper-image": "^5.14.22",
+    "metascraper-logo": "^5.14.22",
+    "metascraper-publisher": "^5.14.22",
+    "metascraper-title": "^5.14.22",
+    "metascraper-url": "^5.14.22",
     "node-fetch": "^2.6.1",
     "polka": "next",
     "sirv": "^1.0.0",
-    "slugify": "^1.4.6"
+    "slugify": "^1.4.6",
+    "universal-base64": "^2.1.0"
   },
   "devDependencies": {
     "sapper": "^0.28.0",

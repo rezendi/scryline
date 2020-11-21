@@ -3,7 +3,7 @@
         id: number,
         originalUrl?: string,
         url?: string,
-        when?: number,
+        when?: string,
         author?: string,
         source?: string,
         logo?: string,

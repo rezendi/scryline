@@ -19,6 +19,7 @@
   import { flip } from 'svelte/animate';
   import { listen } from "svelte/internal";
   import Card from "../../components/Card.svelte";
+  import chrono from 'chrono-node';
 
   let hovering = -1;
 
@@ -26,7 +27,7 @@
     id: number,
     originalUrl?: string,
     url?: string,
-    when?: number,
+    when?: string,
     author?: string,
     source?: string,
     logo?: string,
@@ -87,13 +88,24 @@
       newList.unshift(newEntry);
       line.entries = newList;
       newUrl = '';
+      sortList();
   }
 
   const urlChanged = () => {
       if (Math.abs(newUrl.length - oldUrl.length) > 1) {
           addUrl();
       }
-      oldUrl = newUrl
+      oldUrl = newUrl;
+  }
+
+  const sortList = () => {
+    let newList = line.entries;
+    line.entries= newList.sort((a,b) => {
+      if (a.when=="" || b.when=="") {
+        return 0;
+      }
+      return chrono.parseDate(a.when) < chrono.parseDate(b.when) ? 1 : -1
+    });
   }
 
   /* deleting */
@@ -130,15 +142,6 @@
 .header {
   display:flex;
   justify-content:flex-end;
-}
-
-.hide-button {
-    float: right;
-    border: 0;
-    background-color: #fff;
-    margin-top: -18px;
-    margin-right: -15px;
-    font-size: 11px;
 }
 </style>
 

@@ -2,11 +2,12 @@
     import { getContext } from 'svelte';
     export let onCancel = () => {};
     export let onOK = () => {};
+    export let initialComments;
   
     const { close } = getContext('simple-modal');
       
-    let comments;
-    let inline;
+    let insert;
+    let comments = initialComments;
     let onChange = () => {};
       
     function _onCancel() {
@@ -15,11 +16,11 @@
     }
       
     function _onOK() {
-        onOK(comments, inline);
+        onOK(comments, insert);
         close();
     }
     
-    $: onChange(comments, inline)
+    $: onChange(comments, insert)
   </script>
   
   <style>
@@ -51,11 +52,8 @@
   
   <h2>Add comments to / after this item</h2>
 
-    <input type=checkbox bind:checked={inline}/><em>Insert after this item, as a separate timeline entry</em>
-    <textarea
-    type="text"
-    rows=4
-    bind:value={comments}></textarea>
+    <input type=checkbox bind:checked={insert}/><em>Insert after this item, as a separate timeline entry</em>
+    <textarea type="text" rows=4 bind:value={comments} autofocus></textarea>
   
   <div class="buttons">
       <button on:click={_onCancel}>

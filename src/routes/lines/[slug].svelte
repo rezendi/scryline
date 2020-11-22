@@ -15,27 +15,14 @@
 
 <script lang="ts">
   import { flip } from 'svelte/animate';
+  import Entry from '../../components/Entry.js';
   import Card from "../../components/Card.svelte";
   import chrono from 'chrono-node';
   import Modal from 'svelte-simple-modal';
   
   let hovering = -1;
 
-  export let line: { id:number, slug:string, title:string, sha:string, entries: {
-    id: number,
-    originalUrl?: string,
-    url?: string,
-    when?: string,
-    author?: string,
-    source?: string,
-    logo?: string,
-    image?: string,
-    title?: string,
-    summary?: string,
-    comments?: string
-    tags?: string,
-    chapter?: string,
-  }[]};
+  export let line: { id:number, slug:string, title:string, sha:string, entries: Entry[]};
 
   /* drag and drop */
 
@@ -68,23 +55,25 @@
   let oldUrl: string = '';
   let newUrl: string = '';
 
+  const nextId = function () {
+    let ids = line.entries.map(entry => entry.id);
+    let maxId = ids.reduce((a,b) => {return a < b ? b : a}, 0);
+    return maxId + 1;
+  }
+
   const addUrl = async () => {
       let existing = line.entries.filter(entry => entry.url==newUrl);
       if (newUrl.trim().length < 8 || existing.length > 0) {
         return;
       }
-      let ids = line.entries.map(entry => entry.id);
-      let maxId = ids.reduce((a,b) => {return a < b ? b : a}, 0);
       console.log("fetching", newUrl);
-      let response = await fetch('/pager.json', {
-        headers: { "X-URL": newUrl },
-      });
+      let response = await fetch('/pager.json', { headers: { "X-URL": newUrl }, });
       let metadata = await response.json();
-      let newEntry = { id: maxId + 1, ...metadata };
+      let newEntry = new Entry({ id: nextId(), ...metadata });
       console.log("got", newEntry);
-      const newList = line.entries;
-      newList.unshift(newEntry);
-      line.entries = newList;
+      let newEntries = line.entries;
+      newEntries.unshift(newEntry);
+      line.entries = newEntries;
       newUrl = '';
       sortList();
   }
@@ -117,6 +106,18 @@
     }
   }
 
+  /* inserting */
+  const insertCommentsAfter = (event) => {
+    console.log("detail", event.detail);
+    let index = line.entries.findIndex(a => { return a.id == event.detail.id});
+    let newEntry = new Entry({ id: nextId(), comments: event.detail.comments });
+    console.log("newEntry", newEntry);
+    let newEntries = line.entries;
+    newEntries.splice(index+1, 0, newEntry);
+    line.entries = newEntries;
+  }
+
+  /* save */
   const save = async () => {
     console.log("save");
     let response = await fetch('/save.json', {
@@ -125,6 +126,8 @@
         body: JSON.stringify(line)
     });
     let json = await response.json();
+    line.sha = json.content.sha;
+    console.log("save", json);
   }
 </script>
 
@@ -168,7 +171,7 @@
             {#if i==0 || entry.chapter != line.entries[i-1].chapter}
               <div class="timeline_chapter card_label">{entry.chapter}</div>
             {/if}
-            <Card entry={entry} on:delete={deleteEntry}/>
+            <Card entry={entry} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>
           </div>
         {/each}
       </div>

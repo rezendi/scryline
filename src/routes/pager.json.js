@@ -17,17 +17,14 @@ async function parse(html, url) {
     // TODO get original URL from AMP links
     return {
         url: m.url || url,
-        when: m.date || "",
-        title: m.title || "",
-        author: m.author || "",
-        summary: m.description || "",
-        source: m.publisher || "",
+        when: m.date,
+        title: m.title,
+        author: m.author,
+        summary: m.description,
+        source: m.publisher,
         originalUrl: url,
-        image: m.image || "",
-        logo: m.logo || "",
-        chapter: "",
-        tags: "",
-        comments: ""
+        image: m.image,
+        logo: m.logo,
     };
 }
 

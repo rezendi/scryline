@@ -1,26 +1,13 @@
 <script lang="ts">
-    export let entry: {
-        id: number,
-        originalUrl?: string,
-        url?: string,
-        when?: string,
-        author?: string,
-        source?: string,
-        logo?: string,
-        image?: string,
-        title?: string,
-        summary?: string,
-        comments?: string
-        tags?: string,
-        chapter?: string,
-    };
+    import type Entry from './Entry.js';
+    export let entry: Entry;
 
     import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
     const doDelete = (event) => dispatch('delete', { id: event.target.getAttribute("data-entry-id")} );
 
     function getTitle() {
-      return entry.title.replace(` | ${entry.source}`, "");
+      return entry.title ? entry.title.replace(` | ${entry.source}`, "") : entry.url;
     }
 
     import { getContext } from 'svelte';
@@ -31,6 +18,7 @@
       open (
         Comment,
         {
+          initialComments: entry.comments,
           onCancel,
           onOK
         },
@@ -41,9 +29,17 @@
       );
     }
 
-    const onCancel = (text, inline) => {}
+    const onCancel = (text, inline) => {
+      entry.comments = entry.comments;
+    }
 	
-  	const onOK = (text, inline) => {}
+  	const onOK = (text, insert) => {
+      if (insert) {
+        dispatch("insertCommentsAfter", { id: entry.id, comments: text } );
+      } else {
+        entry.comments = text;
+      }
+    }
   </script>
 
 <style>
@@ -102,6 +98,7 @@
 }
 
 .card_commentary {
+  border-top:1px black;
   padding-bottom:5px;
 }
 
@@ -110,28 +107,39 @@
   border: 0;
   background-color: #fff;
   margin-right: -22px;
+  margin-bottom: 0px;
 }
 
 </style>
 
 <div class="timeline_card card">
     <button class="hide_button" data-entry-id={entry.id} on:click={doDelete}>X</button>
-    <header class="card_header">
-      {#if entry.tags}<div class="card_label">{entry.tags}</div>{/if}
-      <a class="card_title" href="{entry.url}">{getTitle()}</a>
-    </header>
-    <div class="card_main">
-      <div class="card_image" title="{entry.originalUrl}">
-        <a href="{entry.url}"><img src="{entry.image}" alt="article hero" height="auto" width="120"/></a>        
+    {#if entry.title || entry.tags || entry.url}
+      <header class="card_header">
+        {#if entry.tags}<div class="card_label">{entry.tags}</div>{/if}
+        <a class="card_title" href="{entry.url}">{getTitle()}</a>
+      </header>
+    {/if}
+    {#if entry.image || entry.author || entry.source || entry.when}
+      <div class="card_main">
+        {#if entry.image}
+          <div class="card_image" title="{entry.originalUrl}">
+            <a href="{entry.url}"><img src="{entry.image}" alt={entry.title} height="auto" width="120"/></a>        
+          </div>
+        {/if}
+        <div class="card_info">
+          <span class="card_author">{entry.author}</span>
+          <span class="card_source">{entry.source}</span>
+          <span class="card_when">{entry.when}</span>
+        </div>
       </div>
-      <div class="card_info">
-        <span class="card_author">{entry.author}</span>
-        <span class="card_source">{entry.source}</span>
-        <span class="card_when">{entry.when}</span>
-      </div>
-    </div>
-    <div class="card_summary">{entry.summary}</div>
+    {/if}
+    {#if entry.summary}
+      <div class="card_summary">{entry.summary}</div>
+      <hr/>
+    {/if}
     <div class="card_commentary">
+      {entry.comments}
       <button class="comment_button" on:click={doCommentary}>+</button>
     </div>
   </div>

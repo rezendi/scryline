@@ -20,11 +20,12 @@
   import chrono from 'chrono-node';
   import Modal from 'svelte-simple-modal';
   
-  let hovering = -1;
-
   export let line: { id:number, slug:string, title:string, sha:string, entries: Entry[]};
 
   /* drag and drop */
+
+  let hovering = -1;
+  let mousedown = null;
 
   const drop = (event, target) => {
     console.log("drop");
@@ -39,12 +40,18 @@
         newList.splice(target, 0, newList[start]);
         newList.splice(start + 1, 1);
       }
-      line.entries = newList
-      hovering = null
+      line.entries = newList;
+      mousedown = null;
+      hovering = -1;
   }
 
+  let noDragElements = ["card_label", "card_title", "card_author", "card_source", "card_when", "card_summary", "card_commentary"];
   const dragStart = (event, i) => {
-    console.log("drag");
+      console.log("drag", mousedown.className);
+      if (noDragElements.includes(mousedown.className)) {
+        event.preventDefault();
+        return;
+      }
       event.dataTransfer.effectAllowed = 'move';
       event.dataTransfer.dropEffect = 'move';
       const start = i;
@@ -127,7 +134,6 @@
     });
     let json = await response.json();
     line.sha = json.content.sha;
-    console.log("save", json);
   }
 </script>
 
@@ -163,6 +169,7 @@
             animate:flip
             class:is-active={hovering === i}
             draggable={true}
+            on:mousedown={event => mousedown=event.target}
             on:dragstart={event => dragStart(event, i)}
             on:drop|preventDefault={event => drop(event, i)}
             on:dragenter={() => hovering = i}

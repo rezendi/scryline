@@ -44,62 +44,72 @@
 
 <style>
 .hide_button {
-    float: right;
-    border: 0;
-    background-color: #fff;
-    margin-top: -18px;
-    margin-right: -22px;
-    font-size: 11px;
-    font-family:verdana;
+  float: right;
+  border: 0;
+  background-color: #fff;
+  margin-top: -18px;
+  margin-right: -22px;
+  font-size: 11px;
+  font-family:verdana;
 }
 
 .card_label{
-	  display: inline-flex;
-	  padding: .25rem 1.25rem .25rem;
-	  background-color: #f0f0f0;
-	  font-size: .75rem;
-	  font-weight: 700;
-	  text-transform: uppercase;
-	  color: currentColor;
-}
-
-.card_main {
-	  margin-top: .5rem;
-    display:flex;
-    padding: 0.25rem;
-    align-items:center;
+  display: inline-flex;
+  padding: .25rem 1.25rem .25rem;
+  background-color: #f0f0f0;
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: currentColor;
+  user-select: text;
 }
 
 .card_title {
-	  font-size: large;
-    text-decoration: none;
-    font-weight:bold;
+  font-size: large;
+  text-decoration: none;
+  font-weight:bold;
+  user-select:text;
 }
   
+.card_main {
+  margin-top: .5rem;
+  display:flex;
+  padding: 0.25rem;
+  align-items:center;
+}
+
 .card_image {
-    width:120px;
-    margin-top:5px;
+  width:120px;
+  margin-top:5px;
 }
 
 .card_info {
-    display:flex;
-    flex-direction:column;
-    padding-left:0.25rem;
-    line-height:1.5rem;
-    font-size:1.1rem;
+  display:flex;
+  flex-direction:column;
+  padding-left:0.25rem;
+  line-height:1.5rem;
+  font-size:1.1rem;
+  user-select:text;
 }
 
 .card_source {
   font-style:italic;
+  user-select: text;
 }
 
 .card_summary {
   font-style:italic;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
 }
 
 .card_commentary {
   border-top:1px black;
   padding-bottom:5px;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
 }
 
 .comment_button {

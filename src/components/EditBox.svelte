@@ -2,12 +2,14 @@
     import { getContext } from 'svelte';
     export let onCancel = () => {};
     export let onOK = () => {};
-    export let initialComments;
+    export let initialComments, initialChapter, initialTags;
   
     const { close } = getContext('simple-modal');
       
     let insert;
     let comments = initialComments;
+    let chapter = initialChapter;
+    let tags = initialTags;
     let onChange = () => {};
       
     function _onCancel() {
@@ -16,7 +18,7 @@
     }
       
     function _onOK() {
-        onOK(comments, insert);
+        onOK({comments:comments, insert:insert, chapter:chapter, tags:tags});
         close();
     }
     
@@ -50,11 +52,16 @@
       Close
   </button>
   
-  <h2>Add comments to / after this item</h2>
+  <h2>Add/edit comments, chapter, and tags</h2>
 
-    <input type=checkbox bind:checked={insert}/><em>Insert after this item, as a separate timeline entry</em>
-    <textarea type="text" rows=4 bind:value={comments} autofocus></textarea>
-  
+    <label for="comments">Comments</label>
+    <input type=checkbox bind:checked={insert}/><em>Insert comments after this item, as a separate timeline entry</em>
+    <textarea id="comments" type="text" rows=4 bind:value={comments} autofocus></textarea>
+    <label for="chapter">Chapter</label>
+    <input id="chapter" type="text" rows=4 bind:value={chapter}/>
+    <label for="tags">Tags</label>
+    <input id="tags" type="text" rows=4 bind:value={tags}/>
+    
   <div class="buttons">
       <button on:click={_onCancel}>
           Cancel

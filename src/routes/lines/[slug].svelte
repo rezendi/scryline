@@ -68,6 +68,16 @@
     return maxId + 1;
   }
 
+  const refresh = function() {
+    let newEntries = line.entries;
+    line.entries = newEntries;
+    invalidate();
+  }
+
+  const invalidate = function() {
+    document.getElementById("saveLine").removeAttribute("disabled");
+  }
+
   const addUrl = async () => {
       let existing = line.entries.filter(entry => entry.url==newUrl);
       if (newUrl.trim().length < 8 || existing.length > 0) {
@@ -81,8 +91,9 @@
       let newEntries = line.entries;
       newEntries.unshift(newEntry);
       line.entries = newEntries;
-      newUrl = '';
+      invalidate();
       sortList();
+      newUrl = '';
   }
 
   const urlChanged = () => {
@@ -110,6 +121,7 @@
       const toDelete = event.detail.id;
       const newList = line.entries.filter(e => `${e.id}` !== toDelete);
       line.entries = newList;
+      invalidate();
     }
   }
 
@@ -122,6 +134,7 @@
     let newEntries = line.entries;
     newEntries.splice(index+1, 0, newEntry);
     line.entries = newEntries;
+    invalidate();
   }
 
   /* save */
@@ -157,7 +170,7 @@
 
 <Modal>
   <div class="page">
-    <button on:click={save}>Save</button>
+    <button id="saveLine" on:click={save} disabled="disabled">Save</button>
     <input bind:value={line.title} placeholder="Title"/>
     <div class="header">
       <input class="adder" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
@@ -175,10 +188,10 @@
             on:dragenter={() => hovering = i}
             ondragover="return false"
           >
-            {#if i==0 || entry.chapter != line.entries[i-1].chapter}
-              <div class="timeline_chapter card_label">{entry.chapter}</div>
+            {#if entry.chapter && (i==0 || entry.chapter != line.entries[i-1].chapter)}
+              <div class="timeline_chapter">{entry.chapter}</div>
             {/if}
-            <Card entry={entry} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>
+            <Card entry={entry} on:refresh={refresh} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>
           </div>
         {/each}
       </div>

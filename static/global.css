@@ -45,6 +45,13 @@ a {
   
   .timeline_chapter{
 	margin-bottom: 1.25rem; /* 1 */
+	display: var(--timeDisplay, inline-flex);
+	padding: var(--timePadding, .25rem 1.25rem .25rem);
+    background-color: var(--timeBackgroundColor, #f0f0f0);
+    font-size: var(--timeFontSize, .75rem);
+    font-weight: var(--timeFontWeight, 700);
+    text-transform: var(--timeTextTransform, uppercase);
+    color: var(--timeColor, currentColor);
 	--timePadding: var(--timelineYearPadding, .5rem 1.5rem);
 	--timeColor: var(--uiTimelineSecondaryColor);
 	--timeBackgroundColor: var(--uiTimelineMainColor);

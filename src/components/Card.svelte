@@ -12,13 +12,15 @@
 
     import { getContext } from 'svelte';
     const { open } = getContext('simple-modal');
-    import Comment from './Comment.svelte';
+    import EditBox from './EditBox.svelte';
 
     function doCommentary() {
       open (
-        Comment,
+        EditBox,
         {
           initialComments: entry.comments,
+          initialChapter: entry.chapter,
+          initialTags: entry.tags,
           onCancel,
           onOK
         },
@@ -33,12 +35,15 @@
       entry.comments = entry.comments;
     }
 	
-  	const onOK = (text, insert) => {
-      if (insert) {
-        dispatch("insertCommentsAfter", { id: entry.id, comments: text } );
+  	const onOK = (vals) => {
+      if (vals.insert) {
+        dispatch("insertCommentsAfter", { id: entry.id, comments: vals.comments } );
       } else {
-        entry.comments = text;
+        entry.comments = vals.comments;
       }
+      entry.chapter = vals.chapter;
+      entry.tags = vals.tags;
+      dispatch("refresh");
     }
   </script>
 

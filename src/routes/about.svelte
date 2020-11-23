@@ -4,6 +4,8 @@
 
 <h1>About Scryline</h1>
 
+<div class="youtube" id="_Jmisv1Spck" style="width:560px; height: 315px;"></div>
+
 <p>
 	Between the pandemic, the US election, Brexit, etc., 2020 has proved it is increasingly hard to make sense of our world.
 	Doing so often requires synthesizing key developments and vital information scattered across articles on different

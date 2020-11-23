@@ -28,6 +28,7 @@
     "polka": "next",
     "sirv": "^1.0.0",
     "slugify": "^1.4.6",
+    "twitter": "^1.7.1",
     "universal-base64": "^2.1.0"
   },
   "devDependencies": {

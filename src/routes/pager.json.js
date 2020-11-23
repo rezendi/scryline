@@ -1,3 +1,4 @@
+require('dotenv').config();
 const fetch = require('node-fetch');
 
 const metascraper = require('metascraper')([
@@ -10,6 +11,14 @@ const metascraper = require('metascraper')([
     require('metascraper-title')(),
     require('metascraper-url')()
 ])
+
+const Twitter = require('twitter');
+var client = new Twitter({
+    consumer_key: process.env.TWITTER_API_KEY,
+    consumer_secret: process.env.TWITTER_API_SECRET,
+    access_token_key: process.env.TWITTER_TOKEN_KEY,
+    access_token_secret: process.env.TWITTER_TOKEN_SECRET
+});
 
 async function parse(html, url) {
     let m = await metascraper({html, url});
@@ -30,15 +39,38 @@ async function parse(html, url) {
 
 export async function get(req, res, next) {
     let url = req.headers["x-url"];
-    console.log("fetching", url);
-	let response = await fetch(url, {
-        method: 'GET',
-        mode: 'no-cors',
-        cache: 'no-cache',
-        redirect: 'follow',
-    });
-    let html = await response.text();
-    console.log("html", html.length);
-    let metadata = await parse(html, url);
-	res.end(JSON.stringify(metadata));
+    if (url.startsWith("https://twitter.com/")) {
+        console.log("fetching tweet", url);
+        url = url.split("?")[0];
+        let twitter_id = url.split("/").splice(-1)[0];
+        console.log("id", twitter_id);
+        client.get('statuses/show/' + twitter_id, {}, function(error, tweet, response) {
+            if (error) {
+                console.log("tweet error", error);
+                res.end(JSON.stringify({url:url, source:"Twitter"}));
+                return;
+            }
+            let metadata = {
+                url: url,
+                source: "Twitter",
+                when: tweet.created_at,
+                author: `@${tweet.user.screen_name} | ${tweet.user.id}`,
+                summary: tweet.full_text || tweet.text,
+                image: tweet.entities.media ? tweet.entities.media[0].media_url_https : ''
+            }
+            res.end(JSON.stringify(metadata));
+         });
+    } else {
+        console.log("fetching", url);
+        let response = await fetch(url, {
+            method: 'GET',
+            mode: 'no-cors',
+            cache: 'no-cache',
+            redirect: 'follow',
+        });
+        let html = await response.text();
+        console.log("html", html.length);
+        let metadata = await parse(html, url);
+        res.end(JSON.stringify(metadata));
+    }
 }

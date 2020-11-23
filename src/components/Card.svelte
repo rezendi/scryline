@@ -46,12 +46,20 @@
       dispatch("refresh");
     }
 
+    let showingEmbed = false;
     import { onMount } from 'svelte';
     onMount(async () => {
       if (entry.url.startsWith("https://twitter.com/")) {
         let twitter_id = entry.url.split("/").splice(-1)[0];
         console.log("twttering", twitter_id);
-        window.twttr.widgets.createTweet(twitter_id, document.getElementById("entry_content_"+entry.id));
+        window.twttr.widgets.createTweet(twitter_id, document.getElementById("entry_content_"+entry.id))
+        .then(res => {
+          console.log("tweet added "+twitter_id, res);
+          if (!res) { throw new Error("tweet not added"); }
+          showingEmbed = true;
+        }).catch(err => {
+          console.log("tweet error", err);
+        });
       }
     });
 
@@ -140,29 +148,31 @@
 <div class="timeline_card card" id="entry_{entry.id}">
     <button class="hide_button" data-entry-id={entry.id} on:click={doDelete}>X</button>
     <div class="card_inherent_content" id="entry_content_{entry.id}">
-      {#if entry.title || entry.tags || entry.url}
-        <header class="card_header">
-          {#if entry.tags}<div class="card_label">{entry.tags}</div>{/if}
-          <a class="card_title" href="{entry.url}">{getTitle()}</a>
-        </header>
-      {/if}
-      {#if entry.image || entry.author || entry.source || entry.when}
-        <div class="card_main">
-          {#if entry.image}
-            <div class="card_image" title="{entry.originalUrl}">
-              <a href="{entry.url}"><img src="{entry.image}" alt={entry.title} height="auto" width="120"/></a>        
+      {#if !showingEmbed}
+        {#if entry.title || entry.tags || entry.url}
+          <header class="card_header">
+            {#if entry.tags}<div class="card_label">{entry.tags}</div>{/if}
+            <a class="card_title" href="{entry.url}">{getTitle()}</a>
+          </header>
+        {/if}
+        {#if entry.image || entry.author || entry.source || entry.when}
+          <div class="card_main">
+            {#if entry.image}
+              <div class="card_image" title="{entry.originalUrl}">
+                <a href="{entry.url}"><img src="{entry.image}" alt={entry.title} height="auto" width="120"/></a>        
+              </div>
+            {/if}
+            <div class="card_info">
+              <span class="card_author">{entry.author}</span>
+              <span class="card_source">{entry.source}</span>
+              <span class="card_when">{entry.when}</span>
             </div>
-          {/if}
-          <div class="card_info">
-            <span class="card_author">{entry.author}</span>
-            <span class="card_source">{entry.source}</span>
-            <span class="card_when">{entry.when}</span>
           </div>
-        </div>
-      {/if}
-      {#if entry.summary}
-        <div class="card_summary">{entry.summary}</div>
-        <hr/>
+        {/if}
+        {#if entry.summary}
+          <div class="card_summary">{entry.summary}</div>
+          <hr/>
+        {/if}
       {/if}
     </div>
     <div class="card_commentary">

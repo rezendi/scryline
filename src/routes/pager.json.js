@@ -50,6 +50,7 @@ export async function get(req, res, next) {
                 res.end(JSON.stringify({url:url, source:"Twitter"}));
                 return;
             }
+            console.log("tweet", tweet.length);
             let metadata = {
                 url: url,
                 source: "Twitter",
@@ -64,8 +65,6 @@ export async function get(req, res, next) {
         console.log("fetching", url);
         let response = await fetch(url, {
             method: 'GET',
-            mode: 'no-cors',
-            cache: 'no-cache',
             redirect: 'follow',
         });
         let html = await response.text();

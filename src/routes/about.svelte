@@ -2,9 +2,16 @@
 	<title>About</title>
 </svelte:head>
 
+<script>
+    import { onMount } from 'svelte';
+    onMount(async () => {
+		showPlayers();
+	});
+</script>
+
 <h1>About Scryline</h1>
 
-<div class="youtube" id="_Jmisv1Spck" style="width:560px; height: 315px;"></div>
+<div class="youtube-player" data-id="aSL-iIskEFU"></div>
 
 <p>
 	Between the pandemic, the US election, Brexit, etc., 2020 has proved it is increasingly hard to make sense of our world.

@@ -219,8 +219,8 @@
 <Modal>
   <div class="page">
     <button id="saveLine" on:click={save} disabled>Save</button>
-    <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
     <button on:click={sortList} disabled={line.entries.length<2}>Sort</button>
+    <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
     <button on:click={undo}>Undo</button>
     <button on:click={redo}>Redo</button>
     <input bind:value={line.title} placeholder="Title"/>
@@ -231,7 +231,7 @@
       <div class="timeline_cards">
         {#each line.entries as entry, i (entry.id)}
           <div class="timeline_element"
-            animate:flip
+            animate:flip="{{duration: 800}}"
             class:is-active={hovering === i}
             draggable={true}
             on:mousedown={event => mousedown=event.target}

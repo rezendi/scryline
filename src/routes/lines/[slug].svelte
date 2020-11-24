@@ -22,16 +22,22 @@
   
   export let line: { id:number, slug:string, title:string, sha:string, entries: Entry[]};
 
+   let versions:string[] = [JSON.stringify(line)], redoVersions:string[] = [];
+
   /* drag and drop */
 
   let hovering = -1;
   let mousedown = null;
 
   const drop = (event, target) => {
-    console.log("drop");
+      console.log("drop");
       event.dataTransfer.dropEffect = 'move'; 
       const start = parseInt(event.dataTransfer.getData("text/plain"));
       const newList = line.entries;
+      if (start==target) {
+        console.log("no change");
+        return;
+      }
 
       if (start < target) {
         newList.splice(target + 1, 0, newList[start]);
@@ -43,6 +49,7 @@
       line.entries = newList;
       mousedown = null;
       hovering = -1;
+      invalidate();
   }
 
   let noDragElements = ["card_label", "card_title", "card_author", "card_source", "card_when", "card_summary", "card_commentary"];
@@ -75,7 +82,36 @@
   }
 
   const invalidate = function() {
+    let newVersion = JSON.stringify(line);
+    if (versions.length==0 || newVersion != versions[versions.length-1]) {
+      versions.push(newVersion);
+    }
+    // console.log("versions", versions);
+    redoVersions=[];
     document.getElementById("saveLine").removeAttribute("disabled");
+  }
+
+  const undo = function() {
+    if (versions.length<2) {
+      return;
+    }
+    let currentVersion = versions.pop();
+    if (redoVersions.length==0 || currentVersion != redoVersions[redoVersions.length-1]) {
+      redoVersions.push(currentVersion);
+    }
+    let newLine = versions[versions.length-1];
+    line = JSON.parse(newLine);
+  }
+
+  const redo = function() {
+    if (redoVersions.length==0) {
+      return;
+    }
+    let currentVersion = JSON.stringify(line);
+    if (versions.length==0 || currentVersion != versions[versions.length-1]) {
+      versions.push(currentVersion);
+    }
+    line = JSON.parse(redoVersions.pop());
   }
 
   const addUrl = async () => {
@@ -111,6 +147,13 @@
       }
       return chrono.parseDate(a.when) < chrono.parseDate(b.when) ? 1 : -1
     });
+    invalidate();
+  }
+
+  const reverseList = () => {
+    let newList = line.entries.reverse();
+    line.entries = newList;
+    invalidate();
   }
 
   /* deleting */
@@ -138,6 +181,10 @@
 
   /* save */
   const save = async () => {
+    if (!line.title || line.title.trim().length==0) {
+      alert("A timeline must have a title to be saved.");
+      return;
+    }
     console.log("save");
     let response = await fetch('/save.json', {
         method: 'POST',
@@ -146,7 +193,9 @@
     });
     let json = await response.json();
     line.sha = json.content.sha;
+    document.getElementById("saveLine").setAttribute("disabled","true");
   }
+
 </script>
 
 <style>
@@ -164,12 +213,16 @@
 </style>
 
 <svelte:head>
-	<title>{line.title}</title>
+	<title>{line.title || "New Line"}</title>
 </svelte:head>
 
 <Modal>
   <div class="page">
-    <button id="saveLine" on:click={save} disabled="disabled">Save</button>
+    <button id="saveLine" on:click={save} disabled>Save</button>
+    <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
+    <button on:click={sortList} disabled={line.entries.length<2}>Sort</button>
+    <button on:click={undo}>Undo</button>
+    <button on:click={redo}>Redo</button>
     <input bind:value={line.title} placeholder="Title"/>
     <div class="header">
       <input class="adder" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>

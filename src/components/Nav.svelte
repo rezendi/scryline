@@ -43,6 +43,10 @@
 		location.reload();
 	}
 
+	function newLine() {
+		window.location.href="/lines/new";
+	}
+
 </script>
 
 <style>
@@ -104,6 +108,7 @@
 		<li><a rel=prefetch aria-current="{segment === 'lines' ? 'page' : undefined}" href="lines">lines</a></li>
 		{#if $session.user}
 			<button on:click={logout}>Logout</button>
+			<button on:click={newLine}>New</button>
 		{:else}
 			<button on:click={login}>Login</button>
 		{/if}

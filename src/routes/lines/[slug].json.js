@@ -8,6 +8,11 @@ export async function get(req, res, next) {
 		return getIndex(req, res, next);
 	}
 
+	if (slug=="new") {
+		res.end(JSON.stringify({entries:[]}));
+		return;
+	}
+
 	res.writeHead(200, {
 		'Content-Type': 'application/json'
 	});

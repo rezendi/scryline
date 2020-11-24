@@ -23,6 +23,7 @@
 	<!-- This contains the contents of the <svelte:head> component, if
 	     the current page has one -->
 	%sapper.head%
+
 	<script>
 	// Twitter embeds
 	window.twttr = (function(d, s, id) {
@@ -43,8 +44,6 @@
 	}(document, "script", "twitter-wjs"));
 
     /* Light YouTube Embeds by @labnol */
-    document.addEventListener("DOMContentLoaded", showPlayers);
-
 	function showPlayers() {
 		var div, n,
                 v = document.getElementsByClassName("youtube-player");

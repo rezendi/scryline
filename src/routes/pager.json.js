@@ -9,7 +9,8 @@ const metascraper = require('metascraper')([
     require('metascraper-logo')(),
     require('metascraper-publisher')(),
     require('metascraper-title')(),
-    require('metascraper-url')()
+    require('metascraper-url')(),
+    require('metascraper-youtube')()
 ])
 
 const Twitter = require('twitter');
@@ -36,6 +37,9 @@ async function parse(html, url) {
         logo: m.logo,
     };
 }
+
+// TODO some kind of caching
+// TODO YouTube name
 
 export async function get(req, res, next) {
     let url = req.headers["x-url"];

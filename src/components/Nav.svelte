@@ -1,5 +1,48 @@
 <script lang="ts">
+	import { stores } from '@sapper/app';
+	const { session } = stores();
+
 	export let segment: string;
+
+	import firebase from 'firebase/app';
+	import 'firebase/auth';
+
+	import { onMount } from 'svelte';
+    onMount(async () => {
+		const firebaseConfig = {
+			apiKey: 'AIzaSyANqcb0it-tn1Veri5Sw4kAa_la_rzAmX8',
+			authDomain: 'hfc-rubric.firebaseapp.com',
+			databaseURL: 'https://hfc-rubric.firebaseio.com',
+			projectId: 'hfc-rubric',
+			storageBucket: 'hfc-rubric.appspot.com',
+			messagingSenderId: '424177396554',
+			appId: '1:424177396554:web:e7f6f9c4297bc5512eefb3',
+			measurementId: 'G-73KMG0QGE3',
+		};
+		firebase.initializeApp(firebaseConfig);
+	});
+
+	function login() {
+		var provider = new firebase.auth.GoogleAuthProvider();
+		firebase.auth()
+		.signInWithPopup(provider)
+		.then(function(result) {
+			console.log("result", result);
+			console.log('logged in', result.user.email);
+		})
+		.catch(function(error) {
+			console.log('auth error code', error.code);
+			console.log('auth error message', error.message);
+			console.log('auth error email', error.email);
+			console.log('auth error credential', error.credential);
+		});
+	}
+
+	function logout() {
+		firebase.auth().signOut();
+		location.reload();
+	}
+
 </script>
 
 <style>
@@ -59,6 +102,10 @@
 		<li><a aria-current="{segment === undefined ? 'page' : undefined}" href=".">home</a></li>
 		<li><a aria-current="{segment === 'about' ? 'page' : undefined}" href="about">about</a></li>
 		<li><a rel=prefetch aria-current="{segment === 'lines' ? 'page' : undefined}" href="lines">lines</a></li>
-		<button>Login</button>
+		{#if $session.user}
+			<button on:click={logout}>Logout</button>
+		{:else}
+			<button on:click={login}>Login</button>
+		{/if}
 	</ul>
 </nav>

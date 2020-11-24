@@ -51,15 +51,23 @@
     onMount(async () => {
       if (entry.url.startsWith("https://twitter.com/")) {
         let twitter_id = entry.url.split("/").splice(-1)[0];
-        console.log("twttering", twitter_id);
         window.twttr.widgets.createTweet(twitter_id, document.getElementById("entry_content_"+entry.id))
         .then(res => {
-          console.log("tweet added "+twitter_id, res);
+          console.log("tweet added "+twitter_id);
           if (!res) { throw new Error("tweet not added"); }
           showingEmbed = true;
         }).catch(err => {
           console.log("tweet error", err);
         });
+      }
+      else if (entry.url.startsWith("https://www.youtube.com/")) {
+        let youtube_id = entry.url.split("v=").splice(-1)[0];
+        youtube_id = youtube_id.split("&")[0];
+        let newHTML = `<div class="youtube-player" data-id="${youtube_id}"></div>`;
+        let summary = document.getElementById("entry_summary_"+entry.id)
+        summary.innerHTML = summary.innerHTML + newHTML;
+        console.log("youtube added "+youtube_id);
+        showPlayers();
       }
     });
 
@@ -170,7 +178,7 @@
           </div>
         {/if}
         {#if entry.summary}
-          <div class="card_summary">{entry.summary}</div>
+          <div id="entry_summary_{entry.id}" class="card_summary">{entry.summary}</div>
           <hr/>
         {/if}
       {/if}

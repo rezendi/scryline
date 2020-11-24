@@ -3,15 +3,15 @@
 </svelte:head>
 
 <script>
+	import { stores } from '@sapper/app';
+	const { session } = stores();
     import { onMount } from 'svelte';
     onMount(async () => {
-		showPlayers();
+		console.log("mount");
 	});
 </script>
 
 <h1>About Scryline</h1>
-
-<div class="youtube-player" data-id="aSL-iIskEFU"></div>
 
 <p>
 	Between the pandemic, the US election, Brexit, etc., 2020 has proved it is increasingly hard to make sense of our world.

@@ -117,7 +117,6 @@
 
   const deleteEntry = (event) => {
     if (confirm("Are you sure you want to delete this card?")) {
-      console.log("target", event.detail.id);
       const toDelete = event.detail.id;
       const newList = line.entries.filter(e => `${e.id}` !== toDelete);
       line.entries = newList;

@@ -26,7 +26,7 @@ export async function post(req, res, next) {
 
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
-		let path = `${sha256(email)}/${slug}.yaml`;
+		let path = `lines/${sha256(req.session.user.email).substring(0,8)}/${slug}.yaml`;
 
 		let toPut = {
 			message: "Scryline update",
@@ -70,13 +70,13 @@ export async function post(req, res, next) {
 		if (doRename) {
 			let toDelete = {
 				message: "Scryline file rename",
-				sha:data.sha,
+				sha: data.sha,
 				committer: {
 					name: process.env.GITHUB_AUTHOR_NAME,
 					email: process.env.GITHUB_AUTHOR_EMAIL
 				}
 			};
-			let dPath = `${process.env.GITHUB_PATH}/${originalSlug}.yaml`;
+			let dPath = `lines/${sha256(req.session.user.email).substring(0,8)}/${originalSlug}.yaml`;
 			let dResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${dPath}`, {
 				method: 'DELETE',
 				headers: {

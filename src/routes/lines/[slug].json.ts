@@ -8,6 +8,8 @@ export async function get(req, res, next) {
 		'Content-Type': 'application/json'
 	});
 	const { slug } = req.params;
+	req.session.user = { email:"jon@rezendi.com"};
+
 	if (slug=="index" || slug=="all") {
 		return getIndex(req, res, next);
 	}
@@ -19,7 +21,7 @@ export async function get(req, res, next) {
 
 	let owner = process.env.GITHUB_ACCOUNT;
 	let repo = process.env.GITHUB_REPO;
-	let path = `${sha256(req.session.user.email)}`;
+	let path = `lines/${sha256(req.session.user.email).substring(0,8)}`;
 
 	try {
 		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}/${slug}.yaml`, {
@@ -42,10 +44,9 @@ export async function get(req, res, next) {
 
 async function getIndex(req, res, next) {
 	try {
-		console.log("here", req.session);
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
-		let path = `${sha256(req.session.user.email)}`;
+		let path = `lines/${sha256(req.session.user.email).substring(0,8)}`;
 
 		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
 			method: 'GET',
@@ -56,10 +57,13 @@ async function getIndex(req, res, next) {
 			},
 		});
 		let json = await response.json();
-		let retval = json.map(entry => { return {
-			slug: entry.name.slice(0,-5),
-			sha: entry.sha
-		}});
+		let retval = [];
+		if (!json.message) {
+			retval = json.map(entry => { return {
+				slug: entry.name.slice(0,-5),
+				sha: entry.sha
+			}});
+		}
 		res.end(JSON.stringify(retval));
 	} catch(error) {
 		res.end(JSON.stringify({success:false, slug:"index", error:error}));

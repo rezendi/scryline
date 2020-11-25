@@ -2,13 +2,13 @@
 	export async function preload() {
 		let response = await this.fetch('/lines/all.json');
 		let json = await response.json();
-		let posts: { slug: string; sha: string }[] = json;
-		return { posts };
+		let lines: { slug: string; sha: string }[] = json;
+		return { lines };
 	}
 </script>
 
 <script lang="ts">
-	export let posts: { slug: string; sha: string }[];
+	export let lines: { slug: string; sha: string }[];
 </script>
 
 <style>
@@ -19,13 +19,13 @@
 </style>
 
 <svelte:head>
-	<title>Blog</title>
+	<title>Recent lines</title>
 </svelte:head>
 
-<h1>Recent posts</h1>
+<h1>Recent lines</h1>
 
 <ul>
-	{#each posts as post}
-		<li><a rel="prefetch" href="lines/{post.slug}">{post.slug}</a></li>
+	{#each lines as line}
+		<li><a rel="prefetch" href="lines/{line.slug}">{line.slug}</a></li>
 	{/each}
 </ul>

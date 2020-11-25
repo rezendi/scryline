@@ -31,6 +31,7 @@
     "metascraper-youtube": "^5.14.24",
     "node-fetch": "^2.6.1",
     "polka": "next",
+    "sha256": "^0.2.0",
     "sirv": "^1.0.0",
     "slugify": "^1.4.6",
     "twitter": "^1.7.1",

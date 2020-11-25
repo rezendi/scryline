@@ -201,6 +201,7 @@
       }
       line['originalTitle'] = originalTitle;
     }
+    line['email'] = $session.user.email;
     let response = await fetch('/save.json', {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
@@ -222,6 +223,7 @@
     }
     line.sha = json.content.sha;
     originalTitle = line.title;
+    delete line['email'];
     delete line['originalTitle'];
     document.getElementById("saveLine").setAttribute("disabled","true");
   }

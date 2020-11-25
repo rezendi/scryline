@@ -25,7 +25,7 @@ polka() // You can also use Express
 		sirv('static', { dev }),
 		sapper.middleware({
 			session: (req, res) => {
-				return { user: req.session.user || {} };
+				return { user: req.session.user || {email:"jon@rezendi.com"} };
 			}
 		}),
 	)

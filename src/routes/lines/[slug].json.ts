@@ -1,13 +1,14 @@
+const yaml = require('js-yaml');
 const fetch = require('node-fetch');
 const base64 = require('universal-base64');
-const yaml = require('js-yaml');
+const sha256 = require('sha256');
 
 export async function get(req, res, next) {
 	res.writeHead(200, {
 		'Content-Type': 'application/json'
 	});
 	const { slug } = req.params;
-	if (slug=="index") {
+	if (slug=="index" || slug=="all") {
 		return getIndex(req, res, next);
 	}
 
@@ -18,7 +19,7 @@ export async function get(req, res, next) {
 
 	let owner = process.env.GITHUB_ACCOUNT;
 	let repo = process.env.GITHUB_REPO;
-	let path = `${process.env.GITHUB_PATH}`;
+	let path = `${sha256(req.session.user.email)}`;
 
 	try {
 		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}/${slug}.yaml`, {
@@ -41,9 +42,10 @@ export async function get(req, res, next) {
 
 async function getIndex(req, res, next) {
 	try {
+		console.log("here", req.session);
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
-		let path = `${process.env.GITHUB_PATH}`;
+		let path = `${sha256(req.session.user.email)}`;
 
 		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
 			method: 'GET',

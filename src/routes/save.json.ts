@@ -1,6 +1,7 @@
+const yaml = require('js-yaml');
 const fetch = require('node-fetch');
 const base64 = require('universal-base64');
-const yaml = require('js-yaml');
+const sha256 = require('sha256');
 const slugify = require('slugify');
 
 export async function post(req, res, next) {
@@ -13,19 +14,26 @@ export async function post(req, res, next) {
 		let title = data.title;
 		let slug = slugify(title, {lower: true, strict: true, locale: 'en'});
 		data.slug = slug;
+
+		let email = data.email;
+		delete data['email'] // don't save to file for privacy reasons
+		if (!email) {
+			throw new Error("No email");
+		}
+
 		let yamlData = yaml.safeDump(data);
 		// console.log("yaml", yamlData);
 
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
-		let path = `${process.env.GITHUB_PATH}/${slug}.yaml`;
+		let path = `${sha256(email)}/${slug}.yaml`;
 
 		let toPut = {
 			message: "Scryline update",
 			content: base64.encode(yamlData),
 			committer: {
-				name: process.env.GITHUB_AUTHOR_NAME,
-				email: process.env.GITHUB_AUTHOR_EMAIL
+				name: "Scryline",
+				email: email
 			}
 		};
 

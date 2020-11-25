@@ -1,5 +1,6 @@
 <script context="module" lang="ts">
 	export async function preload( { params }, session ) {
+    console.log("session", session);
 
     // the `slug` parameter is available because this file is called [slug].svelte
 		const res = await this.fetch(`lines/${params.slug}.json`);

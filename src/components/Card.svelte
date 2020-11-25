@@ -199,7 +199,7 @@
       {/if}
     </div>
     <div class="card_commentary">
-      {entry.comments}
+      {@html entry.comments}
       <button class="comment_button" on:click={doCommentary}>+</button>
     </div>
   </div>

@@ -5,7 +5,7 @@
   import chrono from 'chrono-node';
   import Modal from 'svelte-simple-modal';
   
-  export let line: { id:number, slug:string, title:string, sha:string, entries: Entry[]};
+  export let line: { title:string, slug:string, sha:string, entries: Entry[]};
   let versions:string[] = [JSON.stringify(line)], redoVersions:string[] = [];
 
   import { stores } from '@sapper/app';

@@ -1,3 +1,8 @@
+<svelte:head>
+	<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+	<script src="https://cdn.quilljs.com/1.3.6/quill.js" on:load={quillLoaded}></script>
+</svelte:head>
+
 <script>
     import { getContext } from 'svelte';
     export let onCancel = () => {};
@@ -18,45 +23,63 @@
     }
       
     function _onOK() {
+        comments = quill.root.innerHTML.split("<script")[0].split("javascript:")[0]; // paranoia
         onOK({comments:comments, insert:insert, chapter:chapter, tags:tags});
         close();
     }
     
     $: onChange(comments, insert)
-  </script>
+
+    let quill;
+    let quillReady = false;
+
+    let mounted = false;
+    import { onMount } from 'svelte';
+    onMount(async () => {
+		mounted = true;
+		if (quillReady) {
+				loadQuill();
+		}
+  });
+
+	function quillLoaded() {
+			quillReady = true;
+			if (mounted) {
+					loadQuill();
+			}
+	}
+    
+    function loadQuill() {
+		quill = new Quill('#quill-container', {
+			modules: {
+				toolbar: [
+					['bold', 'italic'],
+					['link', 'blockquote'],
+					[{ list: 'ordered' }, { list: 'bullet' }],
+				],
+			},
+			placeholder: 'Add commentary',
+			theme: 'snow'
+        });
+        quill.focus();
+    }
+</script>
   
   <style>
-    h2 {
-          font-size: 1.1rem;
-          text-align: center;
-      }
-      
-      textarea {
-          width: 100%;
-      }
-      
       .buttons {
           display: flex;
           justify-content: space-between;
       }
-      
-      .close {
-          position: absolute;
-          top: -2rem;
-          right: 0;
-          background: black;
+      #quill-container {
+		min-height: 16rem;
       }
   </style>
   
-  <button class="close" on:click={_onCancel}>
-      Close
-  </button>
-  
   <h2>Add/edit comments, chapter, and tags</h2>
 
-    <label for="comments">Comments</label>
+    <label for="quill-container">Comments</label>
     <input type=checkbox bind:checked={insert}/><em>Insert comments after this item, as a separate timeline entry</em>
-    <textarea id="comments" type="text" rows=4 bind:value={comments} autofocus></textarea>
+    <div id="quill-container">{@html comments}</div>
     <label for="chapter">Chapter</label>
     <input id="chapter" type="text" rows=4 bind:value={chapter}/>
     <label for="tags">Tags</label>

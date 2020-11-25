@@ -4,6 +4,7 @@
   import Card from "./Card.svelte";
   import chrono from 'chrono-node';
   import Modal from 'svelte-simple-modal';
+import { listen } from 'svelte/internal';
   
   export let line: { id:number, slug:string, title:string, sha:string, entries: Entry[]};
   let versions:string[] = [JSON.stringify(line)], redoVersions:string[] = [];
@@ -123,21 +124,42 @@
       oldUrl = newUrl;
   }
 
-  const sortList = () => {
-    let newList = line.entries;
-    line.entries= newList.sort((a,b) => {
+  const getAtemporal = () => {
+    let atemporal = [];
+    for (let i=0; i<line.entries.length; i++) {
+        if (!line.entries[i].when) {
+            let a = { entry: line.entries[i], previousId: i==0 ? -1 : line.entries[i-1].id }
+            atemporal.push(a);
+        }
+    }
+    return atemporal;
+  }
+
+  const doSort = (reverse:boolean) => {
+    let temporal = line.entries.filter(a => a.when.length > 0);
+    let sorted = temporal.sort((a,b) => {
       if (a.when=="" || b.when=="") {
         return 0;
       }
       return chrono.parseDate(a.when) < chrono.parseDate(b.when) ? 1 : -1
     });
+    if (reverse) {
+        sorted = sorted.reverse();
+    }
+    for (const f of getAtemporal()) {
+        let idx = sorted.findIndex(a => f.previousId == a.id);
+        sorted.splice(idx+1, 0, f.entry);
+    }
+    line.entries = sorted;
     invalidate();
   }
 
+  const sortList = () => {
+      doSort(false);
+  }
+
   const reverseList = () => {
-    let newList = line.entries.reverse();
-    line.entries = newList;
-    invalidate();
+      doSort(true);
   }
 
   /* deleting */
@@ -155,7 +177,7 @@
   const insertCommentsAfter = (event) => {
     console.log("detail", event.detail);
     let index = line.entries.findIndex(a => { return a.id == event.detail.id});
-    let newEntry = new Entry({ id: nextId(), comments: event.detail.comments });
+    let newEntry = new Entry({ id: nextId(), previousId: event.detail.id, comments: event.detail.comments });
     console.log("newEntry", newEntry);
     let newEntries = line.entries;
     newEntries.splice(index+1, 0, newEntry);
@@ -183,14 +205,7 @@
 </script>
 
 <style>
-.page{
-  max-width: 47rem;
-  padding: 1rem 2rem 3rem;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.header {
+.entry_header {
   display:flex;
   justify-content:flex-end;
 }
@@ -203,7 +218,7 @@
     <button on:click={undo}>Undo</button>
     <button on:click={redo}>Redo</button>
     <input bind:value={line.title} placeholder="Title"/>
-    <div class="header">
+    <div class="entry_header">
       <input class="adder" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
     </div>
     <div class="timeline">

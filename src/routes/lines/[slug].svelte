@@ -14,14 +14,23 @@
 </script>
 
 <script lang="ts">
-  export let line: { id:number, slug:string, title:string, sha:string, entries: Entry[]};
   import Line from "../../components/Line.svelte";
+  export let line: { id:number, slug:string, title:string, sha:string, entries: []};
 </script>
 
 <svelte:head>
 	<title>{line.title || "New Line"}</title>
 </svelte:head>
 
+<style>
+  .page{
+    max-width: 47rem;
+    padding: 1rem 2rem 3rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+</style>  
+  
 <div class="page">
   <Line {line}/>
 </div>

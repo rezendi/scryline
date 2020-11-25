@@ -70,9 +70,9 @@ import { listen } from 'svelte/internal';
     let newVersion = JSON.stringify(line);
     if (versions.length==0 || newVersion != versions[versions.length-1]) {
       versions.push(newVersion);
+      redoVersions=[];
     }
     // console.log("versions", versions);
-    redoVersions=[];
     document.getElementById("saveLine").removeAttribute("disabled");
   }
 
@@ -135,7 +135,7 @@ import { listen } from 'svelte/internal';
     return atemporal;
   }
 
-  const doSort = (reverse:boolean) => {
+  const sortList = () => {
     let temporal = line.entries.filter(a => a.when.length > 0);
     let sorted = temporal.sort((a,b) => {
       if (a.when=="" || b.when=="") {
@@ -143,9 +143,6 @@ import { listen } from 'svelte/internal';
       }
       return chrono.parseDate(a.when) < chrono.parseDate(b.when) ? 1 : -1
     });
-    if (reverse) {
-        sorted = sorted.reverse();
-    }
     for (const f of getAtemporal()) {
         let idx = sorted.findIndex(a => f.previousId == a.id);
         sorted.splice(idx+1, 0, f.entry);
@@ -154,12 +151,9 @@ import { listen } from 'svelte/internal';
     invalidate();
   }
 
-  const sortList = () => {
-      doSort(false);
-  }
-
   const reverseList = () => {
-      doSort(true);
+    line.entries = line.entries.reverse();
+    invalidate();
   }
 
   /* deleting */
@@ -212,16 +206,18 @@ import { listen } from 'svelte/internal';
 </style>
 
 <Modal>
+    <div class="entry_header">
+      <input class="adder" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
+    </div>
+    <label for="lineTitle">Title</label>
+    <input id="lineTitle" bind:value={line.title} placeholder="Title"/>
     <button id="saveLine" on:click={save} disabled>Save</button>
+    <br/>
     <button on:click={sortList} disabled={line.entries.length<2}>Sort</button>
     <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
     <button on:click={undo}>Undo</button>
     <button on:click={redo}>Redo</button>
-    <input bind:value={line.title} placeholder="Title"/>
-    <div class="entry_header">
-      <input class="adder" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
-    </div>
-    <div class="timeline">
+  <div class="timeline">
       <div class="timeline_cards">
         {#each line.entries as entry, i (entry.id)}
           <div class="timeline_element"

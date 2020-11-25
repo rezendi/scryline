@@ -84,17 +84,6 @@
   font-family:verdana;
 }
 
-.card_label{
-  display: inline-flex;
-  padding: .25rem 1.25rem .25rem;
-  background-color: #f0f0f0;
-  font-size: .75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: currentColor;
-  user-select: text;
-}
-
 .card_title {
   font-size: large;
   text-decoration: none;
@@ -125,6 +114,27 @@
 
 .card_source {
   font-style:italic;
+  user-select: text;
+}
+
+.card_labels {
+  display:flex;
+  flex-direction:column;
+  align-content: flex-end;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  flex: 2;
+}
+
+.card_label{
+  display: inline-flex;
+  padding: 0.1rem 1.25rem 0.1rem;
+  margin: .15rem 0rem 0.15rem;
+  background-color: #f0f0f0;
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: currentColor;
   user-select: text;
 }
 
@@ -159,7 +169,6 @@
       {#if !showingEmbed}
         {#if entry.title || entry.tags || entry.url}
           <header class="card_header">
-            {#if entry.tags}<div class="card_label">{entry.tags}</div>{/if}
             <a class="card_title" href="{entry.url}">{getTitle()}</a>
           </header>
         {/if}
@@ -174,6 +183,12 @@
               <span class="card_author">{entry.author}</span>
               <span class="card_source">{entry.source}</span>
               <span class="card_when">{entry.when}</span>
+            </div>
+            <div class="spacer">&nbsp;</div>
+            <div class="card_labels">
+              {#each entry.tags.split(",") as tag}
+                <span class="card_label">{tag}</span>
+              {/each}
             </div>
           </div>
         {/if}

@@ -194,7 +194,11 @@
       return;
     }
     console.log("save");
-    if (originalTitle && originalTitle !== line.title) {
+    let doRename = originalTitle && originalTitle != line.title;
+    if (doRename) {
+      if (!confirm(`Are you sure you want to change the title from "${originalTitle}"? This will change this timeline's URL and break previous links to it!`)) {
+        return;
+      }
       line['originalTitle'] = originalTitle;
     }
     let response = await fetch('/save.json', {
@@ -204,9 +208,17 @@
     });
     let json = await response.json();
     if (json.success===false) {
-      console.log("save error", json.error);
-      alert("Save error!");
+      console.log("save error", json);
+      let message = "Save error!";
+      if (json.error.startsWith("Invalid request")) {
+        message = "Save error; you may already be using this title?";
+      }
+      alert(message);
       return;
+    }
+    if (doRename) {
+      console.log("moving");
+      window.location.href = `/lines/${json.content.name.split(".")[0]}`;
     }
     line.sha = json.content.sha;
     originalTitle = line.title;

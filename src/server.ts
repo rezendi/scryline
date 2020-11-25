@@ -24,9 +24,9 @@ polka() // You can also use Express
 		}),
 		sirv('static', { dev }),
 		sapper.middleware({
-			session: (req, res) => ({
-				user: req.session.user
-			})
+			session: (req, res) => {
+				return { user: req.session.user || {} };
+			}
 		}),
 	)
 	.listen(PORT, err => {

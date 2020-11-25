@@ -4,11 +4,13 @@
   import Card from "./Card.svelte";
   import chrono from 'chrono-node';
   import Modal from 'svelte-simple-modal';
-import { listen } from 'svelte/internal';
   
   export let line: { id:number, slug:string, title:string, sha:string, entries: Entry[]};
   let versions:string[] = [JSON.stringify(line)], redoVersions:string[] = [];
 
+  import { stores } from '@sapper/app';
+	const { session } = stores();
+ 
   /* drag and drop */
 
   let hovering = -1;
@@ -201,22 +203,48 @@ import { listen } from 'svelte/internal';
 <style>
 .entry_header {
   display:flex;
-  justify-content:flex-end;
+  justify-content:space-between;
+}
+
+.author_header {
+  display:flex;
+  flex-direction: column;
+  align-content: right;
+  width:100%;
+}
+
+.author_title {
+  display:flex;
+}
+
+.adder {
+  margin-left:auto;
+  padding:0.5rem;
+  margin-bottom:0.25rem;
 }
 </style>
 
 <Modal>
-    <div class="entry_header">
-      <input class="adder" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
+  <div class="entry_header">
+    {#if $session.user}
+      <div class="author_header">
+        <input class="adder" placeholder="Add URLs here" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
+        <div class="author_title">
+          <b>Title</b>
+          <input id="lineTitle" bind:value={line.title} size="40" placeholder="Title"/>
+          <button id="saveLine" on:click={save} disabled>Save</button>
+          <span style="flex:2;">&nbsp;</span>
+          <button on:click={sortList} disabled={line.entries.length<2}>Sort</button>
+          <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
+          <button on:click={undo}>Undo</button>
+          <button on:click={redo}>Redo</button>
+        </div>
+      </div>
+    {:else}
+      <b>Timeline: {line.title}</b>
+      <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
+    {/if}
     </div>
-    <label for="lineTitle">Title</label>
-    <input id="lineTitle" bind:value={line.title} placeholder="Title"/>
-    <button id="saveLine" on:click={save} disabled>Save</button>
-    <br/>
-    <button on:click={sortList} disabled={line.entries.length<2}>Sort</button>
-    <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
-    <button on:click={undo}>Undo</button>
-    <button on:click={redo}>Redo</button>
   <div class="timeline">
       <div class="timeline_cards">
         {#each line.entries as entry, i (entry.id)}

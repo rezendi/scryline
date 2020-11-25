@@ -5,10 +5,10 @@
 		const res = await this.fetch(`lines/${params.slug}.json`);
     const data = await res.json();
 
-		if (res.status === 200) {
-      return { line : data }
+		if (res.status === 200 && data.success) {
+      return { line : data.line }
 		} else {
-			this.error(res.status, data.message);
+			this.error(res.status, data.error);
 		}
 	}
 </script>

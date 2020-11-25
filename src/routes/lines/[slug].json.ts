@@ -12,7 +12,7 @@ export async function get(req, res, next) {
 	}
 
 	if (slug=="new") {
-		res.end(JSON.stringify({entries:[]}));
+		res.end(JSON.stringify({success:true, line:{entries:[]}}));
 		return;
 	}
 
@@ -33,7 +33,7 @@ export async function get(req, res, next) {
 		let converted = base64.decode(json.content);
 		let retval = yaml.safeLoad(converted);
 		retval.sha = json.sha;
-		res.end(JSON.stringify(retval));
+		res.end(JSON.stringify({success:true, line:retval}));
 	} catch(error) {
 		res.end(JSON.stringify({success:false, slug:slug, error:error}));
 	}

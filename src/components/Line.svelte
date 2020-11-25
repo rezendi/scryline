@@ -109,6 +109,11 @@
       console.log("fetching", newUrl);
       let response = await fetch('/pager.json', { headers: { "X-URL": newUrl }, });
       let metadata = await response.json();
+      if (metadata.success===false) {
+        console.log("add error", metadata.error);
+        alert("Error adding this URL");
+        return;
+      }
       let newEntry = new Entry({ id: nextId(), ...metadata });
       console.log("got", newEntry);
       let newEntries = line.entries;
@@ -194,6 +199,11 @@
         body: JSON.stringify(line)
     });
     let json = await response.json();
+    if (json.success===false) {
+      console.log("save error", json.error);
+      alert("Save error!");
+      return;
+    }
     line.sha = json.content.sha;
     document.getElementById("saveLine").setAttribute("disabled","true");
   }

@@ -43,6 +43,34 @@ export async function post(req, res, next) {
 			body: JSON.stringify(toPut)
 		});
 		let json = await response.json();
+
+		if (data.originalTitle) {
+			let originalSlug = slugify(data.originalTitle, {lower: true, strict: true, locale: 'en'});
+			if (originalSlug != slug) {
+				let toDelete = {
+					message: "Scryline file rename",
+					sha:data.sha,
+					committer: {
+						name: process.env.GITHUB_AUTHOR_NAME,
+						email: process.env.GITHUB_AUTHOR_EMAIL
+					}
+				};
+				console.log("toDelete", toDelete);
+				let dPath = `${process.env.GITHUB_PATH}/${originalSlug}.yaml`;
+				let dResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${dPath}`, {
+					method: 'DELETE',
+					headers: {
+						"Content-Type": "application/json",
+						"Accept": "application/vnd.github.v3+json",
+						"Authorization": `Basic ${base64.encode(`${owner}:${process.env.GITHUB_TOKEN}`)}`
+					},
+					body: JSON.stringify(toDelete)
+				});
+				let dJSON = await dResponse.json();
+				console.log("delete json", dJSON);
+			}
+		}
+
 		res.end(JSON.stringify(json));
 	} catch(error) {
 		res.end(JSON.stringify({success:false, data:data, error:error}));

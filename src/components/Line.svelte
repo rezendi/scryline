@@ -7,6 +7,7 @@
   
   export let line: { title:string, slug:string, sha:string, entries: Entry[]};
   let versions:string[] = [JSON.stringify(line)], redoVersions:string[] = [];
+  let originalTitle = line.title;
 
   import { stores } from '@sapper/app';
 	const { session } = stores();
@@ -17,7 +18,7 @@
   let mousedown = null;
 
   const drop = (event, target) => {
-      console.log("drop");
+      console.log("drop", originalTitle);
       event.dataTransfer.dropEffect = 'move'; 
       const start = parseInt(event.dataTransfer.getData("text/plain"));
       const newList = line.entries;
@@ -193,6 +194,9 @@
       return;
     }
     console.log("save");
+    if (originalTitle && originalTitle !== line.title) {
+      line['originalTitle'] = originalTitle;
+    }
     let response = await fetch('/save.json', {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
@@ -205,6 +209,8 @@
       return;
     }
     line.sha = json.content.sha;
+    originalTitle = line.title;
+    delete line['originalTitle'];
     document.getElementById("saveLine").setAttribute("disabled","true");
   }
 
@@ -241,7 +247,7 @@
         <input class="adder" placeholder="Add URLs here" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
         <div class="author_title">
           <b>Title</b>
-          <input id="lineTitle" bind:value={line.title} size="40" placeholder="Title"/>
+          <input id="lineTitle" on:change={invalidate} bind:value={line.title} size="40" placeholder="Title"/>
           <button id="saveLine" on:click={save} disabled>Save</button>
           <span style="flex:2;">&nbsp;</span>
           <button on:click={sortList} disabled={line.entries.length<2}>Sort</button>

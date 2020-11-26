@@ -24,20 +24,20 @@ a {
 /* cards */
 
   .card{
-	padding: var(--timelineCardPadding, 1.5rem 1.5rem 1.25rem);
-	border-radius: var(--timelineCardBorderRadius, 4px);
-	border-left: var(--timelineCardBorderLeftWidth, 3px) solid var(--timelineCardBorderLeftColor, var(--uiTimelineMainColor));
-	box-shadow: var(--timelineCardBoxShadow, 0 1px 3px 0 rgba(0, 0, 0, .12), 0 1px 2px 0 rgba(0, 0, 0, .24));
-	background-color: var(--timelineCardBackgroundColor, #fff);
+	padding: 1.5rem 1.5rem 1.25rem;
+	border-radius: 4px;
+	border-left: 3px solid var(--timelineCardBorderLeftColor, var(--uiTimelineMainColor));
+	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 1px 2px 0 rgba(0, 0, 0, .24);
+	background-color: #fff;
   }
   
   .timeline{
-	display: var(--timelineDisplay, grid);
-	grid-row-gap: var(--timelineGroupsGap, 2rem);
+	display: grid;
+	grid-row-gap: 2rem;
 	--uiTimelineMainColor: var(--timelineMainColor, #222);
 	--uiTimelineSecondaryColor: var(--timelineSecondaryColor, #fff);
   
-	border-left: var(--timelineLineWidth, 3px) solid var(--timelineLineBackgroundColor, var(--uiTimelineMainColor));
+	border-left: 3px solid var(--uiTimelineMainColor);
 	padding-top: 1rem;
 	padding-bottom: 1.5rem;
 	--timelineMainColor: #4557bb;
@@ -46,21 +46,17 @@ a {
   .timeline_chapter{
 	margin-bottom: 1.25rem; /* 1 */
 	display: var(--timeDisplay, inline-flex);
-	padding: var(--timePadding, .25rem 1.25rem .25rem);
-    background-color: var(--timeBackgroundColor, #f0f0f0);
-    font-size: var(--timeFontSize, .75rem);
-    font-weight: var(--timeFontWeight, 700);
-    text-transform: var(--timeTextTransform, uppercase);
-    color: var(--timeColor, currentColor);
-	--timePadding: var(--timelineYearPadding, .5rem 1.5rem);
-	--timeColor: var(--uiTimelineSecondaryColor);
-	--timeBackgroundColor: var(--uiTimelineMainColor);
-	--timeFontWeight: var(--timelineYearFontWeight, 400);
+	padding: .5rem 1.5rem;
+    background-color: var(--uiTimelineMainColor);
+    font-size: .8rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: var(--uiTimelineSecondaryColor);
   }
   
   .timeline_cards{
-	display: var(--timeloneCardsDisplay, grid);
-	grid-row-gap: var(--timeloneCardsGap, 1.5rem);
+	display: grid;
+	grid-row-gap: 1.5rem;
 	overflow: hidden;
 	padding-top: .25rem; /* 1 */
 	padding-bottom: .25rem; /* 1 */
@@ -68,16 +64,16 @@ a {
   
   .timeline_card{
 	position: relative;
-	margin-left: var(--timelineCardLineGap, 1rem);
+	margin-left: 1rem;
   }
   
   .timeline_card::before{
 	content: "";
 	width: 3%;
-	height: var(--timelineCardLineWidth, 2px);
-	background-color: var(--timelineCardLineBackgroundColor, var(--uiTimelineMainColor));
+	height: 2px;
+	background-color: var(--uiTimelineMainColor);
 	position: absolute;
-	top: var(--timelineCardLineTop, 1rem);
+	top: 1rem;
 	left: -3%;
   }
   

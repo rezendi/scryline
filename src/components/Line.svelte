@@ -1,9 +1,9 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
-  import { DateTime } from 'luxon';
   import Modal from 'svelte-simple-modal';
-  import Entry from './Entry.js';
+  import Entry from './Entry';
   import Card from "./Card.svelte";
+  import util from "./util";
   
   export let line: { title:string, sha:string, userid:string, editable:boolean, entries: Entry[]};
   let versions:string[] = [JSON.stringify(line)], redoVersions:string[] = [];
@@ -22,17 +22,6 @@
 
   let hovering = -1;
   let mousedown = null;
-
-  const TWITTER_DATE_FORMAT = 'EEE MMM d HH:mm:ss ZZZ yyyy';
-  const parseDate = (str:string) => {
-    let dt = DateTime.fromISO(str);
-    if (!dt) { dt = DateTime.fromString(str, TWITTER_DATE_FORMAT); }
-    if (!dt) { dt = DateTime.fromRFC2822(str); }
-    if (!dt) { dt = DateTime.fromHTTP(str); }
-    if (!dt) { dt = DateTime.fromSQL(str); }
-    if (!dt) { dt = DateTime.fromMillis(parseInt(str)); }
-    return dt;
-  }
 
   const drop = (event, target) => {
       console.log("drop");
@@ -166,7 +155,7 @@
       if (a.when=="" || b.when=="") {
         return 0;
       }
-      return parseDate(a.when) < parseDate(b.when) ? 1 : -1
+      return util.parseDate(a.when) < util.parseDate(b.when) ? 1 : -1
     });
     for (const f of getAtemporal()) {
         let idx = sorted.findIndex(a => f.previousId == a.id);

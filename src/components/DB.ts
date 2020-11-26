@@ -50,12 +50,13 @@ async function saveLine(title:string, userid:string, sha:string, originalTitle:s
   try {
     let user = await db.oneOrNone("SELECT * FROM Users WHERE uid=$1", userid);
 
+    let rename = originalTitle && originalTitle != title;
     let slug = slugify(title, {lower: true, strict: true, locale: 'en'});
     let originalSlug = slugify(originalTitle || '', {lower: true, strict: true, locale: 'en'});
     let path = sha256(user.email).substring(0,8); // TODO username
 
     let existing = null;
-    if (originalTitle && originalTitle != title) {
+    if (rename) {
       existing = await db.oneOrNone("SELECT * FROM Lines WHERE user_id=$1 AND slug=$2", [user.id, originalSlug]);
     } else {
       existing = await db.oneOrNone("SELECT * FROM Lines WHERE user_id=$1 AND slug=$2", [user.id, slug]);
@@ -63,8 +64,7 @@ async function saveLine(title:string, userid:string, sha:string, originalTitle:s
 
     if (existing) {
       let query = "UPDATE Lines SET slug = $1, title = $2, path = $3, sha = $4 WHERE user_id = $5 AND slug = $6 RETURNING *"
-      return await db.one(query, [slug, title, path, sha, user.id, originalSlug]);
-
+      return await db.one(query, [slug, title, path, sha, user.id, rename ? originalSlug : slug]);
     } else {
       let query = "INSERT INTO Lines (user_id, slug, title, path, sha) VALUES ($1, $2, $3, $4, $5) RETURNING *";
       return await db.one(query, [user.id, slug, title, path, sha]);

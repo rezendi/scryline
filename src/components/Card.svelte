@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { DateTime } from 'luxon';
-
+    import util from "./util";
     import type Entry from './Entry.js';
     export let entry: Entry, own:boolean, editable:boolean;
 
@@ -91,7 +90,7 @@
     }
 
     function getTime() {
-      return entry.when ? DateTime.fromISO(entry.when).toLocaleString(DateTime.DATETIME_MED) : '';
+      return util.formatDateString(entry.when);
     }
 
     </script>

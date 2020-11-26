@@ -1,8 +1,8 @@
 <script context="module" lang="ts">
-	export async function preload( { session }) {
+	export async function preload() {
 		let response = await this.fetch('/lines/all.json');
 		let json = await response.json();
-		let lines: { slug: string; sha: string }[] = json;
+		let lines: { slug: string; sha: string }[] = json.lines;
 		return { lines };
 	}
 </script>

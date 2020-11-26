@@ -19,8 +19,33 @@
 			appId: "1:350222598486:web:e35a87ad9b4c03774ad6f7",
 			measurementId: "G-7KHLE3WKF1"
 		};
-		// Initialize Firebase
 		firebase.initializeApp(firebaseConfig);
+
+		firebase.auth().onAuthStateChanged(async (user) => {
+			if (user) {
+				console.log("logging in server");
+				let token = await user.getIdToken(false)
+				let response =  await fetch('/session.json', {
+					method: 'POST',
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ token })
+				});
+				let json = await response.json();
+				if (json.success === false) {
+					alert("Login error");
+				}
+			} else {
+				console.log("logging out server");
+				let response =  await fetch('/session.json', {
+					method: 'DELETE',
+					headers: { "Content-Type": "application/json" },
+				});
+				let json = await response.json();
+				if (json.success === false) {
+					alert("Logout error");
+				}
+			}
+		});
 	});
 
 	async function login() {
@@ -37,16 +62,6 @@
 			console.log('auth error credential', error.credential);
 		}
 		if (result) {
-			let token = await result.user.getIdToken(false)
-			let response =  await fetch('/session.json', {
-				method: 'POST',
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ token })
-			});
-			let json = await response.json();
-			if (json.success === false) {
-				alert("Login error");
-			}
 		}
 	}
 

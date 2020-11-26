@@ -9,8 +9,6 @@ export async function get(req, res, next) {
 	});
 	const { slug } = req.params;
 
-	console.log("session", req.session);
-
 	if (slug=="index" || slug=="all") {
 		return getIndex(req, res, next);
 	}
@@ -58,15 +56,15 @@ async function getIndex(req, res, next) {
 			},
 		});
 		let json = await response.json();
-		let retval = [];
+		let lines = [];
 		if (!json.message) {
-			retval = json.map(entry => { return {
+			lines = json.map(entry => { return {
 				slug: entry.name.slice(0,-5),
 				sha: entry.sha
 			}});
 		}
-		res.end(JSON.stringify(retval));
+		res.end(JSON.stringify({success:true, lines:lines}));
 	} catch(error) {
-		res.end(JSON.stringify({success:false, slug:"index", error:error}));
+		res.end(JSON.stringify({success:false, slug:"index", error:error, lines:[]}));
 	}
 }

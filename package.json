@@ -31,6 +31,7 @@
     "metascraper-url": "^5.14.22",
     "metascraper-youtube": "^5.14.24",
     "node-fetch": "^2.6.1",
+    "pg-promise": "^10.8.0",
     "polka": "next",
     "sha256": "^0.2.0",
     "sirv": "^1.0.0",

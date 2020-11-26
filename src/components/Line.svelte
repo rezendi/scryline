@@ -1,6 +1,6 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
-  import chrono from 'chrono-node';
+  import { DateTime } from 'luxon';
   import Modal from 'svelte-simple-modal';
   import Entry from './Entry.js';
   import Card from "./Card.svelte";
@@ -18,6 +18,10 @@
 
   let hovering = -1;
   let mousedown = null;
+
+  const parseDate = (str:string) => {
+    return DateTime.fromISO(str);
+  }
 
   const drop = (event, target) => {
       console.log("drop");
@@ -151,7 +155,7 @@
       if (a.when=="" || b.when=="") {
         return 0;
       }
-      return chrono.parseDate(a.when) < chrono.parseDate(b.when) ? 1 : -1
+      return parseDate(a.when) < parseDate(b.when) ? 1 : -1
     });
     for (const f of getAtemporal()) {
         let idx = sorted.findIndex(a => f.previousId == a.id);

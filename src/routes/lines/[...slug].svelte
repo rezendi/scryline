@@ -1,14 +1,21 @@
 <script context="module" lang="ts">
 	export async function preload( { params }, session ) {
-    console.log("params", params);
-    let [path, slug] = params.slug;
-		const res = await this.fetch(`lines/${path}/${slug}.json`);
-    const data = await res.json();
 
-		if (res.status === 200 && data.success) {
+    let response;
+    if (params.slug.length > 2 && params.slug[0]=="github") {
+      console.log("github", params);
+      let githubPath = params.slug.splice(1).join("/");
+      response = await this.fetch(`lines/${githubPath}.json`);
+    } else {
+      let [path, slug] = params.slug;
+      response = await this.fetch(`lines/${path}/${slug}.json`);
+    }
+    const data = await response.json();
+
+		if (response.status === 200 && data.success) {
       return { line : data.line }
 		} else {
-			this.error(res.status, data.error);
+			this.error(response.status, data.error);
 		}
 	}
 </script>

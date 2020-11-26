@@ -7,17 +7,30 @@ export async function get(req, res, next) {
 		'Content-Type': 'application/json'
 	});
 
-    let [path, slug] = req.params.slug;
-	if (slug=="all") {
+	let owner = process.env.GITHUB_ACCOUNT;
+	let repo = process.env.GITHUB_REPO;
+
+	//console.log("params", req.params);
+	let [path, slug] = req.params.slug;
+	if (path=="all" || path=="index") {
 		return getIndex(req, res, next);
 	}
 
+	if (req.params.slug.length > 2) {
+		let params = req.params.slug;
+		owner = params.shift();
+		repo = params.shift();
+		slug = params.pop();
+		params.unshift("contents");
+		path = params.join("/");
+	} else {
+		path = "contents/lines/" + path;
+	}
+
 	try {
-		let owner = process.env.GITHUB_ACCOUNT;
-		let repo = process.env.GITHUB_REPO;
 		let email = req.session.user ? req.session.user.email || '' : '';
 
-		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/lines/${path}/${slug}.yaml`, {
+		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/${path}/${slug}.yaml`, {
 			method: 'GET',
 			headers: {
 				"Content-Type": "application/json",
@@ -26,7 +39,7 @@ export async function get(req, res, next) {
 			},
 		});
 		let json = await response.json();
-		console.log("json", json);
+		// console.log("json", json);
 		let converted = base64.decode(json.content);
 		let retval = yaml.safeLoad(converted);
 		retval.sha = json.sha;

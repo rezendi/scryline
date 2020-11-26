@@ -8,7 +8,8 @@ export async function get(req, res, next) {
 		'Content-Type': 'application/json'
 	});
 	const { slug } = req.params;
-	req.session.user = { email:"jon@rezendi.com"};
+
+	console.log("session", req.session);
 
 	if (slug=="index" || slug=="all") {
 		return getIndex(req, res, next);

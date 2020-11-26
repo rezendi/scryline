@@ -9,33 +9,45 @@
 
 	import { onMount } from 'svelte';
     onMount(async () => {
-		const firebaseConfig = {
-			apiKey: 'AIzaSyANqcb0it-tn1Veri5Sw4kAa_la_rzAmX8',
-			authDomain: 'hfc-rubric.firebaseapp.com',
-			databaseURL: 'https://hfc-rubric.firebaseio.com',
-			projectId: 'hfc-rubric',
-			storageBucket: 'hfc-rubric.appspot.com',
-			messagingSenderId: '424177396554',
-			appId: '1:424177396554:web:e7f6f9c4297bc5512eefb3',
-			measurementId: 'G-73KMG0QGE3',
+		var firebaseConfig = {
+			apiKey: "AIzaSyC0pWxpoHg9YahhjASvv2RSsM-o43bcyXk",
+			authDomain: "scryliner.firebaseapp.com",
+			databaseURL: "https://scryliner.firebaseio.com",
+			projectId: "scryliner",
+			storageBucket: "scryliner.appspot.com",
+			messagingSenderId: "350222598486",
+			appId: "1:350222598486:web:e35a87ad9b4c03774ad6f7",
+			measurementId: "G-7KHLE3WKF1"
 		};
+		// Initialize Firebase
 		firebase.initializeApp(firebaseConfig);
 	});
 
-	function login() {
+	async function login() {
+		let result = null;
 		var provider = new firebase.auth.GoogleAuthProvider();
-		firebase.auth()
-		.signInWithPopup(provider)
-		.then(function(result) {
+		try {
+			result = await firebase.auth().signInWithPopup(provider);
 			console.log("result", result);
-			console.log('logged in', result.user.email);
-		})
-		.catch(function(error) {
+		} catch(error) {
+			alert("Signin error");
 			console.log('auth error code', error.code);
 			console.log('auth error message', error.message);
 			console.log('auth error email', error.email);
 			console.log('auth error credential', error.credential);
-		});
+		}
+		if (result) {
+			let token = await result.user.getIdToken(false)
+			let response =  await fetch('/session.json', {
+				method: 'POST',
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ token })
+			});
+			let json = await response.json();
+			if (json.success === false) {
+				alert("Login error");
+			}
+		}
 	}
 
 	function logout() {

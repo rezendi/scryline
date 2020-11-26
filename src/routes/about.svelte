@@ -7,7 +7,6 @@
 	const { session } = stores();
     import { onMount } from 'svelte';
     onMount(async () => {
-		console.log("mount");
 	});
 </script>
 

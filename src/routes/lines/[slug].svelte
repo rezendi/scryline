@@ -14,7 +14,7 @@
 
 <script lang="ts">
   import Line from "../../components/Line.svelte";
-  export let line: { id:number, slug:string, title:string, sha:string, entries: []};
+  export let line: { title:string, slug:string, sha:string, userid:string, editable:boolean, entries: []};
 </script>
 
 <svelte:head>

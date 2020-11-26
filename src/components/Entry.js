@@ -11,6 +11,7 @@ export default class Entry {
         this.title = vals.title || '';
         this.summary = vals.summary || '';
         this.comments = vals.comments || '';
+        this.suggestions = vals.suggestions || '';
         this.tags = vals.tags || '';
         this.chapter = vals.chapter || '';
     }

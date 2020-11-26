@@ -299,7 +299,7 @@
             {#if entry.chapter && (i==0 || entry.chapter != line.entries[i-1].chapter)}
               <div class="timeline_chapter">{entry.chapter}</div>
             {/if}
-            <Card userEditable={userEditable} entry={entry} on:refresh={refresh} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>
+            <Card entry={entry} own={usersLine} editable={userEditable} on:refresh={refresh} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>
           </div>
         {/each}
       </div>

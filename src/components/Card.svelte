@@ -1,6 +1,6 @@
 <script lang="ts">
     import type Entry from './Entry.js';
-    export let entry: Entry, userEditable:boolean;
+    export let entry: Entry, own:boolean, editable:boolean;
 
     import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
@@ -164,7 +164,7 @@
 </style>
 
 <div class="timeline_card card" id="entry_{entry.id}">
-    {#if userEditable}
+    {#if editable}
       <button class="hide_button" data-entry-id={entry.id} on:click={doDelete}>X</button>
     {/if}
     <div class="card_inherent_content" id="entry_content_{entry.id}">
@@ -202,7 +202,7 @@
     </div>
     <div class="card_commentary">
       {@html entry.comments}
-      {#if userEditable}
+      {#if editable}
         <button class="comment_button" on:click={doCommentary}>+</button>
       {/if}
     </div>

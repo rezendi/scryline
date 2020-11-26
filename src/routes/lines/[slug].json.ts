@@ -7,22 +7,22 @@ export async function get(req, res, next) {
 	res.writeHead(200, {
 		'Content-Type': 'application/json'
 	});
-	const { slug } = req.params;
 
+	const { slug } = req.params;
 	if (slug=="index" || slug=="all") {
 		return getIndex(req, res, next);
 	}
-
 	if (slug=="new") {
 		res.end(JSON.stringify({success:true, line:{entries:[]}}));
 		return;
 	}
 
-	let owner = process.env.GITHUB_ACCOUNT;
-	let repo = process.env.GITHUB_REPO;
-	let path = `lines/${sha256(req.session.user.email).substring(0,8)}`;
-
 	try {
+		let owner = process.env.GITHUB_ACCOUNT;
+		let repo = process.env.GITHUB_REPO;
+		let email = req.session.user ? req.session.user.email || '' : '';
+		let path = `lines/${sha256(email).substring(0,8)}`;
+
 		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}/${slug}.yaml`, {
 			method: 'GET',
 			headers: {
@@ -45,7 +45,8 @@ async function getIndex(req, res, next) {
 	try {
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
-		let path = `lines/${sha256(req.session.user.email).substring(0,8)}`;
+		let email = req.session.user.email || '';
+		let path = `lines/${sha256(email).substring(0,8)}`;
 
 		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
 			method: 'GET',

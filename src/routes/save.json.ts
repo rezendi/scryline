@@ -4,6 +4,8 @@ const base64 = require('universal-base64');
 const sha256 = require('sha256');
 const slugify = require('slugify');
 
+import DB from '../components/DB.js';
+
 export async function post(req, res, next) {
 	console.log("saving");
 	res.writeHead(200, {
@@ -88,6 +90,8 @@ export async function post(req, res, next) {
 			});
 			let dJSON = await dResponse.json();
 		}
+
+		DB.saveLine(data.title, data.userid, json.content.sha, data.originalTitle);
 
 		res.end(JSON.stringify(json));
 	} catch(error) {

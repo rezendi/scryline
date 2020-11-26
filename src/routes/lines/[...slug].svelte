@@ -1,7 +1,8 @@
 <script context="module" lang="ts">
 	export async function preload( { params }, session ) {
-    // the `slug` parameter is available because this file is called [slug].svelte
-		const res = await this.fetch(`lines/${params.slug}.json`);
+    console.log("params", params);
+    let [path, slug] = params.slug;
+		const res = await this.fetch(`lines/${path}/${slug}.json`);
     const data = await res.json();
 
 		if (res.status === 200 && data.success) {
@@ -14,11 +15,11 @@
 
 <script lang="ts">
   import Line from "../../components/Line.svelte";
-  export let line: { title:string, slug:string, sha:string, userid:string, editable:boolean, entries: []};
+  export let line: { title:string, sha:string, userid:string, editable:boolean, entries: []};
 </script>
 
 <svelte:head>
-	<title>{line.title || "New Line"}</title>
+	<title>{line.title}</title>
 </svelte:head>
 
 <style>

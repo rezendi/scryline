@@ -1,29 +1,23 @@
 const yaml = require('js-yaml');
 const fetch = require('node-fetch');
 const base64 = require('universal-base64');
-const sha256 = require('sha256');
 
 export async function get(req, res, next) {
 	res.writeHead(200, {
 		'Content-Type': 'application/json'
 	});
 
-	const { slug } = req.params;
-	if (slug=="index" || slug=="all") {
+    let [path, slug] = req.params.slug;
+	if (slug=="all") {
 		return getIndex(req, res, next);
-	}
-	if (slug=="new") {
-		res.end(JSON.stringify({success:true, line:{entries:[]}}));
-		return;
 	}
 
 	try {
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
 		let email = req.session.user ? req.session.user.email || '' : '';
-		let path = `lines/${sha256(email).substring(0,8)}`;
 
-		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}/${slug}.yaml`, {
+		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/lines/${path}/${slug}.yaml`, {
 			method: 'GET',
 			headers: {
 				"Content-Type": "application/json",
@@ -32,6 +26,7 @@ export async function get(req, res, next) {
 			},
 		});
 		let json = await response.json();
+		console.log("json", json);
 		let converted = base64.decode(json.content);
 		let retval = yaml.safeLoad(converted);
 		retval.sha = json.sha;
@@ -41,12 +36,11 @@ export async function get(req, res, next) {
 	}
 }
 
-import db from '../../components/DB';
+import DB from '../../components/DB.js';
 
 async function getIndex(req, res, next) {
 	try {
-		let rows = await db.getLines();
-		console.log("rows", rows);
+		let rows = await DB.getLines();
 		let lines = rows.map(row => { return {
 			uid: row.uid,
 			title: row.title,
@@ -59,3 +53,4 @@ async function getIndex(req, res, next) {
 		res.end(JSON.stringify({success:false, slug:"index", error:error, lines:[]}));
 	}
 }
+

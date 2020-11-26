@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
 	export async function preload() {
-		let response = await this.fetch('/lines/all.json');
+		let response = await this.fetch('/lines/all/all.json');
 		let json = await response.json();
 		let lines: { slug: string; sha: string }[] = json.lines;
 		return { lines };
@@ -26,6 +26,6 @@
 
 <ul>
 	{#each lines as line}
-		<li><a rel="prefetch" href="lines/{line.slug}">{line.slug}</a></li>
+		<li><a rel="prefetch" href="lines/{line.path}/{line.slug}">{line.slug}</a></li>
 	{/each}
 </ul>

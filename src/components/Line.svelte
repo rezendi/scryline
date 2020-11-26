@@ -1,11 +1,11 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
-  import Entry from './Entry.js';
-  import Card from "./Card.svelte";
   import chrono from 'chrono-node';
   import Modal from 'svelte-simple-modal';
+  import Entry from './Entry.js';
+  import Card from "./Card.svelte";
   
-  export let line: { title:string, slug:string, sha:string, userid:string, editable:boolean, entries: Entry[]};
+  export let line: { title:string, sha:string, userid:string, editable:boolean, entries: Entry[]};
   let versions:string[] = [JSON.stringify(line)], redoVersions:string[] = [];
   let originalTitle = line.title;
 
@@ -219,7 +219,7 @@
     if (json.success===false) {
       console.log("save error", json);
       let message = "Save error!";
-      if (json.error.startsWith("Invalid request")) {
+      if (typeof json.error == "string" && json.error.startsWith("Invalid request")) {
         message = "Save error; you may already be using this title for another timeline?";
       }
       alert(message);

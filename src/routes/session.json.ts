@@ -1,3 +1,5 @@
+import DB from "../components/DB";
+
 require('dotenv').config();
 
 let admin = require('firebase-admin');
@@ -12,11 +14,13 @@ export async function post(req, res, next) {
     try {
       let decoded = await admin.auth().verifyIdToken(json.token);
       req.session.user = { uid: decoded.uid, email: decoded.email, name: decoded.name, picture: decoded.picture };
+      DB.saveUser(decoded.uid, decoded.email, decoded.name, decoded.picture);
       res.end(JSON.stringify({success:true}));
     } catch(error) {
       console.log("error", error);
       res.end(JSON.stringify({success:false, error:error}));
     }
+    console.log("Session set");
 };
 
 export function del(req, res, next) {

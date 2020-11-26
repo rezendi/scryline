@@ -6,6 +6,20 @@
     const dispatch = createEventDispatcher();
     const doDelete = (event) => dispatch('delete', { id: event.target.getAttribute("data-entry-id")} );
 
+    import { stores } from '@sapper/app';
+    const { session } = stores();
+    let userid = $session.user.uid;
+
+    function getMySuggestions() {
+      try {
+        let suggestions = JSON.parse(entry.suggestions ? entry.suggestions : '{}');
+        return suggestions[userid] ? suggestions[userid] : '';
+      } catch(error) {
+        console.log("suggestions JSON error", error);
+        return '';
+      }
+    }
+
     import { getContext } from 'svelte';
     const { open } = getContext('simple-modal');
     import EditBox from './EditBox.svelte';
@@ -14,7 +28,7 @@
       open (
         EditBox,
         {
-          initialComments: entry.comments,
+          initialComments: own ? entry.comments : getMySuggestions(),
           initialChapter: entry.chapter,
           initialTags: entry.tags,
           onCancel,
@@ -34,8 +48,11 @@
   	const onOK = (vals) => {
       if (vals.insert) {
         dispatch("insertCommentsAfter", { id: entry.id, comments: vals.comments } );
-      } else {
+      } else if (own) {
         entry.comments = vals.comments;
+      } else {
+        let suggestions = JSON.parse(entry.suggestions ? entry.suggestions : '{}');
+        entry.suggestions = JSON.stringify ({ suggestions, ...{ userid: vals.comments}});
       }
       entry.chapter = vals.chapter;
       entry.tags = vals.tags;

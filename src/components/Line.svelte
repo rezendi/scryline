@@ -12,7 +12,7 @@
   import { stores } from '@sapper/app';
   const { session } = stores();
   let usersLine = !line.userid || line.userid == $session.user.uid;
-  let userEditable = !line.userid || line.editable;
+  let userEditable = usersLine || line.editable;
  
   /* drag and drop */
 

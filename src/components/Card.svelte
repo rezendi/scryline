@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { DateTime } from 'luxon';
+
     import type Entry from './Entry.js';
     export let entry: Entry, own:boolean, editable:boolean;
 
@@ -86,6 +88,10 @@
 
     function getTitle() {
       return entry.title ? entry.title.replace(` | ${entry.source}`, "") : entry.url;
+    }
+
+    function getTime() {
+      return entry.when ? DateTime.fromISO(entry.when).toLocaleString() : '';
     }
 
     </script>
@@ -201,7 +207,7 @@
             <div class="card_info">
               <span class="card_author">{entry.author}</span>
               <span class="card_source">{entry.source}</span>
-              <span class="card_when">{entry.when}</span>
+              <span class="card_when">{getTime()}</span>
             </div>
             <div class="spacer">&nbsp;</div>
             <div class="card_labels">

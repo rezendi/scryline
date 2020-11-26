@@ -13,6 +13,10 @@
   const { session } = stores();
   let usersLine = !line.userid || line.userid == $session.user.uid;
   let userEditable = usersLine || line.editable;
+  session.subscribe(value => {
+    usersLine = !line.userid || line.userid == $session.user.uid;
+    userEditable = usersLine || line.editable;
+  });
  
   /* drag and drop */
 
@@ -20,7 +24,12 @@
   let mousedown = null;
 
   const parseDate = (str:string) => {
-    return DateTime.fromISO(str);
+    let dt = DateTime.fromISO(str);
+    if (!dt) { dt = DateTime.fromRFC2822(str); }
+    if (!dt) { dt = DateTime.fromHTTP(str); }
+    if (!dt) { dt = DateTime.fromSQL(str); }
+    if (!dt) { dt = DateTime.fromMillis(parseInt(str)); }
+    return dt;
   }
 
   const drop = (event, target) => {

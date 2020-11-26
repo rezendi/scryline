@@ -20,7 +20,6 @@ export async function post(req, res, next) {
       console.log("error", error);
       res.end(JSON.stringify({success:false, error:error}));
     }
-    console.log("Session set");
 };
 
 export function del(req, res, next) {

@@ -5,12 +5,14 @@
   import chrono from 'chrono-node';
   import Modal from 'svelte-simple-modal';
   
-  export let line: { title:string, slug:string, sha:string, entries: Entry[]};
+  export let line: { title:string, slug:string, sha:string, userid:string, editable:boolean, entries: Entry[]};
   let versions:string[] = [JSON.stringify(line)], redoVersions:string[] = [];
   let originalTitle = line.title;
 
   import { stores } from '@sapper/app';
-	const { session } = stores();
+  const { session } = stores();
+  let usersLine = !line.userid || line.userid == $session.user.uid;
+  let userEditable = !line.userid || line.editable;
  
   /* drag and drop */
 
@@ -18,11 +20,11 @@
   let mousedown = null;
 
   const drop = (event, target) => {
-      console.log("drop", originalTitle);
+      console.log("drop");
       event.dataTransfer.dropEffect = 'move'; 
       const start = parseInt(event.dataTransfer.getData("text/plain"));
       const newList = line.entries;
-      if (start==target) {
+      if (start==target || !userEditable) {
         console.log("no change");
         return;
       }
@@ -189,11 +191,13 @@
 
   /* save */
   const save = async () => {
+    console.log("saving");
     if (!line.title || line.title.trim().length==0) {
-      alert("A timeline must have a title to be saved.");
-      return;
+      return alert("A timeline must have a title to be saved.");
     }
-    console.log("save");
+    if (!usersLine) {
+      return alert("You didn't create this timeline.");
+    }
     let doRename = originalTitle && originalTitle != line.title;
     if (doRename) {
       if (!confirm(`Are you sure you want to change the title from "${originalTitle}"? This will change this timeline's URL and break previous links to it!`)) {
@@ -201,7 +205,11 @@
       }
       line['originalTitle'] = originalTitle;
     }
-    line['email'] = $session.user.email;
+
+    // OK, we're actually going to save it
+    line['email'] = $session.user.email; // to be hashed to path
+    line.userid = $session.user.uid;
+    line.editable = false; // TODO make this configurable
     let response = await fetch('/save.json', {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
@@ -212,7 +220,7 @@
       console.log("save error", json);
       let message = "Save error!";
       if (json.error.startsWith("Invalid request")) {
-        message = "Save error; you may already be using this title?";
+        message = "Save error; you may already be using this title for another timeline?";
       }
       alert(message);
       return;
@@ -256,7 +264,7 @@
 
 <Modal>
   <div class="entry_header">
-    {#if $session.user}
+    {#if usersLine}
       <div class="author_header">
         <input class="adder" placeholder="Add URLs here" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
         <div class="author_title">
@@ -291,7 +299,7 @@
             {#if entry.chapter && (i==0 || entry.chapter != line.entries[i-1].chapter)}
               <div class="timeline_chapter">{entry.chapter}</div>
             {/if}
-            <Card entry={entry} on:refresh={refresh} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>
+            <Card userEditable={userEditable} entry={entry} on:refresh={refresh} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>
           </div>
         {/each}
       </div>

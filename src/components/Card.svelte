@@ -1,14 +1,10 @@
 <script lang="ts">
     import type Entry from './Entry.js';
-    export let entry: Entry;
+    export let entry: Entry, userEditable:boolean;
 
     import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
     const doDelete = (event) => dispatch('delete', { id: event.target.getAttribute("data-entry-id")} );
-
-    function getTitle() {
-      return entry.title ? entry.title.replace(` | ${entry.source}`, "") : entry.url;
-    }
 
     import { getContext } from 'svelte';
     const { open } = getContext('simple-modal');
@@ -70,6 +66,10 @@
         showPlayers();
       }
     });
+
+    function getTitle() {
+      return entry.title ? entry.title.replace(` | ${entry.source}`, "") : entry.url;
+    }
 
     </script>
 
@@ -164,7 +164,9 @@
 </style>
 
 <div class="timeline_card card" id="entry_{entry.id}">
-    <button class="hide_button" data-entry-id={entry.id} on:click={doDelete}>X</button>
+    {#if userEditable}
+      <button class="hide_button" data-entry-id={entry.id} on:click={doDelete}>X</button>
+    {/if}
     <div class="card_inherent_content" id="entry_content_{entry.id}">
       {#if !showingEmbed}
         {#if entry.title || entry.tags || entry.url}
@@ -200,6 +202,8 @@
     </div>
     <div class="card_commentary">
       {@html entry.comments}
-      <button class="comment_button" on:click={doCommentary}>+</button>
+      {#if userEditable}
+        <button class="comment_button" on:click={doCommentary}>+</button>
+      {/if}
     </div>
   </div>

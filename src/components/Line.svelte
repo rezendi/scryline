@@ -23,8 +23,10 @@
   let hovering = -1;
   let mousedown = null;
 
+  const TWITTER_DATE_FORMAT = 'EEE MMM d HH:mm:ss ZZZ yyyy';
   const parseDate = (str:string) => {
     let dt = DateTime.fromISO(str);
+    if (!dt) { dt = DateTime.fromString(str, TWITTER_DATE_FORMAT); }
     if (!dt) { dt = DateTime.fromRFC2822(str); }
     if (!dt) { dt = DateTime.fromHTTP(str); }
     if (!dt) { dt = DateTime.fromSQL(str); }

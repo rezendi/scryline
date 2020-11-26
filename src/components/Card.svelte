@@ -91,7 +91,7 @@
     }
 
     function getTime() {
-      return entry.when ? DateTime.fromISO(entry.when).toLocaleString() : '';
+      return entry.when ? DateTime.fromISO(entry.when).toLocaleString(DateTime.DATETIME_MED) : '';
     }
 
     </script>

@@ -66,30 +66,52 @@
 </script>
   
   <style>
-      .buttons {
-          display: flex;
-          justify-content: space-between;
-      }
       #quill-container {
-		min-height: 16rem;
+		min-height: 12rem;
+      }
+      .buttons {
+        display: flex;
+        justify-content: space-between;
+      }
+      .commentsLabel {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .insertAfter {
+        display: flex;
+        font-size:small;
+        font-style:italic;
+      }
+      .chapterAndTags {
+        display:flex;
+        justify-content: space-between;
+        margin: 10px 0px;
       }
   </style>
   
-  <h2>Add/edit comments, chapter, and tags</h2>
+    <h3>Add/edit comments, chapter, and tags</h3>
 
-    <label for="quill-container">Comments</label>
-    <input type=checkbox bind:checked={insert}/><em>Insert comments after this item, as a separate timeline entry</em>
+    <div class="commentsLabel">
+        <label for="quill-container">Comments</label>
+        <span class="insertAfter">
+            <input type=checkbox bind:checked={insert}>Insert after this item, as a separate timeline entry
+        </span>
+    </div>
     <div id="quill-container">{@html comments}</div>
-    <label for="chapter">Chapter</label>
-    <input id="chapter" type="text" rows=4 bind:value={chapter}/>
-    <label for="tags">Tags</label>
-    <input id="tags" type="text" rows=4 bind:value={tags}/>
+    <div class="chapterAndTags">
+        <label for="chapter">Chapter</label>
+        <input id="chapter" type="text" size=30 bind:value={chapter}/>
+        <span class="spacer">&nbsp;</span>
+        <label for="tags">Tags</label>
+        <input id="tags" type="text" size=30 bind:value={tags}/>
+    </div>
     
-  <div class="buttons">
-      <button on:click={_onCancel}>
-          Cancel
-      </button>
-      <button on:click={_onOK}>
-          OK
-      </button>
-  </div>
+    <div class="buttons">
+        <button on:click={_onCancel}>
+            Cancel
+        </button>
+        <button on:click={_onOK}>
+            OK
+        </button>
+    </div>

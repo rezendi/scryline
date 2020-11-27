@@ -93,6 +93,7 @@ export async function post(req, res, next) {
 
 		DB.saveLine(data.title, data.userid, json.content.sha, data.originalTitle);
 
+		json.path = sha256(req.session.user.email).substring(0,8);
 		res.end(JSON.stringify(json));
 	} catch(error) {
 		res.end(JSON.stringify({success:false, data:data, error:error}));

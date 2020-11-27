@@ -1,19 +1,19 @@
 <script context="module" lang="ts">
 	export async function preload( { params }, session ) {
 
-    let response;
+    let response, path, slug;
     if (params.slug.length > 2 && params.slug[0]=="github") {
       console.log("github", params);
-      let githubPath = params.slug.splice(1).join("/");
-      response = await this.fetch(`lines/${githubPath}.json`);
+      path = params.slug.splice(1).join("/");
+      response = await this.fetch(`lines/${path}.json`);
     } else {
-      let [path, slug] = params.slug;
+      [path, slug] = params.slug;
       response = await this.fetch(`lines/${path}/${slug}.json`);
     }
     const data = await response.json();
 
 		if (response.status === 200 && data.success) {
-      return { line : data.line }
+      return { line : data.line, path:path}
 		} else {
 			this.error(response.status, data.error);
 		}
@@ -23,10 +23,18 @@
 <script lang="ts">
   import Line from "../../components/Line.svelte";
   export let line: { title:string, sha:string, userid:string, editable:boolean, entries: []};
+  export let path;
 </script>
 
 <svelte:head>
 	<title>{line.title}</title>
+  <meta name="title" content={line.title}/>
+  <meta name="description" content="A Scryline timeline"/>
+  <meta property="og:title" content={line.title}>
+  <meta property="og:description" content="A Scryline timeline"/>
+  <meta property="og:url" content="https://scryline.com/{path}/{line.slug}"/>
+  <meta name="twitter:title" content={line.title}>
+  <meta name="twitter:description" content="A Scryline timeline"/>
 </svelte:head>
 
 <style>

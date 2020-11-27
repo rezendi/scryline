@@ -205,7 +205,7 @@
     }
     let doRename = originalTitle && originalTitle != line.title;
     if (doRename) {
-      if (!confirm(`Are you sure you want to change the title from "${originalTitle}"? This will change this timeline's URL and break previous links to it!`)) {
+      if (!confirm(`Are you sure you want to change the title from "${originalTitle}"? This will likely change this timeline's URL and break previous links to it!`)) {
         return;
       }
       line['originalTitle'] = originalTitle;
@@ -232,7 +232,7 @@
     }
     if (doRename) {
       console.log("moving");
-      window.location.href = `/lines/${json.content.name.split(".")[0]}`;
+      window.location.href = `/lines/${json.path}/${json.content.name.split(".")[0]}`;
     }
     line.sha = json.content.sha;
     originalTitle = line.title;
@@ -242,23 +242,12 @@
     localStorage.removeItem("latestLine");
   }
 
-  function beforeUnload() {
-    alert("beforeunload");
-    if (localStorage.hasOwnProperty("latestLine")) {
-      let abandon = confirm("Are you sure you want to abandon this line without saving?");
-      if (abandon) {
-        localStorage.removeItem("latestLine");
-      }
-      return abandon;
-    }
-    return true;
-  }
-
   import { onMount } from 'svelte';
   onMount(async () => {
     if (localStorage.hasOwnProperty("latestLine")) {
       let storedLine = JSON.parse(localStorage.getItem("latestLine"));
-      if (storedLine.userid == line.userid && storedLine.slug == line.title && confirm("Restore unsaved edits?")) {
+      localStorage.removeItem("latestLine");
+      if (storedLine.userid == line.userid && storedLine.slug == line.title && confirm("Unsaved edits found. Restore?")) {
         line = storedLine;
         invalidate();
       }
@@ -289,8 +278,6 @@
   margin-bottom:0.25rem;
 }
 </style>
-
-<svelte:window on:beforeUnload={beforeUnload}/>
 
 <Modal>
   <div class="entry_header">

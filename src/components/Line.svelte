@@ -243,6 +243,7 @@
   }
 
   function beforeUnload() {
+    alert("beforeunload");
     if (localStorage.hasOwnProperty("latestLine")) {
       let abandon = confirm("Are you sure you want to abandon this line without saving?");
       if (abandon) {
@@ -259,6 +260,7 @@
       let storedLine = JSON.parse(localStorage.getItem("latestLine"));
       if (storedLine.userid == line.userid && storedLine.slug == line.title && confirm("Restore unsaved edits?")) {
         line = storedLine;
+        invalidate();
       }
     }
   });

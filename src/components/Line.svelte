@@ -78,6 +78,7 @@
   const invalidate = function() {
     let newVersion = JSON.stringify(line);
     if (versions.length==0 || newVersion != versions[versions.length-1]) {
+      localStorage.setItem("latestLine", newVersion);
       versions.push(newVersion);
       redoVersions=[];
     }
@@ -238,8 +239,29 @@
     delete line['email'];
     delete line['originalTitle'];
     document.getElementById("saveLine").setAttribute("disabled","true");
+    localStorage.removeItem("latestLine");
   }
 
+  function beforeUnload() {
+    if (localStorage.hasOwnProperty("latestLine")) {
+      let abandon = confirm("Are you sure you want to abandon this line without saving?");
+      if (abandon) {
+        localStorage.removeItem("latestLine");
+      }
+      return abandon;
+    }
+    return true;
+  }
+
+  import { onMount } from 'svelte';
+  onMount(async () => {
+    if (localStorage.hasOwnProperty("latestLine")) {
+      let storedLine = JSON.parse(localStorage.getItem("latestLine"));
+      if (storedLine.userid == line.userid && storedLine.slug == line.title && confirm("Restore unsaved edits?")) {
+        line = storedLine;
+      }
+    }
+  });
 </script>
 
 <style>
@@ -265,6 +287,8 @@
   margin-bottom:0.25rem;
 }
 </style>
+
+<svelte:window on:beforeUnload={beforeUnload}/>
 
 <Modal>
   <div class="entry_header">

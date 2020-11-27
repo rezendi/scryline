@@ -22,6 +22,11 @@ async function doCreate() {
         lines_query += ", title VARCHAR(255), path VARCHAR(255), sha VARCHAR(255), metadata JSONB";
         lines_query += ", created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES Users (id))";
         await db.none(lines_query);
+        let indexes_qqery = "CREATE UNIQUE INDEX uid_index ON Users (uid); ";
+        indexes_qqery += "CREATE INDEX userid_index ON Lines (user_id); ";
+        indexes_qqery += "CREATE INDEX created_at_index ON Lines (created_at); ";
+        indexes_qqery += "CREATE UNIQUE INDEX user_slug_index ON Lines (user_id, slug); ";
+        await db.none(indexes_qqery);
       }
     } catch(error) {
       console.log("create DB error", error);
@@ -29,12 +34,15 @@ async function doCreate() {
 }
 
 async function doUpdate() {
-  let update_query = "SELECT * FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'lines'";
-  try {
-    let update_results = await db.any(update_query);
-    // TODO: add indexes: uid on user, user_id/slug unique index on lines
-  } catch(error) {
-    console.log("update DB error", error);
+  let update_query = "";
+  if (update_query) {
+    try {
+      console.log("updating DB");
+      let update_results = await db.any(update_query);
+      console.log("results", update_results);
+    } catch(error) {
+      console.log("update DB error", error);
+    }
   }
 }
 

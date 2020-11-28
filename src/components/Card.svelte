@@ -32,6 +32,8 @@
           initialComments: own ? entry.comments : getMySuggestions(),
           initialChapter: entry.chapter,
           initialTags: entry.tags,
+          initialDateTime: entry.when,
+          showDateTime: entry.when && entry.url ? false : true,
           onCancel,
           onOK
         },
@@ -57,6 +59,8 @@
       }
       entry.chapter = vals.chapter;
       entry.tags = vals.tags;
+      entry.when = entry.when && entry.url ? entry.when : vals.dateTime;
+      console.log("entry.when", entry.when);
       dispatch("refresh");
     }
 
@@ -87,10 +91,6 @@
 
     function getTitle() {
       return entry.title ? entry.title.replace(` | ${entry.source}`, "") : entry.url;
-    }
-
-    function getTime() {
-      return util.formatDateString(entry.when);
     }
 
     </script>
@@ -206,7 +206,7 @@
             <div class="card_info">
               <span class="card_author">{entry.author}</span>
               <span class="card_source">{entry.source}</span>
-              <span class="card_when">{getTime()}</span>
+              <span class="card_when">{util.formatDateString(entry.when)}</span>
             </div>
             <div class="spacer">&nbsp;</div>
             <div class="card_labels">

@@ -7,7 +7,7 @@
     import { getContext } from 'svelte';
     export let onCancel = () => {};
     export let onOK = () => {};
-    export let initialComments, initialChapter, initialTags;
+    export let initialComments, initialChapter, initialTags, initialDateTime, showDateTime;
   
     const { close } = getContext('simple-modal');
       
@@ -15,6 +15,7 @@
     let comments = initialComments;
     let chapter = initialChapter;
     let tags = initialTags;
+    let dateTime = initialDateTime;
     let onChange = () => {};
       
     function _onCancel() {
@@ -24,7 +25,7 @@
       
     function _onOK() {
         comments = quill.root.innerHTML.split("<script")[0].split("javascript:")[0]; // paranoia
-        onOK({comments:comments, insert:insert, chapter:chapter, tags:tags});
+        onOK({comments:comments, insert:insert, chapter:chapter, tags:tags, dateTime:dateTime});
         close();
     }
     
@@ -99,6 +100,12 @@
         </span>
     </div>
     <div id="quill-container">{@html comments}</div>
+    {#if showDateTime}
+      <div class="dateAndTime">
+        <label for="dateTime">Date/time (ISO 8601 or YYYY-MM-DD HH:MM:SS)</label>
+        <input id="dateTime" type="text" placeholder="1934-09-21 13:45:00" size=30 bind:value={dateTime}/>
+      </div>
+    {/if}
     <div class="chapterAndTags">
         <label for="chapter">Chapter</label>
         <input id="chapter" type="text" size=30 bind:value={chapter}/>

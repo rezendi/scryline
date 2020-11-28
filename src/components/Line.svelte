@@ -242,8 +242,16 @@
     localStorage.removeItem("latestLine");
   }
 
+  const editTitle = async () => {
+    document.getElementById("lineTitle").style.display="none";
+    document.getElementById("lineTitleInput").style.display="block";
+  }
+
   import { onMount } from 'svelte';
   onMount(async () => {
+    if (!line.title) {
+      editTitle();
+    }
     if (localStorage.hasOwnProperty("latestLine")) {
       let storedLine = JSON.parse(localStorage.getItem("latestLine"));
       localStorage.removeItem("latestLine");
@@ -270,12 +278,20 @@
 
 .author_title {
   display:flex;
+  align-content: center;
+  justify-content: center;
+  border-top: 1px solid gray;
+  padding-top: 0.3rem;
 }
 
 .adder {
   margin-left:auto;
   padding:0.5rem;
   margin-bottom:0.25rem;
+}
+
+#lineTitleInput {
+  display:none;
 }
 </style>
 
@@ -285,14 +301,21 @@
       <div class="author_header">
         <input class="adder" placeholder="Add URLs here" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
         <div class="author_title">
-          <b>Title</b>
-          <input id="lineTitle" on:change={invalidate} bind:value={line.title} size="40" placeholder="Title"/>
-          <button id="saveLine" on:click={save} disabled>Save</button>
-          <span style="flex:2;">&nbsp;</span>
+          <span id="lineTitle">
+            <b>{line.title}</b>&nbsp;
+            <button style="border:0" on:click={editTitle}>✏️</button>
+          </span>
+          <input id="lineTitleInput" on:change={invalidate} bind:value={line.title} size="40" placeholder="Title"/>
+          <span class="spacer">&nbsp;</span>
           <button on:click={sortList} disabled={line.entries.length<2}>Sort</button>
+          |
           <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
+          |
           <button on:click={undo}>Undo</button>
+          |
           <button on:click={redo}>Redo</button>
+          |
+          <button id="saveLine" on:click={save} disabled>Save</button>
         </div>
       </div>
     {:else}

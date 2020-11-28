@@ -86,6 +86,7 @@
 	ul {
 		margin: 0;
 		padding: 0;
+		display:flex;
 	}
 
 	/* clearfix */
@@ -101,7 +102,6 @@
 	}
 
 	button {
-		float:right;
 		padding:10px;
 		margin:10px 0px 10px 0px;
 	}
@@ -133,11 +133,14 @@
 		<li><a aria-current="{segment === undefined ? 'page' : undefined}" href=".">home</a></li>
 		<li><a aria-current="{segment === 'about' ? 'page' : undefined}" href="about">about</a></li>
 		<li><a rel=prefetch aria-current="{segment === 'lines' ? 'page' : undefined}" href="lines">lines</a></li>
-		{#if $session.user}
-			<button on:click={logout}>Logout</button>
-			<button on:click={newLine}>New</button>
-		{:else}
-			<button on:click={login}>Login</button>
-		{/if}
+		<li class="spacer">&nbsp;</li>
+		<li>
+			{#if $session.user}
+				<button on:click={logout}>Logout</button>
+				<button on:click={newLine}>New</button>
+			{:else}
+				<button on:click={login}>Login</button>
+			{/if}
+		</li>
 	</ul>
 </nav>

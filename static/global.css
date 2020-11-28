@@ -21,6 +21,10 @@ a {
 	}
 }
 
+.spacer {
+	flex:2;
+}
+
 /* cards */
 
   .card{

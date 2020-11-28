@@ -25,7 +25,7 @@ export async function post(req, res, next) {
         identities: identities,
         username: dbVals.username
       };
-      res.end(JSON.stringify({success:true}));
+      res.end(JSON.stringify({success:true, slUser:req.session.slUser}));
     } catch(error) {
       console.log("error", error);
       res.end(JSON.stringify({success:false, error:error}));

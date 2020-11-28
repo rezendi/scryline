@@ -1,14 +1,4 @@
-<script context="module" lang="ts">
-	export async function preload() {
-		let response = await this.fetch('/lines/all/my.json');
-		let json = await response.json();
-		let lines: { slug: string; sha: string }[] = json.lines;
-		return { lines };
-	}
-</script>
-
 <script lang="ts">
-	export let lines: { slug: string; path:string, sha: string }[];
     import { stores } from '@sapper/app';
 	const { session } = stores();
 
@@ -51,14 +41,20 @@
 
     }
 
+	let lines = [];
     let username;
     let usernameChecked = false;
     let identities = [];
     import { onMount } from 'svelte';
     onMount(async () => {
+		if (!$session.slUser.uid) {
+			return location.href = "/";
+		}
         username = $session.slUser.username;
 		identities = $session.slUser.identities || [];
-		console.log("ids", $session);
+		let response = await fetch('/lines/all/my.json');
+		let json = await response.json();
+		lines = json.lines;
 	});
 </script>
 

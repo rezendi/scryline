@@ -9,9 +9,10 @@
 
 	import Overlay from 'svelte-overlay';
 
+	let loggedIn;
 	import { onMount } from 'svelte';
-
 	onMount(async () => {
+		loggedIn = $session.slUser.uid;
 		var firebaseConfig = {
 			apiKey: "AIzaSyC0pWxpoHg9YahhjASvv2RSsM-o43bcyXk",
 			authDomain: "scryliner.firebaseapp.com",
@@ -34,7 +35,9 @@
 					body: JSON.stringify({ token })
 				});
 				let json = await response.json();
-				if (json.success === false) {
+				if (json.success) {
+					$session.slUser = json.slUser;
+				} else {
 					alert("Login error");
 				}
 			} else {
@@ -44,10 +47,13 @@
 					headers: { "Content-Type": "application/json" },
 				});
 				let json = await response.json();
-				if (json.success === false) {
+				if (json.success) {
+					$session.slUser = {email:""};
+				} else {
 					alert("Logout error");
 				}
 			}
+			loggedIn = $session.slUser.uid;
 		});
 	});
 
@@ -158,7 +164,7 @@
 		<li><a rel=prefetch aria-current="{segment === 'lines' ? 'page' : undefined}" href="lines">lines</a></li>
 		<li class="spacer">&nbsp;</li>
 		<li>
-			{#if $session.slUser}
+			{#if loggedIn}
 				<Overlay closeOnClickOutside>
 					<button slot="parent" class="defaultButton" let:toggle on:click={toggle}>My &#x25BC;</button>
 					<div slot="content" class="loginButtons" let:close>

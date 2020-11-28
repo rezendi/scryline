@@ -10,7 +10,8 @@
 	import Overlay from 'svelte-overlay';
 
 	import { onMount } from 'svelte';
-    onMount(async () => {
+
+	onMount(async () => {
 		var firebaseConfig = {
 			apiKey: "AIzaSyC0pWxpoHg9YahhjASvv2RSsM-o43bcyXk",
 			authDomain: "scryliner.firebaseapp.com",
@@ -36,6 +37,7 @@
 				if (json.success === false) {
 					alert("Login error");
 				}
+				console.log("user", $session);
 			} else {
 				console.log("logging out server");
 				let response =  await fetch('/session.json', {
@@ -52,25 +54,59 @@
 
 	async function loginWithGoogle() {
 		var provider = new firebase.auth.GoogleAuthProvider();
-		return login(provider);
+		return login(provider, "Google");
 	}
 	async function loginWithGitHub() {
 		var provider = new firebase.auth.GithubAuthProvider();
-		return login(provider);
+		provider.addScope('public_repo');
+		return login(provider, "GitHub");
 	}
-	async function login(provider) {
+	async function login(provider, providerName) {
 		let result = null;
 		try {
 			result = await firebase.auth().signInWithPopup(provider);
-			console.log("result", result);
 		} catch(error) {
-			alert("Signin error");
 			console.log('auth error code', error.code);
 			console.log('auth error message', error.message);
 			console.log('auth error email', error.email);
 			console.log('auth error credential', error.credential);
+			if (error.code=="auth/account-exists-with-different-credential") {
+				alert(`An account already exists with the email address ${error.email} -- log in the other way and then link your ${providerName} account from the My menu`);
+			} else {
+				alert(`Signin error: ${error.message}`);
+			}
 		}
 	}
+
+	async function linkGitHub() {
+		var provider = new firebase.auth.GithubAuthProvider();
+		let result = null;
+		try {
+			result = await firebase.auth().currentUser.linkWithPopup(provider);
+			console.log("result", result);
+		} catch(error) {
+			console.log('link error code', error.code);
+			console.log('link error message', error.message);
+			console.log('link error email', error.email);
+			console.log('link error credential', error.credential);
+			return alert(`Account link error: ${error.message}`);
+		}
+		let response =  await fetch('/linkUser.json', {
+				method: 'POST',
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(result)
+		});
+		let json = await response.json();
+		if (json.success === false) {
+			alert("GitHub link error");
+		}
+	}
+	async function unlinkGitHub() {
+		var provider = new firebase.auth.GithubAuthProvider();
+		await firebase.auth().currentUser.unlink(provider.providerId);
+		alert("Unlinked");
+	}
+
 
 	function logout() {
 		firebase.auth().signOut();
@@ -150,13 +186,23 @@
 		<li class="spacer">&nbsp;</li>
 		<li>
 			{#if $session.user}
-				<button class="defaultButton" on:click={logout}>Logout</button>
+				<Overlay closeOnClickOutside>
+					<button slot="parent" class="defaultButton" let:toggle on:click={toggle}>My &#x25BC;</button>
+					<div slot="content" class="loginButtons" let:close>
+						{#if $session.user.identities && $session.user.identities.includes("github.com")}
+							<button on:click={unlinkGitHub}>Unlink GitHub</button>
+						{:else}
+							<button on:click={linkGitHub}>Link GitHub</button>
+						{/if}
+						<button class="defaultButton" on:click={logout}>Logout</button>
+					</div>
+				</Overlay>
 				<button class="defaultButton" on:click={newLine}>New</button>
 			{:else}
 				<Overlay closeOnClickOutside>
 					<button slot="parent" class="defaultButton" let:toggle on:click={toggle}>Login &#x25BC;</button>
 					<div slot="content" class="loginButtons" let:close>
-						<button on:click={loginWithGoogle}>Google </button>
+						<button on:click={loginWithGoogle}>Google</button>
 						<button on:click={loginWithGitHub}>GitHub</button>
 					</div>
 				</Overlay>

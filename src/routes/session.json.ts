@@ -1,3 +1,4 @@
+import firebase from "firebase";
 import DB from "../components/DB";
 
 require('dotenv').config();
@@ -13,7 +14,9 @@ export async function post(req, res, next) {
     let json = req.body;
     try {
       let decoded = await admin.auth().verifyIdToken(json.token);
-      req.session.user = { uid: decoded.uid, email: decoded.email, name: decoded.name, picture: decoded.picture };
+      let identities = Object.keys(decoded.firebase.identities);
+      req.session.user = { uid: decoded.uid, email: decoded.email, name: decoded.name, picture: decoded.picture, identities:identities };
+      // console.log("user", req.session.user);
       DB.saveUser(decoded.uid, decoded.email, decoded.name, decoded.picture);
       res.end(JSON.stringify({success:true}));
     } catch(error) {

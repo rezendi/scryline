@@ -105,9 +105,16 @@ async function saveUser(uid:string, email:string, name:string, image:string) {
   }
 }
 
+async function updateUserGitHubInfo(uid:string, username:string, token:string) {
+  let val = JSON.stringify({username, token});
+  let query = "UPDATE Users SET github = $1 WHERE uid = $2 RETURNING *";
+  return await db.one(query, [val, uid]);
+}
+
 export default {
   getLines,
   saveLine,
   deleteLine,
-  saveUser
+  saveUser,
+  updateUserGitHubInfo
 }

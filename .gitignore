@@ -7,4 +7,7 @@ yarn-error.log
 todo.txt
 .env
 .firebase.json
-
+cypress/videos
+cypress/screenshots
+cypress/integration/examples
+cypress/fixtures/examples

@@ -155,6 +155,25 @@
     }
   }
 
+  const deleteLine = async () => {
+    if (confirm("Are you totally sure you want to delete this timeline?")) {
+      if (confirm("Are you really sure?")) {
+        let response = await fetch('/save.json', {
+            method: 'DELETE',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(line)
+        });
+        let json = await response.json();
+        if (json.success) {
+          window.location.href = `/lines/${json.path}/${json.content.name.split(".")[0]}`;
+        } else {
+          console.log("delete error", json);
+          alert("Save error!");
+        }
+      }
+    }
+  }
+
   /* inserting */
   const insertCommentsAfter = (event) => {
     console.log("detail", event.detail);
@@ -325,7 +344,7 @@
         <div class="author_title">
           <span id="lineTitle">
             <b>{line.title}</b>
-            <button style="border:0" on:click={editTitle}>✏️</button>
+            <button style="border:0" on:click={editTitle}>✏️</button><button style="border:0" on:click={deleteLine}>🗑️</button>
           </span>
           <input id="lineTitleInput" on:change={invalidate} bind:value={line.title} size="40" placeholder="Title"/>
           <span class="spacer">&nbsp;</span>

@@ -13,7 +13,7 @@ export async function get(req, res, next) {
 	//console.log("params", req.params);
 	let [path, slug] = req.params.slug;
 	if (path=="all" || path=="index") {
-		return getIndex(req, res, next);
+		return getIndex(slug, req, res, next);
 	}
 
 	if (req.params.slug.length > 2) {
@@ -51,11 +51,12 @@ export async function get(req, res, next) {
 
 import DB from '../../components/DB.js';
 
-async function getIndex(req, res, next) {
+async function getIndex(slug, req, res, next) {
 	try {
-		let rows = await DB.getLines();
+		let uid = slug=="my" ? req.session.user.uid : null;
+		let rows = await DB.getLines(uid);
 		let lines = rows.map(row => { return {
-			uid: row.uid,
+			uid: row.user_id,
 			title: row.title,
 			path: row.path,
 			slug: row.slug,

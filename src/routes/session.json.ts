@@ -15,9 +15,17 @@ export async function post(req, res, next) {
     try {
       let decoded = await admin.auth().verifyIdToken(json.token);
       let identities = Object.keys(decoded.firebase.identities);
-      req.session.user = { uid: decoded.uid, email: decoded.email, name: decoded.name, picture: decoded.picture, identities:identities };
-      // console.log("user", req.session.user);
-      DB.saveUser(decoded.uid, decoded.email, decoded.name, decoded.picture);
+      if (decoded.email != req.session.user.email || json.force) {
+        let dbVals = await DB.saveUser(decoded.uid, decoded.email, decoded.name, decoded.picture);
+        req.session.user = {
+          uid: decoded.uid,
+          email: decoded.email,
+          name: decoded.name,
+          picture: decoded.picture,
+          identities: identities,
+          username: dbVals.username
+        };
+      }
       res.end(JSON.stringify({success:true}));
     } catch(error) {
       console.log("error", error);

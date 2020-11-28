@@ -50,8 +50,13 @@ async function doUpdate() {
 doCreate();
 doUpdate();
 
-async function getLines(offset:number = 20) {
+async function getLines(uid:string = null, offset:number = 20) {
     let query = `SELECT * FROM LINES ORDER BY created_at DESC LIMIT ${offset}`;
+    if (uid) {
+      let user = await db.oneOrNone("SELECT * FROM Users WHERE uid=$1", uid);
+      query = "SELECT * FROM LINES WHERE user_id = $1 ORDER BY created_at DESC ";
+      return await db.any(query, [user.id]);
+    }
     return await db.any(query);
 }
 

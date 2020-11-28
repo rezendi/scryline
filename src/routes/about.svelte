@@ -2,15 +2,6 @@
 	<title>About</title>
 </svelte:head>
 
-<script>
-	import { stores } from '@sapper/app';
-	const { session } = stores();
-    import { onMount } from 'svelte';
-    onMount(async () => {
-		// console.log("user", $session.user);
-	});
-</script>
-
 <h1>About Scryline</h1>
 
 <p>

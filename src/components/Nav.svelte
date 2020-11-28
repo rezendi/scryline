@@ -37,7 +37,6 @@
 				if (json.success === false) {
 					alert("Login error");
 				}
-				console.log("user", $session);
 			} else {
 				console.log("logging out server");
 				let response =  await fetch('/session.json', {
@@ -71,42 +70,16 @@
 			console.log('auth error email', error.email);
 			console.log('auth error credential', error.credential);
 			if (error.code=="auth/account-exists-with-different-credential") {
-				alert(`An account already exists with the email address ${error.email} -- log in the other way and then link your ${providerName} account from the My menu`);
+				alert(`An account already exists with the email address ${error.email} -- log in the other way and then link your ${providerName} account from My Scrylines`);
 			} else {
 				alert(`Signin error: ${error.message}`);
 			}
 		}
 	}
 
-	async function linkGitHub() {
-		var provider = new firebase.auth.GithubAuthProvider();
-		let result = null;
-		try {
-			result = await firebase.auth().currentUser.linkWithPopup(provider);
-			console.log("result", result);
-		} catch(error) {
-			console.log('link error code', error.code);
-			console.log('link error message', error.message);
-			console.log('link error email', error.email);
-			console.log('link error credential', error.credential);
-			return alert(`Account link error: ${error.message}`);
-		}
-		let response =  await fetch('/linkUser.json', {
-				method: 'POST',
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(result)
-		});
-		let json = await response.json();
-		if (json.success === false) {
-			alert("GitHub link error");
-		}
+	function goToMy() {
+		location.href = "/my";
 	}
-	async function unlinkGitHub() {
-		var provider = new firebase.auth.GithubAuthProvider();
-		await firebase.auth().currentUser.unlink(provider.providerId);
-		alert("Unlinked");
-	}
-
 
 	function logout() {
 		firebase.auth().signOut();
@@ -189,11 +162,7 @@
 				<Overlay closeOnClickOutside>
 					<button slot="parent" class="defaultButton" let:toggle on:click={toggle}>My &#x25BC;</button>
 					<div slot="content" class="loginButtons" let:close>
-						{#if $session.user.identities && $session.user.identities.includes("github.com")}
-							<button on:click={unlinkGitHub}>Unlink GitHub</button>
-						{:else}
-							<button on:click={linkGitHub}>Link GitHub</button>
-						{/if}
+						<button on:click={goToMy}>Scrylines</button>
 						<button class="defaultButton" on:click={logout}>Logout</button>
 					</div>
 				</Overlay>

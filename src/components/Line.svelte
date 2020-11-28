@@ -5,16 +5,18 @@
   import Card from "./Card.svelte";
   import util from "./util";
   
+  // TODO maintain a separate "status" for the line and key behavior on that, as this all is getting complex
+
   export let line: { title:string, sha:string, userid:string, editable:boolean, entries: Entry[]};
   let versions:string[] = [JSON.stringify(line)], redoVersions:string[] = [];
   let originalTitle = line.title;
 
   import { stores } from '@sapper/app';
   const { session } = stores();
-  let usersLine = !line.userid || line.userid == $session.user.uid;
+  let usersLine = !line.userid || line.userid == $session.slUser.uid;
   let userEditable = usersLine || line.editable;
   session.subscribe(value => {
-    usersLine = !line.userid || line.userid == $session.user.uid;
+    usersLine = !line.userid || line.userid == $session.slUser.uid;
     userEditable = usersLine || line.editable;
   });
  
@@ -204,8 +206,8 @@
     }
 
     // OK, we're actually going to save it
-    line['email'] = $session.user.email; // to be hashed to path
-    line.userid = $session.user.uid;
+    line['email'] = $session.slUser.email; // to be hashed to path
+    line.userid = $session.slUser.uid;
     line.editable = false; // TODO make this configurable
     let response = await fetch('/save.json', {
         method: 'POST',

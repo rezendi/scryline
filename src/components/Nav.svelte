@@ -158,7 +158,7 @@
 		<li><a rel=prefetch aria-current="{segment === 'lines' ? 'page' : undefined}" href="lines">lines</a></li>
 		<li class="spacer">&nbsp;</li>
 		<li>
-			{#if $session.user}
+			{#if $session.slUser}
 				<Overlay closeOnClickOutside>
 					<button slot="parent" class="defaultButton" let:toggle on:click={toggle}>My &#x25BC;</button>
 					<div slot="content" class="loginButtons" let:close>

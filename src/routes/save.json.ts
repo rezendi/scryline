@@ -24,7 +24,7 @@ export async function post(req, res, next) {
 
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
-		let pathPrefix = util.hash8(req.session.user.email)
+		let pathPrefix = util.hash8(req.session.slUser.email)
 		let path = `lines/${pathPrefix}/${data.slug}.yaml`;
 
 		let toPut = {
@@ -103,7 +103,7 @@ export async function del(req, res, next) {
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
 		data.slug = util.slugize(data.title);
-		let pathPrefix = util.hash8(req.session.user.email)
+		let pathPrefix = util.hash8(req.session.slUser.email)
 		let path = `lines/${pathPrefix}/${data.slug}.yaml`;
 		let toDel = {
 			message: "Scryline delete",

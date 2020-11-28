@@ -15,17 +15,16 @@ export async function post(req, res, next) {
     try {
       let decoded = await admin.auth().verifyIdToken(json.token);
       let identities = Object.keys(decoded.firebase.identities);
-      if (decoded.email != req.session.user.email || json.force) {
-        let dbVals = await DB.saveUser(decoded.uid, decoded.email, decoded.name, decoded.picture);
-        req.session.user = {
-          uid: decoded.uid,
-          email: decoded.email,
-          name: decoded.name,
-          picture: decoded.picture,
-          identities: identities,
-          username: dbVals.username
-        };
-      }
+      // TODO don't do this every time
+      let dbVals = await DB.saveUser(decoded.uid, decoded.email, decoded.name, decoded.picture);
+      req.session.slUser = {
+        uid: decoded.uid,
+        email: decoded.email,
+        name: decoded.name,
+        picture: decoded.picture,
+        identities: identities,
+        username: dbVals.username
+      };
       res.end(JSON.stringify({success:true}));
     } catch(error) {
       console.log("error", error);
@@ -35,6 +34,6 @@ export async function post(req, res, next) {
 
 export function del(req, res, next) {
   console.log("deleting session");
-  req.session.user = { email: ''};
+  req.session.slUser = { email: ''};
   res.end(JSON.stringify({success:true}));
 }

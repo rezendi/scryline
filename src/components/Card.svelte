@@ -9,7 +9,7 @@
 
     import { stores } from '@sapper/app';
     const { session } = stores();
-    let userid = $session.user.uid;
+    let userid = $session.slUser.uid;
 
     function getMySuggestions() {
       try {

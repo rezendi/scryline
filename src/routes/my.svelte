@@ -56,8 +56,9 @@
     let identities = [];
     import { onMount } from 'svelte';
     onMount(async () => {
-        username = $session.user.username;
-        identities = $session.user.identities || [];
+        username = $session.slUser.username;
+		identities = $session.slUser.identities || [];
+		console.log("ids", $session);
 	});
 </script>
 
@@ -65,12 +66,17 @@
 	<title>My Scrylines</title>
 </svelte:head>
 
-<h1>My Scrylines</h1>
+<h2>My Account</h2>
 
-{#if identities.includes("github.com")}
-    <button on:click={unlinkGitHub}>Unlink GitHub</button>
-{:else}
-    <button on:click={linkGitHub}>Link GitHub</button>
+<b>Name</b> {$session.slUser.name}
+<b>Email</b> {$session.slUser.email}
+
+{#if identities.includes("google.com")}
+	{#if identities.includes("github.com")}
+		<button style="float:right;" on:click={unlinkGitHub}>Unlink GitHub</button>
+	{:else}
+		<button style="float:right;" on:click={linkGitHub}>Link GitHub</button>
+	{/if}
 {/if}
 
 <hr/>
@@ -85,7 +91,7 @@
     {/if}
 {/if}
 
-<hr/>
+<h2>My Scrylines</h2>
 
 <ul>
 	{#each lines as line}

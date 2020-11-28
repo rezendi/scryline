@@ -12,8 +12,8 @@ export async function post(req, res, next) {
       // console.log("json", json);
       let username = json.additionalUserInfo.username;
       let token = json.credential.oauthAccessToken;
-      // TODO check the token works
-      DB.updateUserGitHubInfo(req.session.user.uid, username, token);
+      // TODO check the token is valid
+      DB.updateUserGitHubInfo(req.session.slUser.uid, username, token);
       res.end(JSON.stringify({success:true}));
     } catch(error) {
       console.log("error", error);

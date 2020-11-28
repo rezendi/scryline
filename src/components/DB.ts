@@ -15,11 +15,13 @@ async function doCreate() {
       let exists_results = await db.any(exists_query);
       // console.log("exists", exists_results);
       if (exists_results.length==0) {
-        let users_query = "CREATE TABLE IF NOT EXISTS Users (id serial PRIMARY KEY, uid VARCHAR(255), email VARCHAR(255), name VARCHAR(255)";
-        users_query += ", username VARCHAR(255), twitter VARCHAR(255), github VARCHAR(255), metadata JSONB, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)";
+        console.log("Creating DB");
+        let users_query = "CREATE TABLE IF NOT EXISTS Users (id serial PRIMARY KEY, status INTEGER DEFAULT 0, uid VARCHAR(255)";
+        users_query += ", email VARCHAR(255), name VARCHAR(255), username VARCHAR(255), twitter VARCHAR(255)";
+        users_query += ", github VARCHAR(255), metadata JSONB, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)"
         await db.none(users_query);
-        let lines_query = "CREATE TABLE IF NOT EXISTS Lines (id serial PRIMARY KEY, user_id INTEGER, slug VARCHAR(255)";
-        lines_query += ", title VARCHAR(255), path VARCHAR(255), sha VARCHAR(255), metadata JSONB";
+        let lines_query = "CREATE TABLE IF NOT EXISTS Lines (id serial PRIMARY KEY, user_id INTEGER, status INTEGER DEFAULT 0";
+        lines_query += ", slug VARCHAR(255), title VARCHAR(255), path VARCHAR(255), sha VARCHAR(255), metadata JSONB";
         lines_query += ", created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES Users (id))";
         await db.none(lines_query);
         let indexes_qqery = "CREATE UNIQUE INDEX uid_index ON Users (uid); ";

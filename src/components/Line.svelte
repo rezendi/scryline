@@ -165,7 +165,7 @@
         });
         let json = await response.json();
         if (json.success) {
-          window.location.href = `/lines/${json.path}/${json.content.name.split(".")[0]}`;
+          window.location.href = "/lines";
         } else {
           console.log("delete error", json);
           alert("Save error!");

@@ -1,10 +1,9 @@
 const yaml = require('js-yaml');
 const fetch = require('node-fetch');
 const base64 = require('universal-base64');
-const sha256 = require('sha256');
-const slugify = require('slugify');
 
-import DB from '../components/DB.js';
+import DB from '../components/DB';
+import util from "../components/util";
 
 export async function post(req, res, next) {
 	console.log("saving");
@@ -13,9 +12,6 @@ export async function post(req, res, next) {
 	});
 	let data = req.body;
 	try {
-		let title = data.title;
-		let slug = slugify(title, {lower: true, strict: true, locale: 'en'});
-		data.slug = slug;
 
 		let email = data.email;
 		delete data['email'] // don't save to file for privacy reasons
@@ -23,12 +19,13 @@ export async function post(req, res, next) {
 			throw new Error("No email");
 		}
 
+		data.slug = util.slugize(data.title);
 		let yamlData = yaml.safeDump(data);
-		// console.log("yaml", yamlData);
 
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
-		let path = `lines/${sha256(req.session.user.email).substring(0,8)}/${slug}.yaml`;
+		let pathPrefix = util.hash8(req.session.user.email)
+		let path = `lines/${pathPrefix}/${data.slug}.yaml`;
 
 		let toPut = {
 			message: "Scryline update",
@@ -42,8 +39,8 @@ export async function post(req, res, next) {
 		let originalSlug = '';
 		let doRename = false;
 		if (data.originalTitle) {
-			originalSlug = slugify(data.originalTitle, {lower: true, strict: true, locale: 'en'});
-			doRename = originalSlug != slug;
+			originalSlug = util.slugize(data.originalTitle);
+			doRename = originalSlug != data.slug;
 			console.log("doRename", originalSlug);
 		}
 
@@ -73,12 +70,8 @@ export async function post(req, res, next) {
 			let toDelete = {
 				message: "Scryline file rename",
 				sha: data.sha,
-				committer: {
-					name: process.env.GITHUB_AUTHOR_NAME,
-					email: process.env.GITHUB_AUTHOR_EMAIL
-				}
 			};
-			let dPath = `lines/${sha256(req.session.user.email).substring(0,8)}/${originalSlug}.yaml`;
+			let dPath = `lines/${pathPrefix}/${originalSlug}.yaml`;
 			let dResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${dPath}`, {
 				method: 'DELETE',
 				headers: {
@@ -92,10 +85,45 @@ export async function post(req, res, next) {
 		}
 
 		DB.saveLine(data.title, data.userid, json.content.sha, data.originalTitle);
-
-		json.path = sha256(req.session.user.email).substring(0,8);
+		json.path = pathPrefix;
+		console.log("saved", pathPrefix);
 		res.end(JSON.stringify(json));
 	} catch(error) {
 		res.end(JSON.stringify({success:false, data:data, error:error}));
 	}
 }
+
+export async function del(req, res, next) {
+	console.log("deleting");
+	res.writeHead(200, {
+		'Content-Type': 'application/json'
+	});
+	let data = req.body;
+	try {
+		let owner = process.env.GITHUB_ACCOUNT;
+		let repo = process.env.GITHUB_REPO;
+		data.slug = util.slugize(data.title);
+		let pathPrefix = util.hash8(req.session.user.email)
+		let path = `lines/${pathPrefix}/${data.slug}.yaml`;
+		let toDel = {
+			message: "Scryline delete",
+			sha: data.sha,
+		};
+		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+			method: 'DELETE',
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/vnd.github.v3+json",
+				"Authorization": `Basic ${base64.encode(`${owner}:${process.env.GITHUB_TOKEN}`)}`
+			},
+			body: JSON.stringify(toDel)
+		});
+		let json = await response.json();
+		DB.deleteLine(data.title, data.userid);
+		console.log("deleted");
+		res.end(JSON.stringify({json, ...{ success: true}}));
+	} catch(error) {
+		res.end(JSON.stringify({success:false, data:data, error:error}));
+	}
+}
+

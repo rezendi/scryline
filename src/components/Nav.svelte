@@ -139,7 +139,7 @@
 				<button on:click={logout}>Logout</button>
 				<button on:click={newLine}>New</button>
 			{:else}
-				<button on:click={login}>Login</button>
+				<button on:click={login}>Login &#x25BC;</button>
 			{/if}
 		</li>
 	</ul>

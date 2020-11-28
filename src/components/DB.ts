@@ -1,7 +1,6 @@
 require('dotenv').config();
 
-const slugify = require('slugify');
-const sha256 = require('sha256');
+import util from "../components/util";
 
 const options = {};
 const pgp = require('pg-promise')(options);
@@ -61,9 +60,9 @@ async function saveLine(title:string, userid:string, sha:string, originalTitle:s
     let user = await db.oneOrNone("SELECT * FROM Users WHERE uid=$1", userid);
 
     let rename = originalTitle && originalTitle != title;
-    let slug = slugify(title, {lower: true, strict: true, locale: 'en'});
-    let originalSlug = slugify(originalTitle || '', {lower: true, strict: true, locale: 'en'});
-    let path = sha256(user.email).substring(0,8); // TODO username
+    let slug = util.slugize(title);
+    let originalSlug = rename ? util.slugize(originalTitle) : '';
+    let path = util.hash8(user.email); // TODO username
 
     let existing = null;
     if (rename) {
@@ -84,6 +83,13 @@ async function saveLine(title:string, userid:string, sha:string, originalTitle:s
   }
 }
 
+async function deleteLine(title:string, userid:string) {
+  let slug = util.slugize(title);
+  let user = await db.oneOrNone("SELECT * FROM Users WHERE uid=$1", userid);
+  let query = "DELETE FROM LINES WHERE slug = $1 AND user_id = $2";
+  return await db.any(query, [slug, user.id]);
+}
+
 async function saveUser(uid:string, email:string, name:string, image:string) {
   try {
     let existing = await db.oneOrNone("SELECT * FROM Users WHERE uid=$1", uid);
@@ -100,7 +106,8 @@ async function saveUser(uid:string, email:string, name:string, image:string) {
 }
 
 export default {
-  getLines: getLines,
-  saveLine: saveLine,
-  saveUser: saveUser
+  getLines,
+  saveLine,
+  deleteLine,
+  saveUser
 }

@@ -1,3 +1,5 @@
+import slugify from 'slugify';
+import sha256 from 'sha256';
 import { DateTime } from 'luxon';
 
 const TWITTER_DATE_FORMAT = 'EEE MMM d HH:mm:ss ZZZ yyyy';
@@ -16,7 +18,17 @@ const formatDateString = (str:string) => {
   return str ? parseDate(str).toLocaleString(DateTime.DATETIME_MED) : '';
 }
 
+const slugize = (str:string) => {
+  return slugify(str, {lower: true, strict: true, locale: 'en'});
+}
+
+const hash8 = (str:string) => {
+  return sha256(str).substring(0,8);
+}
+
 export default {
     parseDate,
-    formatDateString
+    formatDateString,
+    slugize,
+    hash8
 }

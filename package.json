@@ -38,6 +38,7 @@
     "sha256": "^0.2.0",
     "sirv": "^1.0.0",
     "slugify": "^1.4.6",
+    "svelte-overlay": "^1.4.1",
     "twitter": "^1.7.1",
     "universal-base64": "^2.1.0"
   },

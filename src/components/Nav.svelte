@@ -7,6 +7,8 @@
 	import firebase from 'firebase/app';
 	import 'firebase/auth';
 
+	import Overlay from 'svelte-overlay';
+
 	import { onMount } from 'svelte';
     onMount(async () => {
 		var firebaseConfig = {
@@ -48,9 +50,16 @@
 		});
 	});
 
-	async function login() {
-		let result = null;
+	async function loginWithGoogle() {
 		var provider = new firebase.auth.GoogleAuthProvider();
+		return login(provider);
+	}
+	async function loginWithGitHub() {
+		var provider = new firebase.auth.GithubAuthProvider();
+		return login(provider);
+	}
+	async function login(provider) {
+		let result = null;
 		try {
 			result = await firebase.auth().signInWithPopup(provider);
 			console.log("result", result);
@@ -60,8 +69,6 @@
 			console.log('auth error message', error.message);
 			console.log('auth error email', error.email);
 			console.log('auth error credential', error.credential);
-		}
-		if (result) {
 		}
 	}
 
@@ -103,7 +110,14 @@
 
 	button {
 		padding:10px;
+		width:5rem;
+		align-items: center;
 		margin:10px 0px 10px 0px;
+	}
+
+	.loginButtons button {
+		border: 0px;
+		margin:0px;
 	}
 
 	[aria-current] {
@@ -136,10 +150,16 @@
 		<li class="spacer">&nbsp;</li>
 		<li>
 			{#if $session.user}
-				<button on:click={logout}>Logout</button>
-				<button on:click={newLine}>New</button>
+				<button class="defaultButton" on:click={logout}>Logout</button>
+				<button class="defaultButton" on:click={newLine}>New</button>
 			{:else}
-				<button on:click={login}>Login &#x25BC;</button>
+				<Overlay closeOnClickOutside>
+					<button slot="parent" class="defaultButton" let:toggle on:click={toggle}>Login &#x25BC;</button>
+					<div slot="content" class="loginButtons" let:close>
+						<button on:click={loginWithGoogle}>Google </button>
+						<button on:click={loginWithGitHub}>GitHub</button>
+					</div>
+				</Overlay>
 			{/if}
 		</li>
 	</ul>

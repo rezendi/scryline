@@ -67,7 +67,7 @@ async function saveLine(title:string, userid:string, sha:string, originalTitle:s
     let rename = originalTitle && originalTitle != title;
     let slug = util.slugize(title);
     let originalSlug = rename ? util.slugize(originalTitle) : '';
-    let path = util.hash8(user.email); // TODO username
+    let path = user.username ? user.username : util.hash8(user.email); // TODO username
 
     let existing = null;
     if (rename) {
@@ -116,10 +116,23 @@ async function updateUserGitHubInfo(uid:string, username:string, token:string) {
   return await db.one(query, [val, uid]);
 }
 
+async function usernameAvailable(check:string) {
+  let query = "SELECT COUNT(*) FROM Users WHERE username = $1";
+  let retval = await db.one(query, [check]);
+  return retval.count==='0';
+}
+
+async function setUsername(uid:string, username:string) {
+  let query = "UPDATE Users SET username=$1 WHERE uid = $2 RETURNING *";
+  return await db.one(query, [username, uid]);
+}
+
 export default {
   getLines,
   saveLine,
   deleteLine,
   saveUser,
-  updateUserGitHubInfo
+  updateUserGitHubInfo,
+  usernameAvailable,
+  setUsername
 }

@@ -34,23 +34,40 @@
 		alert("Unlinked");
     }
     
-    async function checkUsername() {
+    let username='', usernameSet = false, usernameChecked = false;
 
+	async function checkUsername() {
+		console.log("checking", username);
+		let response = await fetch('/username.json?check='+username);
+		let json = await response.json();
+		if (json.success) {
+			usernameChecked = true;
+		}
+		alert(json.message);
     }
-    async function saveUsername() {
 
+	async function saveUsername() {
+		let response = await fetch('/username.json', {
+			method: 'POST',
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({username})
+		});
+		let json = await response.json();
+		if (json.success) {
+			$session.slUser.username = json.username;
+			usernameSet = true;
+		}
     }
 
 	let lines = [];
-    let username;
-    let usernameChecked = false;
     let identities = [];
     import { onMount } from 'svelte';
     onMount(async () => {
 		if (!$session.slUser.uid) {
 			return location.href = "/";
 		}
-        username = $session.slUser.username;
+		username = $session.slUser.username || '';
+		usernameSet = username.length > 3;
 		identities = $session.slUser.identities || [];
 		let response = await fetch('/lines/all/my.json');
 		let json = await response.json();
@@ -78,13 +95,15 @@
 <hr/>
 
 <label for="handle">My Scryline Username:</label>
-{#if !username}
+{#if !usernameSet}
     <input id="handle" type="text" size=30 bind:value={username}/>
     {#if usernameChecked}
         <button on:click={saveUsername}>Save</button>
     {:else}
         <button on:click={checkUsername}>Check Availability</button>
-    {/if}
+	{/if}
+{:else}
+	<b>{username}</b>
 {/if}
 
 <h2>My Scrylines</h2>

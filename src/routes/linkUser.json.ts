@@ -1,7 +1,5 @@
 import DB from "../components/DB";
 
-require('dotenv').config();
-
 export async function post(req, res, next) {
     console.log("linking GitHub user");
     res.writeHead(200, {
@@ -16,7 +14,7 @@ export async function post(req, res, next) {
       DB.updateUserGitHubInfo(req.session.slUser.uid, username, token);
       res.end(JSON.stringify({success:true}));
     } catch(error) {
-      console.log("error", error);
+      console.log("linkUser error", error);
       res.end(JSON.stringify({success:false, error:error}));
     }
 };

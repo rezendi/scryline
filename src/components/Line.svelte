@@ -18,47 +18,6 @@
     userEditable = usersLine || line.editable;
   });
  
-  /* drag and drop */
-
-  let hovering = -1;
-  let mousedown = null;
-
-  const drop = (event, target) => {
-      console.log("drop");
-      event.dataTransfer.dropEffect = 'move'; 
-      const start = parseInt(event.dataTransfer.getData("text/plain"));
-      const newList = line.entries;
-      if (start==target || !userEditable) {
-        console.log("no change");
-        return;
-      }
-
-      if (start < target) {
-        newList.splice(target + 1, 0, newList[start]);
-        newList.splice(start, 1);
-      } else {
-        newList.splice(target, 0, newList[start]);
-        newList.splice(start + 1, 1);
-      }
-      line.entries = newList;
-      mousedown = null;
-      hovering = -1;
-      invalidate();
-  }
-
-  let noDragElements = ["card_label", "card_title", "card_author", "card_source", "card_when", "card_summary", "card_commentary"];
-  const dragStart = (event, i) => {
-      console.log("drag", mousedown.className);
-      if (noDragElements.includes(mousedown.className)) {
-        event.preventDefault();
-        return;
-      }
-      event.dataTransfer.effectAllowed = 'move';
-      event.dataTransfer.dropEffect = 'move';
-      const start = i;
-      event.dataTransfer.setData('text/plain', start);
-  }
-
   /* adding */
   let oldUrl: string = '';
   let newUrl: string = '';
@@ -75,15 +34,26 @@
     invalidate();
   }
 
+  const doDisable = function(elId, disableIt) {
+    if (disableIt) {
+      document.getElementById(elId).setAttribute("disabled", "true");
+    } else {
+      document.getElementById(elId).removeAttribute("disabled");
+    }
+  }
+
   const invalidate = function() {
     let newVersion = JSON.stringify(line);
     if (versions.length==0 || newVersion != versions[versions.length-1]) {
       localStorage.setItem("latestLine", newVersion);
       versions.push(newVersion);
       redoVersions=[];
+      doDisable("undo", versions.length < 2);
+      doDisable("redo", true);
     }
     // console.log("versions", versions);
-    document.getElementById("saveLine").removeAttribute("disabled");
+    document.getElementById("restoreLocalVersion").style.display="none";
+    doDisable("saveLine", false);
   }
 
   const undo = function() {
@@ -93,6 +63,8 @@
     let currentVersion = versions.pop();
     if (redoVersions.length==0 || currentVersion != redoVersions[redoVersions.length-1]) {
       redoVersions.push(currentVersion);
+      doDisable("redo", false);
+      doDisable("saveLine", false);
     }
     let newLine = versions[versions.length-1];
     line = JSON.parse(newLine);
@@ -105,6 +77,7 @@
     let currentVersion = JSON.stringify(line);
     if (versions.length==0 || currentVersion != versions[versions.length-1]) {
       versions.push(currentVersion);
+      doDisable("undo", false);
     }
     line = JSON.parse(redoVersions.pop());
   }
@@ -239,6 +212,8 @@
     delete line['email'];
     delete line['originalTitle'];
     document.getElementById("saveLine").setAttribute("disabled","true");
+    document.getElementById("lineTitle").style.display="block";
+    document.getElementById("lineTitleInput").style.display="none";
     localStorage.removeItem("latestLine");
   }
 
@@ -247,6 +222,55 @@
     document.getElementById("lineTitleInput").style.display="block";
   }
 
+  const restoreLocalVersion = () => {
+      let storedLine = JSON.parse(localStorage.getItem("latestLine"));
+      localStorage.removeItem("latestLine");
+      line = storedLine;
+      invalidate();
+  }
+
+  /* drag and drop */
+
+  let hovering = -1;
+  let mousedown = null;
+
+  const drop = (event, target) => {
+      console.log("drop");
+      event.dataTransfer.dropEffect = 'move'; 
+      const start = parseInt(event.dataTransfer.getData("text/plain"));
+      const newList = line.entries;
+      if (start==target || !userEditable) {
+        console.log("no change");
+        return;
+      }
+
+      if (start < target) {
+        newList.splice(target + 1, 0, newList[start]);
+        newList.splice(start, 1);
+      } else {
+        newList.splice(target, 0, newList[start]);
+        newList.splice(start + 1, 1);
+      }
+      line.entries = newList;
+      mousedown = null;
+      hovering = -1;
+      invalidate();
+  }
+
+  let noDragElements = ["card_label", "card_title", "card_author", "card_source", "card_when", "card_summary", "card_commentary"];
+  const dragStart = (event, i) => {
+      console.log("drag", mousedown.className);
+      if (noDragElements.includes(mousedown.className)) {
+        event.preventDefault();
+        return;
+      }
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.dropEffect = 'move';
+      const start = i;
+      event.dataTransfer.setData('text/plain', start);
+  }
+
+  /* on mount */
   import { onMount } from 'svelte';
   onMount(async () => {
     if (!line.title) {
@@ -254,10 +278,8 @@
     }
     if (localStorage.hasOwnProperty("latestLine")) {
       let storedLine = JSON.parse(localStorage.getItem("latestLine"));
-      localStorage.removeItem("latestLine");
-      if (storedLine.userid == line.userid && storedLine.slug == line.title && confirm("Unsaved edits found. Restore?")) {
-        line = storedLine;
-        invalidate();
+      if (storedLine.userid == line.userid && storedLine.slug == line.title) {
+        document.getElementById("restoreLocalVersion").style.display="block";
       }
     }
   });
@@ -302,18 +324,20 @@
         <input class="adder" placeholder="Add URLs here" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
         <div class="author_title">
           <span id="lineTitle">
-            <b>{line.title}</b>&nbsp;
+            <b>{line.title}</b>
             <button style="border:0" on:click={editTitle}>✏️</button>
           </span>
           <input id="lineTitleInput" on:change={invalidate} bind:value={line.title} size="40" placeholder="Title"/>
+          <span class="spacer">&nbsp;</span>
+          <button id="restoreLocalVersion" style="display:none;" on:click={restoreLocalVersion}>Restore Local Save</button>
           <span class="spacer">&nbsp;</span>
           <button on:click={sortList} disabled={line.entries.length<2}>Sort</button>
           |
           <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
           |
-          <button on:click={undo}>Undo</button>
+          <button id="undo" on:click={undo} disabled>Undo</button>
           |
-          <button on:click={redo}>Redo</button>
+          <button id="redo" on:click={redo} disabled>Redo</button>
           |
           <button id="saveLine" on:click={save} disabled>Save</button>
         </div>

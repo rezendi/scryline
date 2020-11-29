@@ -140,9 +140,8 @@ export async function get(req, res, next) {
 		let repo = process.env.GITHUB_REPO;
 		let slug = util.slugize(params.title);
 		let user = await DB.getUserByUID(params.uid);
-		let pathPrefix = user.username ? user.username : util.hash8(user.email)
-		let url = `https://raw.githubusercontent.com/${owner}/${repo}/main/lines/${pathPrefix}/${slug}.yaml`
-		console.log("url", url);
+		let line = await DB.getLineByUserAndSlug(user.id, slug);
+		let url = `https://raw.githubusercontent.com/${owner}/${repo}/main/lines/${line.path}/${slug}.yaml`
 		res.end(JSON.stringify({success:true, url:url}));
 	} catch(error) {
 		res.end(JSON.stringify({success:false, params:params, error:error}));

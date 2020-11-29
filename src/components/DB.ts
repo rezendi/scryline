@@ -55,6 +55,8 @@ async function doUpdate() {
 doCreate();
 doUpdate();
 
+/* Lines */
+
 async function getLines(uid:string = null, offset:number = 20) {
     let query = `SELECT * FROM LINES ORDER BY created_at DESC LIMIT ${offset}`;
     if (uid) {
@@ -99,6 +101,13 @@ async function deleteLine(title:string, userid:string) {
   let query = "DELETE FROM LINES WHERE slug = $1 AND user_id = $2";
   return await db.any(query, [slug, user.id]);
 }
+
+async function getLineByUserAndSlug(id:number, slug:string) {
+  let query = "SELECT * FROM Lines WHERE user_id = $1 AND slug = $2";
+  return await db.oneOrNone(query, [id, slug]);
+}
+
+/* Users */
 
 async function saveUser(uid:string, email:string, name:string, image:string) {
   try {
@@ -156,4 +165,5 @@ export default {
   usernameAvailable,
   setUsername,
   getUserByUID,
+  getLineByUserAndSlug,
 }

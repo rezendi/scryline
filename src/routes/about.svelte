@@ -20,7 +20,7 @@
 <ul>
     <li>Journalists are generally loath to link to their competitors.</li>
     <li>They're often even reluctant to link to primary sources.</li>
-    <li>They still have a "dead tree" attitude towards articles—that they are individual, and self-contained,
+    <li>They still have a "dead tree" attitude towards articles—that they are individual, self-contained,
         and once published, set in stone but for corrections—rather than treating them as connected nodes
         in a network of living documents.</li>
     <li>The open-source concept of incorporating suggestions from strangers after publication is unthinkable anathema.</li>

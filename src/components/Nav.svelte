@@ -27,7 +27,7 @@
 
 		firebase.auth().onAuthStateChanged(async (user) => {
 			if (user) {
-				// console.log("logging in server", user);
+				console.log("logging in server");
 				let token = await user.getIdToken(false)
 				let response =  await fetch('/session.json', {
 					method: 'POST',
@@ -59,17 +59,28 @@
 
 	async function loginWithGoogle() {
 		var provider = new firebase.auth.GoogleAuthProvider();
-		return login(provider, "Google");
+		return login(provider, "google.com");
 	}
 	async function loginWithGitHub() {
 		var provider = new firebase.auth.GithubAuthProvider();
 		provider.addScope('public_repo');
-		return login(provider, "GitHub");
+		return login(provider, "github.com");
 	}
-	async function login(provider, providerName) {
+	async function login(provider, site) {
 		let result = null;
 		try {
 			result = await firebase.auth().signInWithPopup(provider);
+			if (site=="github.com") {
+				let response =  await fetch('/linkUser.json', {
+					method: 'POST',
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({result, ...{site:site}})
+				});
+				let json = await response.json();
+				if (json.success === false) {
+					alert("GitHub credential add error");
+				}
+			}
 		} catch(error) {
 			console.log('auth error code', error.code);
 			console.log('auth error message', error.message);

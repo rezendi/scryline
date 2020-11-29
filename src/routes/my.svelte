@@ -7,13 +7,13 @@
 
     async function linkGitHub() {
 		var provider = new firebase.auth.GithubAuthProvider();
-		return linkProvider(provider);
+		return linkProvider(provider, "github.com");
 	}
 	async function linkGoogle() {
 		var provider = new firebase.auth.GoogleAuthProvider();
-		return linkProvider(provider);
+		return linkProvider(provider, "google.com");
 	}
-	async function linkProvider(provider) {
+	async function linkProvider(provider, site) {
 		let result = null;
 		try {
 			result = await firebase.auth().currentUser.linkWithPopup(provider);
@@ -30,7 +30,7 @@
 		let response =  await fetch('/linkUser.json', {
 				method: 'POST',
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(result)
+			body: JSON.stringify({result, ...{site:site}})
 		});
 		let json = await response.json();
 		if (json.success === false) {
@@ -40,16 +40,26 @@
 
 	async function unlinkGitHub() {
 		var provider = new firebase.auth.GithubAuthProvider();
-		await firebase.auth().currentUser.unlink(provider.providerId);
-		firebase.auth().currentUser.reload();
-		alert("Unlinked");
-		location.href = "/";
-    }
+		return unlinkProvider(provider, "github.com");
+	}
 	async function unlinkGoogle() {
 		var provider = new firebase.auth.GoogleAuthProvider();
+		return unlinkProvider(provider, "google.com");
+	}
+	async function unlinkProvider(provider, site) {
+		if (!confirm("We have to log you out after unlinking a provider; then you can log back in with the other. That OK?")) {
+			return;
+		}
 		await firebase.auth().currentUser.unlink(provider.providerId);
 		firebase.auth().currentUser.reload();
+		let response =  await fetch('/linkUser.json', {
+				method: 'DELETE',
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({site})
+		});
+		let json = await response.json();
 		alert("Unlinked");
+		firebase.auth().signOut();
 		location.href = "/";
     }
     

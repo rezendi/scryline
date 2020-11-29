@@ -102,7 +102,7 @@ async function deleteLine(title:string, userid:string) {
 
 async function saveUser(uid:string, email:string, name:string, image:string) {
   try {
-    let existing = await db.oneOrNone("SELECT * FROM Users WHERE uid=$1", uid);
+    let existing = await db.oneOrNone("SELECT id FROM Users WHERE uid=$1", uid);
     if (existing && existing.id) {
       let query = "UPDATE Users SET name = $1, email = $2, metadata = $3 WHERE id = $4 AND uid = $5 RETURNING *";
       return await db.one(query, [name, email, {image:image}, existing.id, uid]);
@@ -115,10 +115,20 @@ async function saveUser(uid:string, email:string, name:string, image:string) {
   }
 }
 
-async function updateUserGitHubInfo(uid:string, username:string, token:string) {
-  let val = JSON.stringify({username, token});
-  let query = "UPDATE Users SET github = $1 WHERE uid = $2 RETURNING *";
-  return await db.one(query, [val, uid]);
+async function saveUserGitHubInfo(uid:string, username:string, token:string) {
+  try {
+    let val = JSON.stringify({username, token});
+    let existing = await db.oneOrNone("SELECT id FROM Users WHERE uid=$1", uid);
+    if (existing && existing.id) {
+      let query = "UPDATE Users SET github = $1 WHERE uid = $2 RETURNING *";
+      return await db.one(query, [val, uid]);
+    } else {
+      let query = "INSERT INTO Users (uid, github) VALUES ($1, $2) RETURNING *";
+      return await db.one(query, [uid, val]);
+    }
+  } catch(error) {
+    console.log("DB error saving user", error);
+  }
 }
 
 async function usernameAvailable(check:string) {
@@ -137,7 +147,7 @@ export default {
   saveLine,
   deleteLine,
   saveUser,
-  updateUserGitHubInfo,
+  saveUserGitHubInfo,
   usernameAvailable,
   setUsername
 }

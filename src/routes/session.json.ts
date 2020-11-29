@@ -14,9 +14,10 @@ export async function post(req, res, next) {
     let json = req.body;
     try {
       let decoded = await admin.auth().verifyIdToken(json.token);
-      console.log("decoded", decoded);
+      // console.log("decoded", decoded);
       let identities = Object.keys(decoded.firebase.identities);
       // TODO don't do this every time
+      console.log("saving user");
       let dbVals = await DB.saveUser(decoded.uid, decoded.email, decoded.name, decoded.picture);
       req.session.slUser = {
         uid: decoded.uid,

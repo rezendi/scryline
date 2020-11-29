@@ -113,6 +113,7 @@
 
 <b>Name</b> {$session.slUser.name}
 <b>Email</b> {$session.slUser.email}
+<b>GitHub</b> {$session.slUser.github || 'n/a'}
 
 {#if identities.includes("google.com")}
 	{#if identities.includes("github.com")}

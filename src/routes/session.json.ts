@@ -17,7 +17,6 @@ export async function post(req, res, next) {
       // console.log("decoded", decoded);
       let identities = Object.keys(decoded.firebase.identities);
       // TODO don't do this every time
-      console.log("saving user");
       let dbVals = await DB.saveUser(decoded.uid, decoded.email, decoded.name, decoded.picture);
       req.session.slUser = {
         uid: decoded.uid,
@@ -25,7 +24,8 @@ export async function post(req, res, next) {
         name: decoded.name,
         picture: decoded.picture,
         identities: identities,
-        username: dbVals.username
+        username: dbVals.username,
+        github: dbVals.github && dbVals.github.startsWith("{") ? JSON.parse(dbVals.github).username : ''
       };
       res.end(JSON.stringify({success:true, slUser:req.session.slUser}));
     } catch(error) {

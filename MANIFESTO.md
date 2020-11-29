@@ -13,7 +13,7 @@ more.
 "But surely the job of journalism is to make sense of all this!" you cry.
 Yes... theoretically... but journalism as we know it suffers from a number
 of flaws which make it unsuitable for this sort of synthesis:
-* Journalists are loath to link to anything from their competitors.
+* Journalists are generally loath to link to their competitors.
 * They're often even surprisingly reluctant to link to primary sources.
 * They still have a "dead tree" attitude towards articles -- that they are
 individual and self-contained, and that once published they are set in stone

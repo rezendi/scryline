@@ -1,12 +1,17 @@
 require('dotenv').config();
 
+const fs = require('fs');
 import util from "../components/util";
 
 const options = {};
 const pgp = require('pg-promise')(options);
 const defaultPostgresUrl = `postgres://postgres:${process.env.POSTGRES_PASSWORD}@localhost:5432/postgres`;
 const connectionString = process.env.DATABASE_URL || defaultPostgresUrl;
-const db = pgp(connectionString);
+
+const certPath = '/app/config/do-pg-client.crt';
+const certPathExists = fs.existsSync(certPath);
+const connectionOptions = certPathExists ? {connectionString, ssl:{ cert: fs.readFileSync(certPath) }} : connectionString;
+const db = pgp(connectionOptions);
 
 async function doCreate() {
     let exists_query = "SELECT * FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'lines'";

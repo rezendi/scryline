@@ -14,6 +14,7 @@ services:
       - ./config/certbot/www:/var/www/certbot
       - ./static:/static
     depends_on:
+      - app
       - certbot
 
   app:

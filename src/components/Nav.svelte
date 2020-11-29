@@ -27,7 +27,7 @@
 
 		firebase.auth().onAuthStateChanged(async (user) => {
 			if (user) {
-				console.log("logging in server");
+				// console.log("logging in server", user);
 				let token = await user.getIdToken(false)
 				let response =  await fetch('/session.json', {
 					method: 'POST',
@@ -89,7 +89,7 @@
 
 	function logout() {
 		firebase.auth().signOut();
-		location.reload();
+		location.href = "/";
 	}
 
 	function newLine() {

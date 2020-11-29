@@ -7,10 +7,19 @@
 
     async function linkGitHub() {
 		var provider = new firebase.auth.GithubAuthProvider();
+		return linkProvider(provider);
+	}
+	async function linkGoogle() {
+		var provider = new firebase.auth.GoogleAuthProvider();
+		return linkProvider(provider);
+	}
+	async function linkProvider(provider) {
 		let result = null;
 		try {
 			result = await firebase.auth().currentUser.linkWithPopup(provider);
-			console.log("result", result);
+			firebase.auth().currentUser.reload();
+			location.href = "/";
+			// console.log("result", result);
 		} catch(error) {
 			console.log('link error code', error.code);
 			console.log('link error message', error.message);
@@ -28,10 +37,20 @@
 			alert("GitHub link error");
 		}
 	}
+
 	async function unlinkGitHub() {
 		var provider = new firebase.auth.GithubAuthProvider();
 		await firebase.auth().currentUser.unlink(provider.providerId);
+		firebase.auth().currentUser.reload();
 		alert("Unlinked");
+		location.href = "/";
+    }
+	async function unlinkGoogle() {
+		var provider = new firebase.auth.GoogleAuthProvider();
+		await firebase.auth().currentUser.unlink(provider.providerId);
+		firebase.auth().currentUser.reload();
+		alert("Unlinked");
+		location.href = "/";
     }
     
     let username='', usernameSet = false, usernameChecked = false;
@@ -69,6 +88,7 @@
 		username = $session.slUser.username || '';
 		usernameSet = username.length > 3;
 		identities = $session.slUser.identities || [];
+		// console.log("identities", identities);
 		let response = await fetch('/lines/all/my.json');
 		let json = await response.json();
 		lines = json.lines;
@@ -89,6 +109,14 @@
 		<button style="float:right;" on:click={unlinkGitHub}>Unlink GitHub</button>
 	{:else}
 		<button style="float:right;" on:click={linkGitHub}>Link GitHub</button>
+	{/if}
+{/if}
+
+{#if identities.includes("github.com")}
+	{#if identities.includes("google.com")}
+		<button style="float:right;" on:click={unlinkGoogle}>Unlink Google</button>
+	{:else}
+		<button style="float:right;" on:click={linkGoogle}>Link Google</button>
 	{/if}
 {/if}
 

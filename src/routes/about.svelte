@@ -25,9 +25,10 @@
         in a network of living documents.</li>
     <li>The open-source concept of incorporating suggestions from strangers after publication is unthinkable anathema.</li>
     <li>Aggregation of others' articles is considered inferior, low-class work.</li>
-    <li>Readers frequently only come across individual articles, discovered in a scattershot way on social media,
-        without knowing important background or context of the subject under discussion. Often there is no good
-        source to link to for an overview of that context.</li>
+    <li>Readers frequently only come across individual articles, discovered on social media, without knowing
+        important background or context of the subject under discussion. Often there is no good single source
+        to link to for an overview of that context. This scattershot dissemination contributes to the
+        spread of mis- and disinformation.</li>
 </ul>
 
 <p>

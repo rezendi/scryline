@@ -1,0 +1,40 @@
+version: '3.5'
+
+services:
+  web:
+    image: nginx:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx.conf.https:/etc/nginx/nginx.conf
+      - ./config/.htpasswd:/etc/nginx/.htpasswd
+      - ./config/certbot/conf:/etc/letsencrypt
+      - ./config/certbot/www:/var/www/certbot
+      - ./static:/static
+    depends_on:
+      - app
+      - certbot
+
+  app:
+    build: .
+    image: &scryline scryline
+    restart: unless-stopped
+    env_file: .env
+    command: ["npm", "start"]
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /etc/localtime:/etc/localtime
+      - /etc/timezone:/etc/timezone
+
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  

@@ -44,6 +44,16 @@
     }
   }
 
+  const doShow = (elId) => {
+    let el = document.getElementById("lineTitle");
+    el ? el.style.display="block" : null;
+  }
+
+  const doHide = (elId) => {
+    let el = document.getElementById("lineTitle");
+    el ? el.style.display="none" : null;
+  }
+
   const invalidate = function() {
     let newVersion = JSON.stringify(line);
     if (versions.length==0 || newVersion != versions[versions.length-1]) {
@@ -54,7 +64,7 @@
       doDisable("redo", true);
     }
     // console.log("versions", versions);
-    document.getElementById("restoreLocalVersion").style.display="none";
+    doHide("restoreLocalVersion");
     doDisable("saveLine", false);
   }
 
@@ -233,14 +243,15 @@
     delete line['email'];
     delete line['originalTitle'];
     document.getElementById("saveLine").setAttribute("disabled","true");
-    document.getElementById("lineTitle").style.display="block";
-    document.getElementById("lineTitleInput").style.display="none";
+    doShow("lineTitle");
+    doHide("lineTitleInput");
+
     localStorage.removeItem("latestLine");
   }
 
   const editTitle = async () => {
-    document.getElementById("lineTitle").style.display="none";
-    document.getElementById("lineTitleInput").style.display="block";
+    doHide("lineTitle");
+    doShow("lineTitleInput");
   }
 
   const restoreLocalVersion = () => {
@@ -291,6 +302,15 @@
       event.dataTransfer.setData('text/plain', start);
   }
 
+  const goToRepo = async () => {
+    let url = `/save.json?title=${encodeURI(line.title)}&uid=${line.userid}`
+    let response = await fetch(url);
+    let json = await response.json();
+    if (json.url) {
+      window.location.href = json.url;
+    }
+  }
+
   /* on mount */
   import { onMount } from 'svelte';
   onMount(async () => {
@@ -300,7 +320,7 @@
     if (localStorage.hasOwnProperty("latestLine")) {
       let storedLine = JSON.parse(localStorage.getItem("latestLine"));
       if (storedLine.userid == line.userid && storedLine.slug == line.title) {
-        document.getElementById("restoreLocalVersion").style.display="block";
+        doShow("restoreLocalVersion");
       }
     }
   });
@@ -352,6 +372,8 @@
           <span class="spacer">&nbsp;</span>
           <button id="restoreLocalVersion" style="display:none;" on:click={restoreLocalVersion}>Restore Local Save</button>
           <span class="spacer">&nbsp;</span>
+          <button on:click={goToRepo}>GitHub repo</button>
+          |
           <button on:click={sortList} disabled={line.entries.length<2}>Sort</button>
           |
           <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
@@ -365,6 +387,7 @@
       </div>
     {:else}
       <b>Timeline: {line.title}</b>
+      <button on:click={goToRepo}>GitHub repo</button>
       <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
     {/if}
     </div>

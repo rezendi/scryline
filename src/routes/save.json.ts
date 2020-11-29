@@ -5,7 +5,7 @@ const base64 = require('universal-base64');
 import DB from '../components/DB';
 import util from "../components/util";
 
-export async function post(req, res, next) {
+	export async function post(req, res, next) {
 	console.log("saving");
 	res.writeHead(200, {
 		'Content-Type': 'application/json'
@@ -104,7 +104,7 @@ export async function del(req, res, next) {
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
 		data.slug = util.slugize(data.title);
-		let user =req.session.slUser;
+		let user = req.session.slUser;
 		let pathPrefix = user.username ? user.username : util.hash8(req.session.slUser.email)
 		let path = `lines/${pathPrefix}/${data.slug}.yaml`;
 		let toDel = {
@@ -129,3 +129,22 @@ export async function del(req, res, next) {
 	}
 }
 
+export async function get(req, res, next) {
+	console.log("redirecting to repo");
+	res.writeHead(200, {
+		'Content-Type': 'application/json'
+	});
+	let params = req.query;
+	try {
+		let owner = process.env.GITHUB_ACCOUNT;
+		let repo = process.env.GITHUB_REPO;
+		let slug = util.slugize(params.title);
+		let user = await DB.getUserByUID(params.uid);
+		let pathPrefix = user.username ? user.username : util.hash8(user.email)
+		let url = `https://raw.githubusercontent.com/${owner}/${repo}/main/lines/${pathPrefix}/${slug}.yaml`
+		console.log("url", url);
+		res.end(JSON.stringify({success:true, url:url}));
+	} catch(error) {
+		res.end(JSON.stringify({success:false, params:params, error:error}));
+	}
+}

@@ -142,6 +142,11 @@ async function setUsername(uid:string, username:string) {
   return await db.one(query, [username, uid]);
 }
 
+async function getUserByUID(uid:string) {
+  let query = "SELECT * FROM Users WHERE uid = $1";
+  return await db.oneOrNone(query, [uid]);
+}
+
 export default {
   getLines,
   saveLine,
@@ -149,5 +154,6 @@ export default {
   saveUser,
   saveUserGitHubInfo,
   usernameAvailable,
-  setUsername
+  setUsername,
+  getUserByUID,
 }

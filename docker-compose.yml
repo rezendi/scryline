@@ -1,7 +1,7 @@
 version: '3.5'
 
 services:
-  web:
+  nginx:
     image: nginx:latest
     restart: unless-stopped
     ports:
@@ -14,7 +14,6 @@ services:
       - ./config/certbot/www:/var/www/certbot
       - ./static:/static
     depends_on:
-      - app
       - certbot
 
   app:
@@ -34,7 +33,7 @@ services:
     image: certbot/certbot
     restart: unless-stopped
     volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
+      - ./config/certbot/conf:/etc/letsencrypt
+      - ./config/certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
   

@@ -42,7 +42,13 @@
 <p>
     Scryline is also built atop <em>open data</em>. Its timelines are stored as YAML, a human-readable format,
     in GitHub repositories. A single common public repository is used by default, but it is also possible to use
-    one's own public or private repos. As such, Scryline data will always be accessible to its users/creators,
-    even if Scryline itself were to perish; is automatically available, with complete version histories, via
-    GitHub's rich API; and is easily transferable to other services such as GitLab.
+    one's own public or private repos. As such, Scryline data
 </p>
+<ul>
+    <li>will always be accessible to its users/creators, even if Scryline itself were to perish</li>
+    <li>is automatically available, with complete version histories, via GitHub's rich API</li>
+    <li>natively incorporates GitHub's fork / pull-request / merge paradigm</li>
+    <li>is very easily transferable to other services such as GitLab.</li>
+</ul>
+
+<p>The word "scry" means "<em>to use divination to discover hidden knowledge or future events</em>."</p>

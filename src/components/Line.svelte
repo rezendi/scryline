@@ -311,6 +311,10 @@
     }
   }
 
+  const doChapter = (entryId:number) => {
+    console.log("chapter", entryId);
+  }
+
   /* on mount */
   import { onMount } from 'svelte';
   onMount(async () => {
@@ -405,7 +409,7 @@
             ondragover="return false"
           >
             {#if entry.chapter && (i==0 || entry.chapter != line.entries[i-1].chapter)}
-              <div class="timeline_chapter">{entry.chapter}</div>
+              <div class="timeline_chapter"><a name="chapter-{util.slugize(entry.chapter)}-{entry.id}" href="#chapter-{util.slugize(entry.chapter)}-{entry.id}" on:click={() => doChapter(entry.id)}>{entry.chapter}</a></div>
             {/if}
             <Card entry={entry} own={usersLine} editable={userEditable} on:refresh={refresh} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>
           </div>

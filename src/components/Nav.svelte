@@ -159,9 +159,9 @@
 
 <nav>
 	<ul>
-		<li><a aria-current="{segment === undefined ? 'page' : undefined}" href=".">home</a></li>
-		<li><a aria-current="{segment === 'about' ? 'page' : undefined}" href="about">about</a></li>
-		<li><a rel=prefetch aria-current="{segment === 'lines' ? 'page' : undefined}" href="lines">lines</a></li>
+		<li><a aria-current="{segment === undefined ? 'page' : undefined}" href=".">Home</a></li>
+		<li><a aria-current="{segment === 'about' ? 'page' : undefined}" href="about">About</a></li>
+		<li><a rel=prefetch aria-current="{segment === 'lines' ? 'page' : undefined}" href="lines">Timelines</a></li>
 		<li class="spacer">&nbsp;</li>
 		<li>
 			{#if loggedIn}

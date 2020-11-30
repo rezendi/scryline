@@ -328,6 +328,9 @@
           // changes only when not empty
           console.log("target chapter found");
           inTargetChapter = lineEntry.chapter == entry.chapter;
+          if (inTargetChapter) {
+            return doMethod(`entry_${lineEntry.id}`);
+          }
         }
         if (inTargetChapter) {
           doMethod(`element_${lineEntry.id}`);

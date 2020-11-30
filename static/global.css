@@ -34,7 +34,7 @@ a {
   
   .timeline{
 	display: grid;
-	grid-row-gap: 2rem;
+	grid-row-gap: 1rem;
 	--uiTimelineMainColor: var(--timelineMainColor, #222);
 	--uiTimelineSecondaryColor: var(--timelineSecondaryColor, #fff);
   
@@ -45,7 +45,7 @@ a {
   }
   
   .timeline_chapter {
-	margin-bottom: 1.25rem; /* 1 */
+	margin-bottom: 0.5rem;
 	display: var(--timeDisplay, inline-flex);
 	padding: .5rem 1.5rem;
     background-color: var(--uiTimelineMainColor);
@@ -61,7 +61,7 @@ a {
 
   .timeline_cards{
 	display: grid;
-	grid-row-gap: 1.5rem;
+	grid-row-gap: 1rem;
 	padding-top: .25rem; /* 1 */
 	padding-bottom: .25rem; /* 1 */
   }

@@ -355,30 +355,39 @@
 </script>
 
 <style>
-.entry_header {
+.timeline_header {
   display:flex;
   justify-content:space-between;
+  z-index: 1;
 }
 
 .author_header {
   display:flex;
-  flex-direction: column;
-  align-content: right;
-  width:100%;
-}
-
-.author_title {
-  display:flex;
   align-content: center;
-  justify-content: center;
-  border-top: 1px solid gray;
-  padding-top: 0.3rem;
+  width:100%;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0px;
 }
 
-.adder {
-  margin-left:auto;
+.author_button {
+  padding: 0px 3px;
+  margin: 0px 2px;
+  border-width: 1px;
+  height: 2.2rem;
+  font-size: 16px;
+}
+
+#adder {
+  margin-left:2px;
   padding:0.5rem;
   margin-bottom:0.25rem;
+}
+
+#lineTitle {
+  align:center;
+  font-weight:bold;
+  font-size:20px;
 }
 
 #lineTitleInput {
@@ -386,58 +395,57 @@
 }
 </style>
 
+{#if usersLine}
+  <div class="author_header timeline_header">
+    <span id="lineTitle">
+      {line.title}
+      <button style="border:0" on:click={editTitle}>✏️</button>
+    </span>
+    <input id="lineTitleInput" on:change={invalidate} bind:value={line.title} size="40" placeholder="Title"/>
+    <span class="spacer">&nbsp;</span>
+    <button class="author_button" id="restoreLocalVersion" style="display:none;" on:click={restoreLocalVersion}>Restore</button>
+    <span class="spacer">&nbsp;</span>
+    <button class="author_button" on:click={sortList} disabled={line.entries.length<2}>Sort</button>
+    <button class="author_button" on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
+    <button class="author_button" id="undo" on:click={undo} disabled>Undo</button>
+    <button class="author_button" id="redo" on:click={redo} disabled>Redo</button>
+    <button class="author_button" id="saveLine" on:click={save} disabled>Save</button>
+    <input id="adder" placeholder="Add URLs here" name="url" size="40" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
+  </div>
+{:else}
+  <div class="timeline_header">
+    <b>Timeline: {line.title}</b>
+    <button on:click={goToRepo}>GitHub repo</button>
+    <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
+  </div>
+{/if}
+
 <Modal>
-  <div class="entry_header">
-    {#if usersLine}
-      <div class="author_header">
-        <input class="adder" placeholder="Add URLs here" name="url" size="60" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
-        <div class="author_title">
-          <span id="lineTitle">
-            <b>{line.title}</b>
-            <button style="border:0" on:click={editTitle}>✏️</button><button style="border:0" on:click={deleteLine}>🗑️</button>
-          </span>
-          <input id="lineTitleInput" on:change={invalidate} bind:value={line.title} size="40" placeholder="Title"/>
-          <span class="spacer">&nbsp;</span>
-          <button id="restoreLocalVersion" style="display:none;" on:click={restoreLocalVersion}>Restore Local Save</button>
-          <span class="spacer">&nbsp;</span>
-          <button on:click={goToRepo}>GitHub repo</button>
-          |
-          <button on:click={sortList} disabled={line.entries.length<2}>Sort</button>
-          |
-          <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
-          |
-          <button id="undo" on:click={undo} disabled>Undo</button>
-          |
-          <button id="redo" on:click={redo} disabled>Redo</button>
-          |
-          <button id="saveLine" on:click={save} disabled>Save</button>
-        </div>
-      </div>
-    {:else}
-      <b>Timeline: {line.title}</b>
-      <button on:click={goToRepo}>GitHub repo</button>
-      <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
-    {/if}
-    </div>
   <div class="timeline">
-      <div class="timeline_cards">
-        {#each line.entries as entry, i (entry.id)}
-          <div id="element_{entry.id}" class="timeline_element"
-            animate:flip="{{duration: 800}}"
-            class:is-active={hovering === i}
-            draggable={true}
-            on:mousedown={event => mousedown=event.target}
-            on:dragstart={event => dragStart(event, i)}
-            on:drop|preventDefault={event => drop(event, i)}
-            on:dragenter={() => hovering = i}
-            ondragover="return false"
-          >
-            {#if entry.chapter && (i==0 || entry.chapter != line.entries[i-1].chapter)}
-              <div class="timeline_chapter"><a name="chapter-{util.slugize(entry.chapter)}-{entry.id}" href="{$page.path}#chapter-{util.slugize(entry.chapter)}-{entry.id}" on:click={(event) => doChapter(event, entry)}>{entry.chapter}</a></div>
-            {/if}
-            <Card entry={entry} own={usersLine} editable={userEditable} on:refresh={refresh} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>
-          </div>
-        {/each}
-      </div>
+    <div class="timeline_cards">
+      {#each line.entries as entry, i (entry.id)}
+        <div id="element_{entry.id}" class="timeline_element"
+          animate:flip="{{duration: 800}}"
+          class:is-active={hovering === i}
+          draggable={true}
+          on:mousedown={event => mousedown=event.target}
+          on:dragstart={event => dragStart(event, i)}
+          on:drop|preventDefault={event => drop(event, i)}
+          on:dragenter={() => hovering = i}
+          ondragover="return false"
+        >
+          {#if entry.chapter && (i==0 || entry.chapter != line.entries[i-1].chapter)}
+            <div class="timeline_chapter"><a name="chapter-{util.slugize(entry.chapter)}-{entry.id}" href="{$page.path}#chapter-{util.slugize(entry.chapter)}-{entry.id}" on:click={(event) => doChapter(event, entry)}>{entry.chapter}</a></div>
+          {/if}
+          <Card entry={entry} own={usersLine} editable={userEditable} on:refresh={refresh} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>
+        </div>
+      {/each}
     </div>
-  </Modal> 
+  </div>
+</Modal> 
+
+{#if usersLine}
+  <button style="float:right;" on:click={deleteLine}>Delete This Timeline</button>
+{/if}
+<button on:click={goToRepo}>View data on GitHub</button>
+<br/>

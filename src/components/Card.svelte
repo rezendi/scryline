@@ -10,6 +10,7 @@
     import { stores } from '@sapper/app';
     const { session } = stores();
     let userid = $session.slUser.uid;
+    let hasComments = entry.comments ? entry.comments.replace(/(<([^>]+)>)/gi, "").trim().length > 0 : false;
 
     function getMySuggestions() {
       try {
@@ -64,6 +65,7 @@
         }
         entry.when = vals.dateTime;
       }
+      hasComments = entry.comments ? entry.comments.replace(/(<([^>]+)>)/gi, "").trim().length > 0 : false;
       console.log("entry.when", entry.when);
       dispatch("refresh");
     }
@@ -102,19 +104,10 @@
       return `${url.hostname}/${displayPath}`;
     }
 
+
     </script>
 
 <style>
-.hide_button {
-  float: right;
-  border: 0;
-  background-color: #fff;
-  margin-top: -18px;
-  margin-right: -22px;
-  font-size: 11px;
-  font-family:verdana;
-}
-
 .card_title {
   font-size: large;
   text-decoration: none;
@@ -201,7 +194,7 @@
 
 <div class="timeline_card card" id="entry_{entry.id}">
     {#if editable}
-      <button class="hide_button" data-entry-id={entry.id} on:click={doDelete}>X</button>
+      <span class="close" style="float:right; margin-right:-10px; margin-top:-10px;" data-entry-id={entry.id} on:click={doDelete}></span>
     {/if}
     <div class="card_inherent_content" id="entry_content_{entry.id}">
       {#if !showingEmbed}
@@ -239,14 +232,16 @@
         {/if}
         {#if entry.summary}
           <div id="entry_summary_{entry.id}" class="card_summary">{@html entry.summary}</div>
-          <hr/>
         {/if}
       {/if}
     </div>
-    <div class="card_commentary">
-      {@html entry.comments}
-      {#if editable}
-        <button class="comment_button" on:click={doCommentary}>+</button>
-      {/if}
+    <hr style="{hasComments && (entry.summary || entry.url) ? 'display:block;' : 'display:none;'}"/>
+    <div class="comments_container" style="{hasComments ? 'display:block;' : 'display:none;'}">
+      <div class="card_commentary">
+          {@html entry.comments}
+        </div>
     </div>
+    {#if editable}
+      <span class="add_button" style="float:right; margin-right:-10px;" on:click={doCommentary}></span>
+    {/if}
   </div>

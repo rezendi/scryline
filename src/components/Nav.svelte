@@ -24,6 +24,7 @@
 			measurementId: "G-7KHLE3WKF1"
 		};
 		firebase.initializeApp(firebaseConfig);
+		firebase.analytics();
 
 		firebase.auth().onAuthStateChanged(async (user) => {
 			if (user) {

@@ -94,7 +94,12 @@
     });
 
     function getTitle() {
-      return entry.title ? entry.title.replace(` | ${entry.source}`, "") : entry.url;
+      if (entry.title) {
+        return entry.title.replace(` | ${entry.source}`, "");
+      }
+      let url = new URL(entry.url);
+      let displayPath = url.pathname.substring(1,1+url.pathname.slice(1).indexOf("/"));
+      return `${url.hostname}/${displayPath}`;
     }
 
     </script>
@@ -208,7 +213,7 @@
         {#if entry.image || entry.author || entry.source || entry.when}
           <div class="card_main">
             {#if entry.image}
-              <div class="card_image" title="{entry.originalUrl}">
+              <div class="card_image">
                 <a href="{entry.url}"><img src="{entry.image}" alt={entry.title} height="auto" width="120"/></a>        
               </div>
             {/if}

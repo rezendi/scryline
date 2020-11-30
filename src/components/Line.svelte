@@ -346,11 +346,29 @@
     if (!line.title) {
       editTitle();
     }
+
     if (localStorage.hasOwnProperty("latestLine")) {
       let storedLine = JSON.parse(localStorage.getItem("latestLine"));
       if (storedLine.userid == line.userid && storedLine.slug == line.title) {
         doShow("restoreLocalVersion");
       }
+    }
+
+    // if a timeline has 32 or more entries and 4 or more chapters, show the first 2 and hide the rest
+    if (line.entries.length >= 32) {
+      let chapters = [];
+      line.entries.forEach((e) => {
+        if (e.chapter && ! chapters.includes(e.chapter)) {
+          chapters.push({id:e.id, chapter:e.chapter});
+        }
+      }) 
+      if ( chapters.length >= 4) {
+        chapters.shift();
+        chapters.shift();
+        chapters.forEach((c) => {
+          document.getElementById("chapter-link-"+c.id).click();
+        })
+      };
     }
   });
 </script>
@@ -435,7 +453,7 @@
           ondragover="return false"
         >
           {#if entry.chapter && (i==0 || entry.chapter != line.entries[i-1].chapter)}
-            <div class="timeline_chapter"><a name="chapter-{util.slugize(entry.chapter)}-{entry.id}" href="{$page.path}#chapter-{util.slugize(entry.chapter)}-{entry.id}" on:click={(event) => doChapter(event, entry)}>{entry.chapter}</a></div>
+            <div class="timeline_chapter"><a id="chapter-link-{entry.id}" name="chapter-{util.slugize(entry.chapter)}-{entry.id}" href="{$page.path}#chapter-{util.slugize(entry.chapter)}-{entry.id}" on:click={(event) => doChapter(event, entry)}>{entry.chapter}</a></div>
           {/if}
           <Card entry={entry} own={usersLine} editable={userEditable} on:refresh={refresh} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>
         </div>

@@ -116,7 +116,7 @@
   font-weight:bold;
   user-select:text;
 }
-  
+
 .card_main {
   margin-top: .5rem;
   display:flex;
@@ -222,11 +222,13 @@
                 {/if}
               </span>
             </div>
-            <div class="spacer">&nbsp;</div>
+            <div class="spacer"></div>
             <div class="card_labels">
-              {#each entry.tags.split(",") as tag}
-                <span class="card_label">{tag}</span>
-              {/each}
+              {#if entry.tags}
+                {#each entry.tags.split(",") as tag}
+                  <span class="card_label">{tag}</span>
+                {/each}
+              {/if}
             </div>
           </div>
         {/if}

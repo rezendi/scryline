@@ -2,6 +2,10 @@
 	<title>About</title>
 </svelte:head>
 
+<h2>Contact Scryline</h2>
+
+Email <a href="mailto:info@scryline.com">info@scryline.com</a>.
+
 <h2>The Scryline Manifesto</h2>
 
 <p>

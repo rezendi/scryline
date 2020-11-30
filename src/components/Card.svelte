@@ -193,7 +193,7 @@
       {#if !showingEmbed}
         {#if entry.title || entry.tags || entry.url}
           <header class="card_header">
-            <a class="card_title" href="{entry.url}">{getTitle()}</a>
+            <a class="card_title" href="{entry.url}">{@html getTitle()}</a>
           </header>
         {/if}
         {#if entry.image || entry.author || entry.source || entry.when}
@@ -204,8 +204,8 @@
               </div>
             {/if}
             <div class="card_info">
-              <span class="card_author">{entry.author}</span>
-              <span class="card_source">{entry.source}</span>
+              <span class="card_author">{@html entry.author}</span>
+              <span class="card_source">{@html entry.source}</span>
               <span class="card_when">{util.formatDateString(entry.when)}</span>
             </div>
             <div class="spacer">&nbsp;</div>
@@ -217,7 +217,7 @@
           </div>
         {/if}
         {#if entry.summary}
-          <div id="entry_summary_{entry.id}" class="card_summary">{entry.summary}</div>
+          <div id="entry_summary_{entry.id}" class="card_summary">{@html entry.summary}</div>
           <hr/>
         {/if}
       {/if}

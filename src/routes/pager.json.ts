@@ -13,6 +13,8 @@ const metascraper = require('metascraper')([
     require('metascraper-youtube')()
 ])
 
+const sanitizeHtml = require('sanitize-html');
+
 const Twitter = require('twitter');
 var client = new Twitter({
     consumer_key: process.env.TWITTER_API_KEY,
@@ -28,10 +30,10 @@ async function parse(html, url) {
     return {
         url: m.url || url,
         when: m.date,
-        title: m.title,
-        author: m.author,
-        summary: m.description,
-        source: m.publisher,
+        title: sanitizeHtml(m.title),
+        author: sanitizeHtml(m.author),
+        summary: sanitizeHtml(m.description),
+        source: sanitizeHtml(m.publisher),
         originalUrl: url,
         image: m.image,
         logo: m.logo,

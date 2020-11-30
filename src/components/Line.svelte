@@ -355,7 +355,7 @@
     }
 
     // if a timeline has 32 or more entries and 4 or more chapters, show the first 2 and hide the rest
-    if (line.entries.length >= 32) {
+    if (line.entries.length >= 32 && !$page.query.showAll) {
       let chapters = [];
       line.entries.forEach((e) => {
         if (e.chapter && ! chapters.includes(e.chapter)) {

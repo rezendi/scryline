@@ -330,7 +330,7 @@
           inTargetChapter = lineEntry.chapter == entry.chapter;
         }
         if (inTargetChapter) {
-          doMethod(`entry_${lineEntry.id}`);
+          doMethod(`element_${lineEntry.id}`);
         }
     });
     event.target.innerHTML = closing ? entry.chapter + " +" : entry.chapter;
@@ -419,7 +419,7 @@
   <div class="timeline">
       <div class="timeline_cards">
         {#each line.entries as entry, i (entry.id)}
-          <div class="timeline_element"
+          <div id="element_{entry.id}" class="timeline_element"
             animate:flip="{{duration: 800}}"
             class:is-active={hovering === i}
             draggable={true}

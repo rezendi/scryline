@@ -7,6 +7,7 @@ export async function get(req, res, next) {
 		'Content-Type': 'application/json'
 	});
 
+	// TODO: determine whether we need to use the current user's account/repo
 	let owner = process.env.GITHUB_ACCOUNT;
 	let repo = process.env.GITHUB_REPO;
 

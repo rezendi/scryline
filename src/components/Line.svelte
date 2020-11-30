@@ -7,7 +7,7 @@
   
   // TODO maintain a separate "status" for the line and key behavior on that, as this all is getting complex
 
-  export let line: { title:string, sha:string, userid:string, editable:boolean, entries: Entry[]};
+  export let line: { title:string, sha:string, userid:string, byline:string, editable:boolean, entries: Entry[]};
   let versions:string[] = [JSON.stringify(line)], redoVersions:string[] = [];
   let originalTitle = line.title;
 
@@ -222,8 +222,9 @@
     }
 
     // OK, we're actually going to save it
-    line['email'] = $session.slUser.email; // to be hashed to path
+    line["email"] = $session.slUser.email;
     line.userid = $session.slUser.uid;
+    line.byline = $session.slUser.name;
     line.editable = false; // TODO make this configurable
     let response = await fetch('/save.json', {
         method: 'POST',
@@ -414,8 +415,7 @@
   </div>
 {:else}
   <div class="timeline_header">
-    <b>Timeline: {line.title}</b>
-    <button on:click={goToRepo}>GitHub repo</button>
+    <span id="lineTitle">{line.title} by {line.byline}</span>
     <button on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
   </div>
 {/if}

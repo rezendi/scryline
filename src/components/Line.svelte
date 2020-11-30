@@ -12,7 +12,7 @@
   let originalTitle = line.title;
 
   import { stores } from '@sapper/app';
-  const { session } = stores();
+  const { page, session } = stores();
   let usersLine = !line.userid || line.userid == $session.slUser.uid;
   let userEditable = usersLine || line.editable;
   session.subscribe(value => {
@@ -37,20 +37,23 @@
   }
 
   const doDisable = function(elId, disableIt) {
-    if (disableIt) {
-      document.getElementById(elId).setAttribute("disabled", "true");
-    } else {
-      document.getElementById(elId).removeAttribute("disabled");
+    let el = document.getElementById(elId);
+    if (el) {
+      if (disableIt) {
+        el.setAttribute("disabled", "true");
+      } else {
+        el.removeAttribute("disabled");
+      }
     }
   }
 
   const doShow = (elId) => {
-    let el = document.getElementById("lineTitle");
+    let el = document.getElementById(elId);
     el ? el.style.display="block" : null;
   }
 
   const doHide = (elId) => {
-    let el = document.getElementById("lineTitle");
+    let el = document.getElementById(elId);
     el ? el.style.display="none" : null;
   }
 
@@ -311,8 +314,23 @@
     }
   }
 
-  const doChapter = (entryId:number) => {
-    console.log("chapter", entryId);
+  const doChapter = (event, entry:Entry) => {
+    event.preventDefault();
+    let text = event.target.innerHTML;
+    let closing:boolean = !text.endsWith(" +");
+    let doMethod = closing ? doHide : doShow;
+    let inTargetChapter = false;
+    line.entries.forEach((lineEntry) => {
+        if (lineEntry.chapter) {
+          // changes only when not empty
+          console.log("target chapter found");
+          inTargetChapter = lineEntry.chapter == entry.chapter;
+        }
+        if (inTargetChapter) {
+          doMethod(`entry_${lineEntry.id}`);
+        }
+    });
+    event.target.innerHTML = closing ? entry.chapter + " +" : entry.chapter;
   }
 
   /* on mount */
@@ -409,7 +427,7 @@
             ondragover="return false"
           >
             {#if entry.chapter && (i==0 || entry.chapter != line.entries[i-1].chapter)}
-              <div class="timeline_chapter"><a name="chapter-{util.slugize(entry.chapter)}-{entry.id}" href="#chapter-{util.slugize(entry.chapter)}-{entry.id}" on:click={() => doChapter(entry.id)}>{entry.chapter}</a></div>
+              <div class="timeline_chapter"><a name="chapter-{util.slugize(entry.chapter)}-{entry.id}" href="{$page.path}#chapter-{util.slugize(entry.chapter)}-{entry.id}" on:click={(event) => doChapter(event, entry)}>{entry.chapter}</a></div>
             {/if}
             <Card entry={entry} own={usersLine} editable={userEditable} on:refresh={refresh} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>
           </div>

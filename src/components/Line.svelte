@@ -118,6 +118,9 @@
       invalidate();
       sortList();
       newUrl = '';
+      setTimeout(() => {
+        document.getElementById(`entry_${newEntry.id}`).scrollIntoView();
+      }, 1000);
   }
 
   const urlChanged = () => {

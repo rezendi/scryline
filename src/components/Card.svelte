@@ -33,7 +33,6 @@
           initialChapter: entry.chapter,
           initialTags: entry.tags,
           initialDateTime: entry.when,
-          showDateTime: entry.when && entry.url ? false : true,
           onCancel,
           onOK
         },
@@ -59,7 +58,12 @@
       }
       entry.chapter = vals.chapter;
       entry.tags = vals.tags;
-      entry.when = entry.when && entry.url ? entry.when : vals.dateTime;
+      if (vals.dateTime) {
+        if (!entry.originalWhen) {
+          entry.originalWhen = entry.when && entry.url ? entry.when : '';
+        }
+        entry.when = vals.dateTime;
+      }
       console.log("entry.when", entry.when);
       dispatch("refresh");
     }
@@ -134,8 +138,13 @@
   user-select:text;
 }
 
+.card_originalWhen {
+  color: gray;
+  user-select: none;
+}
+
 .card_source {
-  font-style:italic;
+  font-style: italic;
   user-select: text;
 }
 
@@ -206,7 +215,12 @@
             <div class="card_info">
               <span class="card_author">{@html entry.author}</span>
               <span class="card_source">{@html entry.source}</span>
-              <span class="card_when">{util.formatDateString(entry.when)}</span>
+              <span class="card_when">
+                {util.formatDateString(entry.when)}
+                {#if entry.originalWhen}
+                  <span class="card_originalWhen" title="Originally parsed as {util.formatDateString(entry.originalWhen)}">(*)</span>
+                {/if}
+              </span>
             </div>
             <div class="spacer">&nbsp;</div>
             <div class="card_labels">

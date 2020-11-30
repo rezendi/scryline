@@ -7,7 +7,7 @@
     import { getContext } from 'svelte';
     export let onCancel = () => {};
     export let onOK = () => {};
-    export let initialComments, initialChapter, initialTags, initialDateTime, showDateTime;
+    export let initialComments, initialChapter, initialTags, initialDateTime;
   
     const { close } = getContext('simple-modal');
       
@@ -100,12 +100,10 @@
         </span>
     </div>
     <div id="quill-container">{@html comments}</div>
-    {#if showDateTime}
-      <div class="dateAndTime">
-        <label for="dateTime">Date/time (ISO 8601 or YYYY-MM-DD HH:MM:SS)</label>
-        <input id="dateTime" type="text" placeholder="1934-09-21 13:45:00" size=30 bind:value={dateTime}/>
-      </div>
-    {/if}
+    <div class="dateAndTime">
+      <label for="dateTime">Date/time (ISO 8601 or YYYY-MM-DD HH:MM:SS)</label>
+      <input id="dateTime" type="text" placeholder="1934-09-21 13:45:00" size=30 bind:value={dateTime}/>
+    </div>
     <div class="chapterAndTags">
         <label for="chapter">Chapter</label>
         <input id="chapter" type="text" size=30 bind:value={chapter}/>

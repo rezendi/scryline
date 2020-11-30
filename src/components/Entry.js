@@ -4,6 +4,7 @@ export default class Entry {
         this.originalUrl = vals.originalUrl || '';
         this.url = vals.url || '';
         this.when = vals.when || '';
+        this.originalWhen = vals.originalWhen || '';
         this.author = vals.author || '';
         this.source = vals.source || '';
         this.logo = vals.logo || '';

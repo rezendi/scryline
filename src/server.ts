@@ -31,7 +31,7 @@ polka()
 			resave: true,
 			saveUninitialized: true,
 			cookie: {
-				maxAge: 259200
+				maxAge: 259200 * 1000 // 3 days in milliseconds
 			},
 		}),
 		sirv('static', { dev: process.env.NODE_ENV === 'development' }),

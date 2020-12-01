@@ -13,19 +13,14 @@ import util from "../components/util";
 	let data = req.body;
 	try {
 		data.slug = util.slugize(data.title);
-		console.log("slug", data.slug);
 		let yamlData = yaml.safeDump(data, {skipInvalid:true});
-		console.log("yamled");
 
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
-		console.log("repo", repo);
 		let user = req.session.slUser;
 		console.log("user", user);
-		let pathPrefix = user.username ? user.username : util.hash8(req.session.slUser.email)
-		console.log("prefix", pathPrefix);
+		let pathPrefix = user.username ? user.username : util.hash8(user.email)
 		let path = `lines/${pathPrefix}/${data.slug}.yaml`;
-		console.log("path", path);
 
 		let toPut = {
 			message: "Scryline update",
@@ -101,7 +96,7 @@ export async function del(req, res, next) {
 		let repo = process.env.GITHUB_REPO;
 		data.slug = util.slugize(data.title);
 		let user = req.session.slUser;
-		let pathPrefix = user.username ? user.username : util.hash8(req.session.slUser.email)
+		let pathPrefix = user.username ? user.username : util.hash8(user.email)
 		let path = `lines/${pathPrefix}/${data.slug}.yaml`;
 		let toDel = {
 			message: "Scryline delete",

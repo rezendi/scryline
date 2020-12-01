@@ -49,10 +49,10 @@ import util from "../components/util";
 			body: JSON.stringify(toPut)
 		});
 		let json = await response.json();
-		// console.log("gh json", json);
-		if (json.message) {
+		if (json.message && json.message.length > 0) {
+			console.log("gh json", json);
 			json.success = false;
-			json.error = json.message;
+			json.error = "GH: " + json.message;
 			doRename = false;
 		}
 

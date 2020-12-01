@@ -18,7 +18,7 @@ import util from "../components/util";
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
 		let user = req.session.slUser;
-		console.log("user", user);
+		console.log("user", user.email);
 		let pathPrefix = user.username ? user.username : util.hash8(user.email)
 		let path = `lines/${pathPrefix}/${data.slug}.yaml`;
 

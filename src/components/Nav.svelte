@@ -41,7 +41,7 @@
 					alert("Login error");
 				}
 			} else {
-				console.log("logging out server");
+				console.log("logout state change");
 				let response =  await fetch('/session.json', {
 					method: 'DELETE',
 					headers: { "Content-Type": "application/json" },

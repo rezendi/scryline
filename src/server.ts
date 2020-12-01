@@ -6,19 +6,27 @@ import compression from 'compression';
 import * as sapper from '@sapper/server';
 
 var session = require('express-session');
-var FileStore = require('session-file-store')(session);
-
-const { PORT, NODE_ENV } = process.env;
-const dev = NODE_ENV === 'development';
+let sessionStore;
+if (process.env.NODE_ENV=="production") {
+	const redis = require('redis')
+	var RedisStore = require('connect-redis')(session);
+	let redisClient = redis.createClient({url:"redis://redis:6379"});
+	sessionStore = new RedisStore({ client: redisClient });
+} else {
+	var FileStore = require('session-file-store')(session);
+	sessionStore = new FileStore({});
+}
 
 const { json } = require('body-parser');
 
-polka() // You can also use Express
+console.log("running in", process.env.NODE_ENV);
+
+polka()
 	.use(
 		compression({ threshold: 0 }),
 		json(),
 		session({
-			store: new FileStore({}),
+			store: sessionStore,
 			secret: process.env.SESSION_SECRET,
 			resave: true,
 			saveUninitialized: true,
@@ -26,13 +34,13 @@ polka() // You can also use Express
 				maxAge: 259200
 			},
 		}),
-		sirv('static', { dev }),
+		sirv('static', { dev: process.env.NODE_ENV === 'development' }),
 		sapper.middleware({
 			session: (req, res) => {
 				return { slUser: req.session.slUser || { email:'' } };
 			}
 		}),
 	)
-	.listen(PORT, err => {
+	.listen(process.env.PORT, err => {
 		if (err) console.log('error', err);
 	});

@@ -13,6 +13,7 @@ import util from "../components/util";
 	let data = req.body;
 	try {
 		data.slug = util.slugize(data.title);
+		console.log("slug", data.slug);
 		let yamlData = yaml.safeDump(data);
 
 		let owner = process.env.GITHUB_ACCOUNT;
@@ -20,6 +21,7 @@ import util from "../components/util";
 		let user = req.session.slUser;
 		let pathPrefix = user.username ? user.username : util.hash8(req.session.slUser.email)
 		let path = `lines/${pathPrefix}/${data.slug}.yaml`;
+		console.log("path", path);
 
 		let toPut = {
 			message: "Scryline update",
@@ -39,6 +41,7 @@ import util from "../components/util";
 			}
 		}
 
+		console.log("posting to GH", toPut);
 		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
 			method: 'PUT',
 			headers: {

@@ -186,7 +186,7 @@
           window.location.href = "/lines";
         } else {
           console.log("delete error", json);
-          alert("Save error!");
+          alert("Delete error!");
         }
       }
     }

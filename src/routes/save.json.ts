@@ -61,6 +61,7 @@ import util from "../components/util";
 			body: JSON.stringify(toPut)
 		});
 		let json = await response.json();
+		console.log("gh json", json);
 		if (json.message) {
 			json.success = false;
 			json.error = json.message;
@@ -125,6 +126,7 @@ export async function del(req, res, next) {
 		console.log("deleted");
 		res.end(JSON.stringify({json, ...{ success: true}}));
 	} catch(error) {
+		console.log("save error", error);
 		res.end(JSON.stringify({success:false, data:data, error:error}));
 	}
 }

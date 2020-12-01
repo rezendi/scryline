@@ -8,7 +8,7 @@
     const doDelete = (event) => dispatch('delete', { id: event.target.getAttribute("data-entry-id")} );
 
     import { stores } from '@sapper/app';
-    const { session } = stores();
+    const { page, session } = stores();
     let userid = $session.slUser.uid;
     let hasComments = entry.comments ? entry.comments.replace(/(<([^>]+)>)/gi, "").trim().length > 0 : false;
 
@@ -136,6 +136,10 @@
   user-select:text;
 }
 
+.card_when a {
+  text-decoration: none;
+}
+
 .card_originalWhen {
   color: gray;
   user-select: none;
@@ -182,20 +186,22 @@
   -moz-user-select: text;
 }
 
-.comment_button {
+.upper_controls {
   float:right;
-  border: 0;
-  background-color: #fff;
-  margin-right: -22px;
-  margin-bottom: 0px;
+  margin: 0px;
+  padding: 0px;
+  margin-right: -10px;
+  margin-top: -18px;
 }
 
 </style>
 
 <div class="timeline_card card" id="entry_{entry.id}">
-    {#if editable}
-      <span class="close" style="float:right; margin-right:-10px; margin-top:-10px;" data-entry-id={entry.id} on:click={doDelete}></span>
-    {/if}
+    <div class="upper_controls">
+      {#if editable}
+        <span class="close" data-entry-id={entry.id} on:click={doDelete}></span>
+      {/if}
+    </div>
     <div class="card_inherent_content" id="entry_content_{entry.id}">
       {#if !showingEmbed}
         {#if entry.title || entry.tags || entry.url}
@@ -214,7 +220,7 @@
               <span class="card_author">{@html entry.author}</span>
               <span class="card_source">{@html entry.source}</span>
               <span class="card_when">
-                {util.formatDateString(entry.when)}
+                <a href="{$page.path}#entry_{entry.id}">{util.formatDateString(entry.when)}</a>
                 {#if entry.originalWhen}
                   <span class="card_originalWhen" title="Originally parsed as {util.formatDateString(entry.originalWhen)}">(*)</span>
                 {/if}

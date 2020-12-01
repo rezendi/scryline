@@ -453,7 +453,7 @@
           ondragover="return false"
         >
           {#if entry.chapter && (i==0 || entry.chapter != line.entries[i-1].chapter)}
-            <div class="timeline_chapter"><a id="chapter-link-{entry.id}" name="chapter-{util.slugize(entry.chapter)}-{entry.id}" href="{$page.path}#chapter-{util.slugize(entry.chapter)}-{entry.id}" on:click={(event) => doChapter(event, entry)}>{entry.chapter}</a></div>
+            <div class="timeline_chapter"><a id="chapter-link-{entry.id}" href="{$page.path}#chapter-link-{entry.id}" on:click={(event) => doChapter(event, entry)}>{entry.chapter}</a></div>
           {/if}
           <Card entry={entry} own={usersLine} editable={userEditable} on:refresh={refresh} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>
         </div>

@@ -12,29 +12,18 @@ import util from "../components/util";
 	});
 	let data = req.body;
 	try {
-
-		let email = data.email;
-		delete data['email'] // don't save to file for privacy reasons
-		if (!email) {
-			throw new Error("No email");
-		}
-
 		data.slug = util.slugize(data.title);
 		let yamlData = yaml.safeDump(data);
 
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
-		let user =req.session.slUser;
+		let user = req.session.slUser;
 		let pathPrefix = user.username ? user.username : util.hash8(req.session.slUser.email)
 		let path = `lines/${pathPrefix}/${data.slug}.yaml`;
 
 		let toPut = {
 			message: "Scryline update",
 			content: base64.encode(yamlData),
-			committer: {
-				name: "Scryline",
-				email: email
-			}
 		};
 
 		let originalSlug = '';
@@ -44,7 +33,6 @@ import util from "../components/util";
 			doRename = originalSlug != data.slug;
 			console.log("doRename", originalSlug);
 		}
-
 		if (!doRename) {
 			if (data.sha && data.sha.length > 0) {
 				toPut['sha'] = data.sha;
@@ -61,7 +49,7 @@ import util from "../components/util";
 			body: JSON.stringify(toPut)
 		});
 		let json = await response.json();
-		console.log("gh json", json);
+		// console.log("gh json", json);
 		if (json.message) {
 			json.success = false;
 			json.error = json.message;

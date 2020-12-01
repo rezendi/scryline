@@ -14,12 +14,16 @@ import util from "../components/util";
 	try {
 		data.slug = util.slugize(data.title);
 		console.log("slug", data.slug);
-		let yamlData = yaml.safeDump(data);
+		let yamlData = yaml.safeDump(data, {skipInvalid:true});
+		console.log("yamled");
 
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
+		console.log("repo", repo);
 		let user = req.session.slUser;
+		console.log("user", user);
 		let pathPrefix = user.username ? user.username : util.hash8(req.session.slUser.email)
+		console.log("prefix", pathPrefix);
 		let path = `lines/${pathPrefix}/${data.slug}.yaml`;
 		console.log("path", path);
 
@@ -41,7 +45,7 @@ import util from "../components/util";
 			}
 		}
 
-		console.log("posting to GH", toPut);
+		// console.log("posting to GH", toPut);
 		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
 			method: 'PUT',
 			headers: {
@@ -77,7 +81,7 @@ import util from "../components/util";
 			let dJSON = await dResponse.json();
 		}
 
-		DB.saveLine(data.title, data.userid, json.content.sha, data.originalTitle);
+		await DB.saveLine(data.title, data.userid, json.content.sha, data.originalTitle);
 		json.path = pathPrefix;
 		console.log("saved", pathPrefix);
 		res.end(JSON.stringify(json));

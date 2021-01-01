@@ -377,6 +377,7 @@
 .timeline_header {
   display:flex;
   justify-content:space-between;
+  background-color: #f0f0f0;
   z-index: 1;
 }
 
@@ -423,11 +424,13 @@
     <span class="spacer">&nbsp;</span>
     <button class="author_button" id="restoreLocalVersion" style="display:none;" on:click={restoreLocalVersion}>Restore</button>
     <span class="spacer">&nbsp;</span>
-    <button class="author_button" on:click={sortList} disabled={line.entries.length<2}>Sort</button>
-    <button class="author_button" on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
+    <button class="author_button" id="saveLine" on:click={save} disabled>Save</button>
+    <span class="spacer">&nbsp;</span>
     <button class="author_button" id="undo" on:click={undo} disabled>Undo</button>
     <button class="author_button" id="redo" on:click={redo} disabled>Redo</button>
-    <button class="author_button" id="saveLine" on:click={save} disabled>Save</button>
+    <span class="spacer">&nbsp;</span>
+    <button class="author_button" on:click={sortList} disabled={line.entries.length<2}>Sort</button>
+    <button class="author_button" on:click={reverseList} disabled={line.entries.length<2}>Reverse</button>
     <input id="adder" placeholder="Add URLs here" name="url" size="40" bind:value={newUrl} on:change={addUrl} on:input={urlChanged}/>
   </div>
 {:else}

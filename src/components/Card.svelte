@@ -176,6 +176,7 @@
   user-select: text;
   -webkit-user-select: text;
   -moz-user-select: text;
+  font-size:smaller;
 }
 
 .card_commentary {

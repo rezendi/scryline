@@ -467,5 +467,5 @@
 {#if usersLine}
   <button style="float:right;" on:click={deleteLine}>Delete This Timeline</button>
 {/if}
-<button on:click={goToRepo}>View data on GitHub</button>
+<button on:click={goToRepo}>View raw data on GitHub</button>
 <br/>

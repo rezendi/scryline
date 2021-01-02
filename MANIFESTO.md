@@ -12,16 +12,15 @@ Reddit threads, and more.
 "But surely the job of journalism is to make sense of all this!" you cry.
 Yes, theoretically... but journalism as we know it suffers from a number
 of flaws which make it unsuitable for this sort of synthesis:
-* Journalists are often loath to link even to primary sources, much less
+* Journalists are often loath even to link to primary sources, much less
 their competitors.
 * Journalism (and journalistic systems) still have a "dead tree" attitude
-that articles are individual, self-contained, and once published, set in stone
-but for corrections, rather than treating them as connected nodes in a network
-of living (versioned) documents.
+towards what they publish: articles are individual, self-contained, and set
+in stone but for corrections, rather than connected nodes in a network of
+living (versioned) documents.
 * The open-source concept of incorporating suggestions from strangers into
 their articles after publication is unthinkable anathema.
-* Aggregation and synthesis of others' articles is wrongly considered
-inferior, low-class work.
+* Aggregation and synthesis of others' articles is considered inferior, low-class work.
 * Readers frequently discover individual articles, often on social media,
 without knowing important background or context. Often there is no good single
 source to link to for an overview of that context. This scattershot
@@ -38,23 +37,26 @@ in which articles, papers, tweets, preprints, blog posts, etc., are arranged
 in (mostly) chronological order, and annotated with brief commentary. Scryline
 is a home for such timelines.
 
-People now pick and choose their news as if from a buffet. Those who subscribe
+Today's readers pick and choose their news as if from a buffet. Those who subscribe
 to alternate realities will not be brought back by the offer of a few random
 morsels from the real world. Rather, they have to be shown that real news is a
-self-consistent web of interlocking facts and evidence, whereas artificial
-realities are incoherent, self-contradictory, and draw no distinction between
-allegations, insinuations, and evidence.
+self-consistent web of interlocking facts and evidence, whereas bad-faith news
+is incoherent, self-contradictory, and draws no distinction between allegations,
+insinuations, and evidence.
 
 To do that, you need the very thing our media kaleidoscope now lacks:
 _context_. A series of citations showing how real news grapples with
-evidence and comes to a good-faith understanding over time, and/or how the erratic
+evidence, and comes to a good-faith understanding over time, and/or how the erratic
 claims of conspiracy theorists are driven by bad faith. That kind of context is
 what Scryline is meant to help provide.
 
 Scryline is also built atop _hosted data_. Its timelines are stored as YAML, a
 human-readable data-serialization format, in GitHub repos. A single common
 public repository is used by default, but it is also possible to use personal
-and/or private repos. As such, Scryline's data is always accessible to its
-users/creators, even if Scryline itself were to perish; is automatically
-available, with complete version histories, via GitHub's rich UI and API; and
-is easily transferable to other services such as GitLab.
+and/or private repos. As such, Scryline's data:
+* is always accessible to its users/creators, even if Scryline itself were to perish
+* is automatically available, with complete version histories, via GitHub's rich UI and API
+* natively incorporates GitHub's collaborative "fork / pull-request / merge" paradigm
+* and is easily transferable to other services such as GitLab.
+
+The word "scry" means "_to use divination to discover hidden knowledge or future events_."

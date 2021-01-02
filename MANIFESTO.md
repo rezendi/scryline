@@ -3,10 +3,11 @@ The Scryline Manifesto
 ----------------------
 
 Our world has splintered into different realities. As 2020's pandemic and
-election show, what we once thought of as "the news" has splintered into a
+election show, what we once thought of as "the news" has fragmented into a
 bewildering kaleidoscope of traditional media articles, online upstarts,
 scientific studies, legal filings, experts / pundits on Twitter, eyewitness
-YouTube clips, Medium posts, Substack essays, Reddit threads, and more.
+YouTube clips, hectoring YouTube lectures, Medium posts, Substack essays,
+Reddit threads, and more.
 
 "But surely the job of journalism is to make sense of all this!" you cry.
 Yes, theoretically... but journalism as we know it suffers from a number
@@ -36,6 +37,19 @@ The most obvious and intuitive form of aggregation is an _annotated timeline_,
 in which articles, papers, tweets, preprints, blog posts, etc., are arranged
 in (mostly) chronological order, and annotated with brief commentary. Scryline
 is a home for such timelines.
+
+People now pick and choose their news as if from a buffet. Those who subscribe
+to alternate realities will not be brought back by the offer of a few random
+morsels from the real world. Rather, they have to be shown that real news is a
+self-consistent web of interlocking facts and evidence, whereas artificial
+realities are incoherent, self-contradictory, and draw no distinction between
+allegations, insinuations, and evidence.
+
+To do that, you need the very thing our media kaleidoscope now lacks:
+_context_. A series of citations showing how real news grapples with
+evidence and comes to a good-faith understanding over time, and/or how the erratic
+claims of conspiracy theorists are driven by bad faith. That kind of context is
+what Scryline is meant to help provide.
 
 Scryline is also built atop _hosted data_. Its timelines are stored as YAML, a
 human-readable data-serialization format, in GitHub repos. A single common

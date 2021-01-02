@@ -10,10 +10,24 @@ Email <a href="mailto:info@scryline.com">info@scryline.com</a>.
 
 <p>
 Our world has splintered into different realities. As 2020's pandemic and
-election show, what we once thought of as "the news" has splintered into a
+election show, what we once thought of as "the news" has fragmented into a
 bewildering kaleidoscope of traditional media articles, online upstarts,
 scientific studies, legal filings, experts / pundits on Twitter, eyewitness
-YouTube clips, Medium posts, Substack essays, Reddit threads, and more.
+YouTube clips, hectoring YouTube lectures, Medium posts, Substack essays,
+Reddit threads, and more.
+
+As a result, people now pick and choose their news as if from a buffet. Those
+who subscribe to alternate realities will not be brought back by the offer of
+a few random morsels from the real world. Rather, they have to be shown that
+real news is a coherent, self-consistent web of interlocking facts, whereas
+artificial "realities" are incoherent, self-contradictory, and draw no
+distinction between allegations, insinuations, and evidence.
+
+What can help is a series of links/citations showing how real news grapples
+with and comes to an understanding of the available evidence, over time, or a
+series showing the ongoing bad faith and erratic claims of alternative and/or
+conspiracy theorists. But to do that, you need the very thing our media
+kaleidoscope now lacks: <i>context</i>.
 </p>
 
 <p>
@@ -49,6 +63,24 @@ in which articles, papers, tweets, preprints, blog posts, etc., are arranged
 in (mostly) chronological order, and annotated with brief commentary. Scryline
 is a home for such timelines.
 </p>
+
+<p>
+People now pick and choose their news as if from a buffet. Those who subscribe
+to alternate realities will not be brought back by the offer of a few random
+morsels from the real world. Rather, they have to be shown that real news is a
+self-consistent web of interlocking facts and evidence, whereas artificial
+realities are incoherent, self-contradictory, and draw no distinction between
+allegations, insinuations, and evidence.
+</p>
+
+<p>
+To do that, you need the very thing our media kaleidoscope now lacks:
+<i>context</i>. A series of citations showing how real news grapples with
+evidence and comes to a good-faith understanding over time, and/or how the erratic
+claims of conspiracy theorists are driven by bad faith. That kind of context is
+what Scryline is meant to help provide.
+</p>
+
 
 <p>
 Scryline is also built atop <i>hosted data</i>. Its timelines are stored as YAML, a

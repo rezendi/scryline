@@ -56,8 +56,8 @@ subscribe to alternate realities will not be brought back by the offer of
 a few random morsels from the real world. To do that, you need the thing our
 media kaleidoscope lacks: <i>context</i>. Citations showing how real news is a
 self-consistent web of interlocking facts and evidence, whereas bad-faith
-"news" is incoherent, self-contradictory, and treats allegations and
-insinuations like evidence. That context is what Scryline is meant to help provide.
+"news" pretends allegations and insinuations are the same as evidence. That
+context is what Scryline is meant to help provide.
 </p>
 
 <p>

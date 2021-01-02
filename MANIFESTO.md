@@ -6,7 +6,7 @@ Our world has splintered into different realities. As 2020's pandemic and
 election show, what we once thought of as "the news" has fragmented into a
 bewildering kaleidoscope of traditional media articles, online upstarts,
 scientific studies, legal filings, experts / pundits on Twitter, eyewitness
-YouTube clips, hectoring YouTube lectures, Medium posts, Substack essays,
+YouTube clips, hectoring YouTube lectures, Medium posts, Substack newsletters,
 Reddit threads, and more.
 
 "But surely the job of journalism is to make sense of all this!" you cry.

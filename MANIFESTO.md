@@ -37,23 +37,18 @@ in which articles, papers, tweets, preprints, blog posts, etc., are arranged
 in (mostly) chronological order, and annotated with brief commentary. Scryline
 is a home for such timelines.
 
-Today's readers pick and choose their news as if from a buffet. Those who subscribe
-to alternate realities will not be brought back by the offer of a few random
-morsels from the real world. They have to be shown that real news is a
-self-consistent web of interlocking facts and evidence, whereas bad-faith "news"
-is incoherent, self-contradictory, and draws no distinction between allegations,
-insinuations, and evidence.
+Today's readers pick and choose their news as if from a buffet. Those who
+subscribe to alternate realities will not be brought back by the offer of
+a few random morsels from the real world. To do that, you need the thing our
+media kaleidoscope lacks: _context_. Citations showing how real news is a
+self-consistent web of interlocking facts and evidence, whereas bad-faith
+"news" is incoherent, self-contradictory, and treats allegations and
+insinuations like evidence. That context is what Scryline is meant to help provide.
 
-To do that, you need the very thing our media kaleidoscope now lacks:
-_context_. Series of citations showing how real news grapples with real
-evidence, and comes to a good-faith understanding over time, while the claims of
-conspiracy theorists are senseless and/or deceptive. That kind of context is
-what Scryline is meant to help provide.
-
-Scryline is also built atop _self-hosted data_. Its timelines are stored as YAML, a
-human-readable data-serialization format, in GitHub repos. A single common
-public repository is used by default, but it is also possible to use personal
-and/or private repos. As such, Scryline's data:
+Scryline is also built atop _self-hosted data_. Its timelines are stored as
+YAML, a human-readable data-serialization format, in GitHub repos. A single
+common public repository is used by default, but it is also possible to use
+personal and/or private repos. As such, Scryline's data:
 * is always accessible to its users/creators, even if Scryline itself were to perish
 * is automatically available, with complete version histories, via GitHub's rich UI and API
 * natively incorporates GitHub's collaborative "fork / pull-request / merge" paradigm

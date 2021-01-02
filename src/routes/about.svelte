@@ -51,20 +51,13 @@ is a home for such timelines.
 </p>
 
 <p>
-Today's readers pick and choose their news as if from a buffet. Those who subscribe
-to alternate realities will not be brought back by the offer of a few random
-morsels from the real world. They have to be shown that real news is a
-self-consistent web of interlocking facts and evidence, whereas bad-faith "news"
-is incoherent, self-contradictory, and draws no distinction between allegations,
-insinuations, and evidence.
-</p>
-
-<p>
-To do that, you need the very thing our media kaleidoscope now lacks:
-<i>context</i>. Series of citations showing how real news grapples with real
-evidence, and comes to a good-faith understanding over time, while the claims of
-conspiracy theorists are senseless and/or deceptive. That kind of context is
-what Scryline is meant to help provide.
+Today's readers pick and choose their news as if from a buffet. Those who
+subscribe to alternate realities will not be brought back by the offer of
+a few random morsels from the real world. To do that, you need the thing our
+media kaleidoscope lacks: <i>context</i>. Citations showing how real news is a
+self-consistent web of interlocking facts and evidence, whereas bad-faith
+"news" is incoherent, self-contradictory, and treats allegations and
+insinuations like evidence. That context is what Scryline is meant to help provide.
 </p>
 
 <p>

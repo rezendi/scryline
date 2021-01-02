@@ -24,7 +24,7 @@ console.log("running in", process.env.NODE_ENV);
 polka()
 	.use(
 		compression({ threshold: 0 }),
-		json(),
+		json({limit: '50mb'}),
 		session({
 			store: sessionStore,
 			secret: process.env.SESSION_SECRET,

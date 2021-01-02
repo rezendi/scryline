@@ -39,8 +39,8 @@ Reddit threads, and more.
 Scryline is built on the precept that aggregation is not merely useful; in
 today's fragmented media world, to provide real context and understanding, it
 is essential. This makes tools which enable collaborative aggregation highly
-desirable. People already try to use Twitter threads, Wikipedia lists. Medium
-tags, etc., for this purpose; but all are ill-suited to the task.
+desirable. People try to use Twitter threads, Wikipedia lists. Medium tags,
+etc., but none are well designed for this purpose.
 </p>
 
 <p>
@@ -53,25 +53,25 @@ is a home for such timelines.
 <p>
 Today's readers pick and choose their news as if from a buffet. Those who subscribe
 to alternate realities will not be brought back by the offer of a few random
-morsels from the real world. Rather, they have to be shown that real news is a
-self-consistent web of interlocking facts and evidence, whereas bad-faith news
+morsels from the real world. They have to be shown that real news is a
+self-consistent web of interlocking facts and evidence, whereas bad-faith "news"
 is incoherent, self-contradictory, and draws no distinction between allegations,
 insinuations, and evidence.
 </p>
 
 <p>
 To do that, you need the very thing our media kaleidoscope now lacks:
-<i>context</i>. A series of citations showing how real news grapples with
-evidence, and comes to a good-faith understanding over time, and/or how the erratic
-claims of conspiracy theorists are driven by bad faith. That kind of context is
+<i>context</i>. Series of citations showing how real news grapples with real
+evidence, and comes to a good-faith understanding over time, while the claims of
+conspiracy theorists are senseless and/or deceptive. That kind of context is
 what Scryline is meant to help provide.
 </p>
 
 <p>
-Scryline is also built atop <i>hosted data</i>. Its timelines are stored as YAML, a
-human-readable data-serialization format, in GitHub repos. A single common
-public repository is used by default, but it is also possible to use personal
-and/or private repos. As such, Scryline's data:
+Scryline is also built atop <i>self-hosted data</i>. Its timelines are stored as
+YAML, a human-readable data-serialization format, in GitHub repos. A single
+common public repository is used by default, but it is also possible to use
+personal and/or private repos. As such, Scryline's data:
 </p>
 <ul>
     <li>will always be accessible to its users/creators, even if Scryline itself were to perish</li>

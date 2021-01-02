@@ -29,7 +29,7 @@ dissemination contributes to the spread of mis- and disinformation.
 Scryline is built on the precept that aggregation is not merely useful; in
 today's fragmented media world, to provide real context and understanding, it
 is essential. This makes tools which enable collaborative aggregation highly
-desirable. People try to use Twitter threads, Wikipedia lists. Medium tags,
+desirable. People try to use Twitter threads, Wikipedia lists, Reddit posts,
 etc., but none are well designed for this purpose.
 
 The most obvious and intuitive form of aggregation is an _annotated timeline_,

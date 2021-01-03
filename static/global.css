@@ -49,9 +49,6 @@ a {
 	display: var(--timeDisplay, inline-flex);
 	padding: .5rem 1.5rem;
     background-color: var(--uiTimelineMainColor);
-  }
-
-  .timeline_chapter a {
 	text-decoration: none;
 	font-size: .8rem;
 	font-weight: 400;

@@ -327,7 +327,6 @@
     line.entries.forEach((lineEntry) => {
         if (lineEntry.chapter) {
           // changes only when not empty
-          console.log("target chapter found");
           inTargetChapter = lineEntry.chapter == entry.chapter;
           if (inTargetChapter) {
             return doMethod(`entry_${lineEntry.id}`);
@@ -337,7 +336,7 @@
           doMethod(`element_${lineEntry.id}`);
         }
     });
-    event.target.innerHTML = closing ? entry.chapter + " +" : entry.chapter;
+    event.target.innerHTML = closing ? `${entry.chapter} +` : entry.chapter
   }
 
   /* on mount */
@@ -455,7 +454,7 @@
           ondragover="return false"
         >
           {#if entry.chapter && (i==0 || entry.chapter != line.entries[i-1].chapter)}
-            <div class="timeline_chapter"><a id="chapter-link-{entry.id}" href="{$page.path}#chapter-link-{entry.id}" on:click={(event) => doChapter(event, entry)}>{entry.chapter}</a></div>
+            <a class="timeline_chapter" id="chapter-link-{entry.id}" href="{$page.path}#chapter-link-{entry.id}" on:click={(event) => doChapter(event, entry)}>{entry.chapter}</a>
           {/if}
           <Card entry={entry} own={usersLine} editable={userEditable} on:refresh={refresh} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>
         </div>

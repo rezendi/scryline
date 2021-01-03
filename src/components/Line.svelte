@@ -321,7 +321,7 @@
   const doChapter = (event, entry:Entry) => {
     event.preventDefault();
     let text = event.target.innerHTML;
-    let closing:boolean = !text.endsWith(" +");
+    let closing:boolean = !event.target.style.textDecoration;
     let doMethod = closing ? doHide : doShow;
     let inTargetChapter = false;
     line.entries.forEach((lineEntry) => {
@@ -336,7 +336,7 @@
           doMethod(`element_${lineEntry.id}`);
         }
     });
-    event.target.innerHTML = closing ? `${entry.chapter} +` : entry.chapter
+    event.target.style.textDecoration = closing ? "underline" : "";
   }
 
   /* on mount */
@@ -466,5 +466,6 @@
 {#if usersLine}
   <button style="float:right;" on:click={deleteLine}>Delete This Timeline</button>
 {/if}
+<br/>
 <button on:click={goToRepo}>View raw data on GitHub</button>
 <br/>

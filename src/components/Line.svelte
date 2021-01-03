@@ -318,6 +318,18 @@
     }
   }
 
+  const getChapterFor = (idx) => {
+    if (idx < 0) {
+      return '';
+    }
+    for (var j=idx; j>=0; j--) {
+      if (line.entries[j].chapter) {
+        return line.entries[j].chapter;
+      }
+    }
+    return '';
+  }
+
   const doChapter = (event, entry:Entry) => {
     event.preventDefault();
     let text = event.target.innerHTML;
@@ -453,7 +465,7 @@
           on:dragenter={() => hovering = i}
           ondragover="return false"
         >
-          {#if entry.chapter && (i==0 || entry.chapter != line.entries[i-1].chapter)}
+          {#if getChapterFor(i) != getChapterFor(i-1)}
             <a class="timeline_chapter" id="chapter-link-{entry.id}" href="{$page.path}#chapter-link-{entry.id}" on:click={(event) => doChapter(event, entry)}>{entry.chapter}</a>
           {/if}
           <Card entry={entry} own={usersLine} editable={userEditable} on:refresh={refresh} on:delete={deleteEntry} on:insertCommentsAfter={insertCommentsAfter}/>

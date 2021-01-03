@@ -112,11 +112,12 @@
       }
       let newEntry = new Entry({ id: nextId(), ...metadata });
       console.log("got", newEntry);
-      let newEntries = line.entries;
-      newEntries.unshift(newEntry);
-      line.entries = newEntries;
-      invalidate();
+      let entries = line.entries;
+      let reversed = entries.length > 0 && util.parseDate(entries[0].when) > util.parseDate(entries[entries.length-1].when)
+      entries.unshift(newEntry);
+      line.entries = entries;
       sortList();
+      if (reversed) reverseList();
       newUrl = '';
       setTimeout(() => {
         document.getElementById(`entry_${newEntry.id}`).scrollIntoView();
@@ -147,7 +148,7 @@
       if (a.when=="" || b.when=="") {
         return 0;
       }
-      return util.parseDate(a.when) < util.parseDate(b.when) ? 1 : -1
+      return util.parseDate(a.when) > util.parseDate(b.when) ? 1 : -1
     });
     for (const f of getAtemporal()) {
         let idx = sorted.findIndex(a => f.previousId == a.id);
@@ -318,7 +319,7 @@
     }
   }
 
-  const getChapterFor = (idx) => {
+  const getChapterFor = (idx:Number) => {
     if (idx < 0) {
       return '';
     }

@@ -37,7 +37,7 @@ polka()
 		sirv('static', { dev: process.env.NODE_ENV === 'development' }),
 		sapper.middleware({
 			session: (req, res) => {
-				return { slUser: req.session.slUser || { email:''}, test_mode:process.env.SAPPER_ENV=="test" } };
+				return { slUser: req.session.slUser || { email:''}, test_mode:process.env.SAPPER_ENV=="test" };
 			}
 		}),
 	)

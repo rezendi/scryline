@@ -477,7 +477,7 @@
 </Modal> 
 
 {#if usersLine}
-  <button style="float:right;" on:click={deleteLine}>Delete This Timeline</button>
+  <button id="deleteLine" style="float:right;" on:click={deleteLine}>Delete This Timeline</button>
 {/if}
 <br/>
 <button on:click={goToRepo}>View raw data on GitHub</button>

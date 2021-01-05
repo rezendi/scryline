@@ -1,13 +1,15 @@
 {
-  "name": "TODO",
-  "description": "TODO",
+  "name": "Scryline",
+  "description": "Make sense of the world.",
   "version": "0.0.1",
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build --legacy",
     "export": "sapper export --legacy",
     "start": "node __sapper__/build",
-    "validate": "svelte-check --ignore src/node_modules/@sapper"
+    "validate": "svelte-check --ignore src/node_modules/@sapper",
+    "test": "SAPPER_ENV=test sapper dev",
+    "cypress:open": "cypress open"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

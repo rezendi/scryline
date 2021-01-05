@@ -1,3 +1,21 @@
+<script context="module" lang="ts">
+	export async function preload( page, session ) {
+        return { testMode: session.test_mode }
+    }
+</script>
+
+<script lang="ts">
+  export let testMode;
+  async function loginTestMode() {
+		let response =  await fetch('/test.json', {
+			method: 'POST',
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ login:true })
+		});
+		console.log("login with test mode");
+	}
+</script>
+
 <svelte:head>
 	<title>About</title>
 </svelte:head>
@@ -5,6 +23,10 @@
 <h2>Contact Scryline</h2>
 
 Email <a href="mailto:info@scryline.com">info@scryline.com</a>.
+
+{#if testMode}
+<button on:click={loginTestMode}>login_test</button>
+{/if}
 
 <h2>The Scryline Manifesto</h2>
 

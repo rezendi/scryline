@@ -42,6 +42,9 @@
 				}
 			} else {
 				console.log("logout state change");
+				if ($session.test_mode) {
+					return;
+				}
 				let response =  await fetch('/session.json', {
 					method: 'DELETE',
 					headers: { "Content-Type": "application/json" },
@@ -92,6 +95,16 @@
 				alert(`Signin error: ${error.message}`);
 			}
 		}
+	}
+
+	async function loginTestMode() {
+		let response =  await fetch('/test.json', {
+			method: 'POST',
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ login:true })
+		});
+		loggedIn=true;
+		console.log("login with test mode");
 	}
 
 	function goToMy() {
@@ -183,7 +196,7 @@
 						<button class="defaultButton" on:click={logout}>Logout</button>
 					</div>
 				</Overlay>
-				<button class="defaultButton" on:click={newLine}>New</button>
+				<button id="new_line" class="defaultButton" on:click={newLine}>New</button>
 			{:else}
 				<Overlay closeOnClickOutside>
 					<button slot="parent" class="defaultButton" let:toggle on:click={toggle}>Login &#x25BC;</button>
@@ -192,6 +205,9 @@
 						<button on:click={loginWithGitHub}>GitHub</button>
 					</div>
 				</Overlay>
+				{#if $session.test_mode}
+				<button id="login_test" on:click={loginTestMode}>login_test</button>
+				{/if}
 			{/if}
 		</li>
 	</ul>

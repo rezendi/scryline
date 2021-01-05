@@ -6,14 +6,6 @@
 
 <script lang="ts">
   export let testMode;
-  async function loginTestMode() {
-		let response =  await fetch('/test.json', {
-			method: 'POST',
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ login:true })
-		});
-		console.log("login with test mode");
-	}
 </script>
 
 <svelte:head>
@@ -23,10 +15,6 @@
 <h2>Contact Scryline</h2>
 
 Email <a href="mailto:info@scryline.com">info@scryline.com</a>.
-
-{#if testMode}
-<button on:click={loginTestMode}>login_test</button>
-{/if}
 
 <h2>The Scryline Manifesto</h2>
 
@@ -92,3 +80,6 @@ personal and/or private repos. As such, Scryline's data:
 </ul>
 
 <p>The word "scry" means "<em>to use divination to discover hidden knowledge or future events</em>."</p>
+
+{#if testMode}test_mode=true{/if}
+

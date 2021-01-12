@@ -29,7 +29,7 @@ export async function get(req, res, next) {
 	}
 
 	try {
-		let email = req.session.slUser ? req.session.slUser.email || '' : '';
+		let email = req.session.sUser ? req.session.sUser.email || '' : '';
 		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/${path}/${slug}.yaml`, {
 			method: 'GET',
 			headers: {
@@ -53,7 +53,7 @@ import DB from '../../components/DB.js';
 
 async function getIndex(slug, req, res, next) {
 	try {
-		let uid = slug=="my" ? req.session.slUser.uid : null;
+		let uid = slug=="my" ? req.session.sUser.uid : null;
 		let rows = await DB.getLines(uid);
 		let lines = rows.map(row => { return {
 			uid: row.user_id,

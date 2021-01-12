@@ -28,13 +28,13 @@
 			return alert(`Account link error: ${error.message}`);
 		}
 		let response =  await fetch('/linkUser.json', {
-				method: 'POST',
+			method: 'POST',
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({result, ...{site:site}})
 		});
 		let json = await response.json();
 		if (json.success === false) {
-			alert("GitHub link error");
+			alert("Link user error");
 		}
 	}
 
@@ -53,7 +53,7 @@
 		await firebase.auth().currentUser.unlink(provider.providerId);
 		firebase.auth().currentUser.reload();
 		let response =  await fetch('/linkUser.json', {
-				method: 'DELETE',
+			method: 'DELETE',
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({site})
 		});
@@ -83,7 +83,7 @@
 		});
 		let json = await response.json();
 		if (json.success) {
-			$session.slUser.username = json.username;
+			$session.sUser.username = json.username;
 			usernameSet = true;
 		}
     }
@@ -92,12 +92,12 @@
     let identities = [];
     import { onMount } from 'svelte';
     onMount(async () => {
-		if (!$session.slUser.uid) {
+		if (!$session.sUser.uid) {
 			return location.href = "/";
 		}
-		username = $session.slUser.username || '';
+		username = $session.sUser.username || '';
 		usernameSet = username.length > 3;
-		identities = $session.slUser.identities || [];
+		identities = $session.sUser.identities || [];
 		// console.log("identities", identities);
 		let response = await fetch('/lines/all/my.json');
 		let json = await response.json();
@@ -111,9 +111,9 @@
 
 <h2>My Account</h2>
 
-<b>Name</b> {$session.slUser.name}
-<b>Email</b> {$session.slUser.email}
-<b>GitHub</b> {$session.slUser.github || 'n/a'}
+<b>Name</b> {$session.sUser.name}
+<b>Email</b> {$session.sUser.email}
+<b>GitHub</b> {$session.sUser.github || 'n/a'}
 
 {#if identities.includes("google.com")}
 	{#if identities.includes("github.com")}

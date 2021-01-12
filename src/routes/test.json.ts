@@ -1,6 +1,6 @@
 export async function post(req, res, next) {
     console.log("test called");
-    req.session.slUser = {
+    req.session.sUser = {
         uid: "test",
         email: "test@example.com",
         name: "test user",

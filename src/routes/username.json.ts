@@ -27,7 +27,7 @@ export async function post(req, res, next) {
     });
     try {
         let username = req.body.username;
-        let row = await DB.setUsername(req.session.slUser.uid, username);
+        let row = await DB.setUsername(req.session.sUser.uid, username);
         res.end(JSON.stringify({success:true, username:row.username}));
         console.log("username", username);
     } catch(error) {

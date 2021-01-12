@@ -11,7 +11,7 @@ export async function post(req, res, next) {
         // TODO check the token is valid
         let username = json.result.additionalUserInfo.username;
         let token = json.result.credential.oauthAccessToken;
-        let uid = req.session.slUser.uid || json.result.user.uid
+        let uid = req.session.sUser.uid || json.result.user.uid
         console.log("GH uid", uid);
         await DB.saveUserGitHubInfo(uid, username, token);
         res.end(JSON.stringify({success:true}));
@@ -31,11 +31,11 @@ export async function del(req, res, next) {
   try {
     // console.log("json", json);
     if (json.site=="github.com") {
-      await DB.saveUserGitHubInfo(req.session.slUser.uid, '', '');
+      await DB.saveUserGitHubInfo(req.session.sUser.uid, '', '');
     }
-    let idsIdx = req.session.slUser.identities.indexOf(json.site);
+    let idsIdx = req.session.sUser.identities.indexOf(json.site);
     if (idsIdx >= 0) {
-      req.session.slUser.identities.splice(idsIdx, 1);
+      req.session.sUser.identities.splice(idsIdx, 1);
     }
     res.end(JSON.stringify({success:true}));
   } catch(error) {

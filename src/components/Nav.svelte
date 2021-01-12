@@ -12,7 +12,7 @@
 	let loggedIn;
 	import { onMount } from 'svelte';
 	onMount(async () => {
-		loggedIn = $session.slUser.uid;
+		loggedIn = $session.sUser.uid ? true : false;
 		var firebaseConfig = {
 			apiKey: "AIzaSyC0pWxpoHg9YahhjASvv2RSsM-o43bcyXk",
 			authDomain: "scryliner.firebaseapp.com",
@@ -36,10 +36,11 @@
 				});
 				let json = await response.json();
 				if (json.success) {
-					$session.slUser = json.slUser;
+					$session.sUser = json.sUser;
 				} else {
 					alert("Login error");
 				}
+				loggedIn = true;
 			} else {
 				console.log("logout state change");
 				if ($session.test_mode) {
@@ -51,12 +52,12 @@
 				});
 				let json = await response.json();
 				if (json.success) {
-					$session.slUser = {email:""};
+					$session.sUser = {email:""};
 				} else {
 					alert("Logout error");
 				}
+				loggedIn = false;
 			}
-			loggedIn = $session.slUser.uid;
 		});
 	});
 

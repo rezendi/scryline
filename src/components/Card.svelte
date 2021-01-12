@@ -9,7 +9,7 @@
 
     import { stores } from '@sapper/app';
     const { page, session } = stores();
-    let userid = $session.slUser.uid;
+    let userid = $session.sUser.uid;
     let hasComments = entry.comments ? entry.comments.replace(/(<([^>]+)>)/gi, "").trim().length > 0 : false;
 
     function getMySuggestions() {

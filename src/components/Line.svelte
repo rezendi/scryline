@@ -13,10 +13,10 @@
 
   import { stores } from '@sapper/app';
   const { page, session } = stores();
-  let usersLine = !line.userid || line.userid == $session.slUser.uid;
+  let usersLine = !line.userid || line.userid == $session.sUser.uid;
   let userEditable = usersLine || line.editable;
   session.subscribe(value => {
-    usersLine = !line.userid || line.userid == $session.slUser.uid;
+    usersLine = !line.userid || line.userid == $session.sUser.uid;
     userEditable = usersLine || line.editable;
   });
  
@@ -223,9 +223,9 @@
     }
 
     // OK, we're actually going to save it
-    line["email"] = $session.slUser.email;
-    line.userid = $session.slUser.uid;
-    line.byline = $session.slUser.name;
+    line["email"] = $session.sUser.email;
+    line.userid = $session.sUser.uid;
+    line.byline = $session.sUser.name;
     line.editable = false; // TODO make this configurable
     let response = await fetch('/save.json', {
         method: 'POST',
@@ -313,6 +313,18 @@
   const goToRepo = async () => {
     let url = `/save.json?title=${encodeURI(line.title)}&uid=${line.userid}`
     let response = await fetch(url);
+    let json = await response.json();
+    if (json.url) {
+      window.location.href = json.url;
+    }
+  }
+
+  const forkRepo = async () => {
+    let response = await fetch('/fork.json', {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({title:line.title, uid:line.userid})
+    });
     let json = await response.json();
     if (json.url) {
       window.location.href = json.url;
@@ -481,4 +493,5 @@
 {/if}
 <br/>
 <button on:click={goToRepo}>View raw data on GitHub</button>
+<button on:click={forkRepo}>Fork this repo</button>
 <br/>

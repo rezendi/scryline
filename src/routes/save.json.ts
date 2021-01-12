@@ -5,7 +5,7 @@ const base64 = require('universal-base64');
 import DB from '../components/DB';
 import util from "../components/util";
 
-	export async function post(req, res, next) {
+export async function post(req, res, next) {
 	console.log("saving");
 	res.writeHead(200, {
 		'Content-Type': 'application/json'
@@ -17,7 +17,7 @@ import util from "../components/util";
 
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
-		let user = req.session.slUser;
+		let user = req.session.sUser;
 		console.log("user", user.email);
 		let pathPrefix = user.username ? user.username : util.hash8(user.email)
 		let path = `lines/${pathPrefix}/${data.slug}.yaml`;
@@ -95,7 +95,7 @@ export async function del(req, res, next) {
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
 		data.slug = util.slugize(data.title);
-		let user = req.session.slUser;
+		let user = req.session.sUser;
 		let pathPrefix = user.username ? user.username : util.hash8(user.email)
 		let path = `lines/${pathPrefix}/${data.slug}.yaml`;
 		let toDel = {

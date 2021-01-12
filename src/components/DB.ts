@@ -67,28 +67,23 @@ async function getLines(uid:string = null, offset:number = 20) {
     return await db.any(query);
 }
 
-async function saveLine(title:string, userid:string, sha:string, originalTitle:string) {
+async function saveLine(title:string, userid:string, sha:string, metadata:{[key:string]:string}) {
   try {
     let user = await db.oneOrNone("SELECT * FROM Users WHERE uid=$1", userid);
+    let path = user.username ? user.username : util.hash8(user.email);
 
-    let rename = originalTitle && originalTitle != title;
+    let rename = metadata.originalTitle && metadata.originalTitle != title;
+    let originalSlug = rename ? util.slugize(metadata.originalTitle) : util.slugize(title);
     let slug = util.slugize(title);
-    let originalSlug = rename ? util.slugize(originalTitle) : '';
-    let path = user.username ? user.username : util.hash8(user.email); // TODO username
 
-    let existing = null;
-    if (rename) {
-      existing = await db.oneOrNone("SELECT * FROM Lines WHERE user_id=$1 AND slug=$2", [user.id, originalSlug]);
-    } else {
-      existing = await db.oneOrNone("SELECT * FROM Lines WHERE user_id=$1 AND slug=$2", [user.id, slug]);
-    }
+    let existing = await db.oneOrNone("SELECT * FROM Lines WHERE user_id=$1 AND slug=$2", [user.id, originalSlug]);
 
     if (existing) {
-      let query = "UPDATE Lines SET slug = $1, title = $2, path = $3, sha = $4 WHERE user_id = $5 AND slug = $6 RETURNING *"
-      return await db.one(query, [slug, title, path, sha, user.id, rename ? originalSlug : slug]);
+      let query = "UPDATE Lines SET slug = $1, title = $2, path = $3, sha = $4, metadata = $5 WHERE user_id = $6 AND slug = $7 RETURNING *"
+      return await db.one(query, [slug, title, path, sha, metadata, user.id, originalSlug]);
     } else {
-      let query = "INSERT INTO Lines (user_id, slug, title, path, sha) VALUES ($1, $2, $3, $4, $5) RETURNING *";
-      return await db.one(query, [user.id, slug, title, path, sha]);
+      let query = "INSERT INTO Lines (user_id, slug, title, path, sha, metadata) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *";
+      return await db.one(query, [user.id, slug, title, path, sha, metadata]);
     }
   } catch(error) {
     console.log("DB error saving line", error);

@@ -76,7 +76,7 @@ export async function post(req, res, next) {
 			let dJSON = await dResponse.json();
 		}
 
-		await DB.saveLine(data.title, data.userid, json.content.sha, data.originalTitle);
+		await DB.saveLine(data.title, data.userid, json.content.sha, {originalTitle:`${data.originalTitle}`});
 		json.path = pathPrefix;
 		console.log("saved", pathPrefix);
 		res.end(JSON.stringify(json));

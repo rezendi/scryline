@@ -323,7 +323,7 @@
     let response = await fetch('/fork.json', {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({title:line.title, uid:line.userid})
+        body: JSON.stringify({title:line.title, uid:line.userid, line:line})
     });
     let json = await response.json();
     if (json.url) {

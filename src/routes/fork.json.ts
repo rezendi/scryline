@@ -18,6 +18,7 @@ export async function post(req, res, next) {
 		let slug = util.slugize(data.title);
 		let originalUser = await DB.getUserByUID(data.uid);
         let original = await DB.getLineByUserAndSlug(originalUser.id, slug);
+        let originalUsername = originalUser.username ? originalUser.username : util.hash8(originalUser.email);
         
         let branch = original.metadata && original.metadata.branch ? original.metadata.branch : 'main';
         let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/ref/heads/${branch}`);
@@ -39,8 +40,7 @@ export async function post(req, res, next) {
         let newJson = await newResponse.json();
         
         // now save new line to DB
-		await DB.saveLine(data.title, user.uid, data.line.sha, {branch:newBranch});
-
+		await DB.saveLine(data.title, user.uid, data.line.sha, {branch:newBranch, path:originalUsername});
 		res.end(JSON.stringify({success:true, url:newJson.url}));
 	} catch(error) {
         console.log("error", error);

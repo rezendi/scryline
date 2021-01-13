@@ -2,13 +2,13 @@
 	export async function preload() {
 		let response = await this.fetch('/lines/all/all.json');
 		let json = await response.json();
-		let lines: { slug:string; path:string, title:string, sha:string }[] = json.lines;
+		let lines: { slug:string; path:string, title:string, sha:string, branch:string }[] = json.lines;
 		return { lines };
 	}
 </script>
 
 <script lang="ts">
-	export let lines: { slug:string; path:string, title:string, sha:string }[];
+	export let lines: { slug:string; path:string, title:string, sha:string, branch:string }[];
 </script>
 
 <svelte:head>
@@ -23,6 +23,8 @@
 
 <ul>
 	{#each lines as line}
-		<li><a rel="prefetch" href="lines/{line.path}/{line.slug}">{line.title}</a></li>
+		{#if !line.branch }
+			<li><a rel="prefetch" href="lines/{line.path}/{line.slug}">{line.title}</a></li>
+		{/if}
 	{/each}
 </ul>

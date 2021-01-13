@@ -41,7 +41,9 @@ export async function post(req, res, next) {
 		}
 
 		// console.log("posting to GH", toPut);
-		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+		let api_url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+		console.log("put url", api_url);
+		let response = await fetch(api_url, {
 			method: 'PUT',
 			headers: {
 				"Content-Type": "application/json",
@@ -76,7 +78,8 @@ export async function post(req, res, next) {
 			let dJSON = await dResponse.json();
 		}
 
-		await DB.saveLine(data.title, data.userid, json.content.sha, {originalTitle:`${data.originalTitle}`});
+		let metadata = {originalTitle:`${data.originalTitle}`};
+		await DB.saveLine(data.title, data.userid, json.content.sha, metadata);
 		json.path = pathPrefix;
 		console.log("saved", pathPrefix);
 		res.end(JSON.stringify(json));

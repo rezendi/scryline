@@ -149,6 +149,6 @@
 
 <ul>
 	{#each lines as line}
-		<li><a rel="prefetch" href="lines/{line.path}/{line.slug}">{line.slug}</a></li>
+		<li><a rel="prefetch" href="lines/{line.path}/{line.slug}?{line.branch ? 'b=1' : ''}">{line.slug}</a></li>
 	{/each}
 </ul>

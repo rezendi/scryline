@@ -7,7 +7,7 @@
   
   // TODO maintain a separate "status" for the line and key behavior on that, as this all is getting complex
 
-  export let line: { title:string, sha:string, userid:string, byline:string, editable:boolean, entries: Entry[]};
+  export let line: { title:string, sha:string, path:string, branch:string, userid:string, byline:string, editable:boolean, entries: Entry[]};
   let versions:string[] = [JSON.stringify(line)], redoVersions:string[] = [];
   let originalTitle = line.title;
 
@@ -331,7 +331,7 @@
     }
   }
 
-  const getChapterFor = (idx:Number) => {
+  const getChapterFor = (idx) => {
     if (idx < 0) {
       return '';
     }
@@ -495,3 +495,5 @@
 <button on:click={goToRepo}>View raw data on GitHub</button>
 <button on:click={forkRepo}>Fork this repo</button>
 <br/>
+{line.path}
+{line.userid}

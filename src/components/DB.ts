@@ -70,7 +70,11 @@ async function getLines(uid:string = null, offset:number = 20) {
 async function saveLine(title:string, userid:string, sha:string, metadata:{[key:string]:string}) {
   try {
     let user = await db.oneOrNone("SELECT * FROM Users WHERE uid=$1", userid);
-    let path = user.username ? user.username : util.hash8(user.email);
+    var path = user.username ? user.username : util.hash8(user.email);
+    if (metadata.path) {
+      path = metadata.path;
+      delete metadata['path'];
+    }
 
     let rename = metadata.originalTitle && metadata.originalTitle != title;
     let originalSlug = rename ? util.slugize(metadata.originalTitle) : util.slugize(title);

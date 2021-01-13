@@ -7,10 +7,11 @@
       response = await this.fetch(`lines/${path}.json`);
     } else {
       [path, slug] = params.slug;
-      let url = `lines/${path}/${slug}.json?${query.b ? "b=1" : ''}`;
+      let url = `lines/${path}/${slug}.json?${query.b ? "b="+query.b : ''}`;
       response = await this.fetch(url);
     }
     const data = await response.json();
+    data.line.branch = query.b;
 
 		if (response.status === 200 && data.success) {
       return { line : data.line, path:path}

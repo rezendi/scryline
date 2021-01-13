@@ -495,5 +495,3 @@
 <button on:click={goToRepo}>View raw data on GitHub</button>
 <button on:click={forkRepo}>Fork this repo</button>
 <br/>
-{line.path}
-{line.userid}

@@ -35,7 +35,7 @@ export async function get(req, res, next) {
 	if (req.query.b) { // if this is a forked line
 		api_url += `?ref=${slug}%2F${username}`; // our standard for branch names
 	}
-	console.log("api_url", api_url);
+	console.log("get url", api_url);
 
 	try {
 		let email = req.session.sUser ? req.session.sUser.email || '' : '';
@@ -48,11 +48,11 @@ export async function get(req, res, next) {
 			},
 		});
 		let json = await response.json();
-		console.log("json", json);
+		// console.log("json", json);
 		let converted = base64.decode(json.content);
 		let retval = yaml.safeLoad(converted);
 		retval.sha = json.sha;
-		retval.path = json.path.substring(0,json.path.lastIndexOf("/"));
+		retval.path = json.path.substring(json.path.indexOf("/")+1,json.path.lastIndexOf("/"));
 		retval.userid = req.query.b ? user.uid : retval.userid;
 		res.end(JSON.stringify({success:true, line:retval}));
 	} catch(error) {

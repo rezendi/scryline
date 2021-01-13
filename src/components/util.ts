@@ -26,9 +26,17 @@ const hash8 = (str:string) => {
   return sha256(str).substring(0,8);
 }
 
+function getPathFor(user, path) {
+	let defaultPath = user.username ? user.username : hash8(user.email);
+	let finalPath = path ? path : defaultPath;
+	// TODO check user can do this
+	return finalPath;
+}
+
 export default {
     parseDate,
     formatDateString,
     slugize,
-    hash8
+    hash8,
+    getPathFor
 }

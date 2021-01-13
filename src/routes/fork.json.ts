@@ -24,7 +24,6 @@ export async function post(req, res, next) {
         let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/ref/heads/${branch}`);
         let json = await response.json();
         let sha = json.object ? json.object.sha : null;
-        console.log("root branch sha", sha);
 
         let user = req.session.sUser;
         let newBranch = `${slug}/${user.username ? user.username : util.hash8(user.email)}`;

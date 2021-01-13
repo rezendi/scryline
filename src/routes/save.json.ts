@@ -17,16 +17,16 @@ export async function post(req, res, next) {
 
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
-		let user = req.session.sUser;
-		console.log("user", user.email);
-		let path = data.path ? data.path : user.username ? user.username : util.hash8(user.email)
+		let path = util.getPathFor(req.session.sUser, data.path);
 		let suffix = `lines/${path}/${data.slug}.yaml`;
+		let api_url = `https://api.github.com/repos/${owner}/${repo}/contents/${suffix}`;
+		console.log("put url", api_url);
 
 		let toPut = {
 			message: "Scryline update",
 			content: base64.encode(yamlData),
-			branch: 'main',
-			sha: data.sha && data.sha.length > 0 ? data.sha : null
+			sha: data.sha && data.sha.length > 0 ? data.sha : null,
+			branch: 'main'
 		};
 
 		let doRename = false;
@@ -34,20 +34,20 @@ export async function post(req, res, next) {
 		if (data.branch) {
 			console.log("branch", data.branch);
 			toPut.branch = data.branch;
-		} else { // don't let people rename in a branch, too confusing
-			if (data.originalTitle) {
-				originalSlug = util.slugize(data.originalTitle);
-				doRename = originalSlug != data.slug;
-			}
-			if (doRename) {
-				console.log("doRename", originalSlug);
-				delete data['sha'];
-			}
+			// don't let people rename in a branch, too confusing
+			data.title = data.originalTitle ? data.originalTitle : data.title;
+		}
+
+		if (data.originalTitle) {
+			originalSlug = util.slugize(data.originalTitle);
+			doRename = originalSlug != data.slug;
+		}
+		if (doRename) {
+			console.log("doRename", originalSlug);
+			delete toPut["sha"];
 		}
 
 		// console.log("posting to GH", toPut);
-		let api_url = `https://api.github.com/repos/${owner}/${repo}/contents/${suffix}`;
-		console.log("put url", api_url);
 		let response = await fetch(api_url, {
 			method: 'PUT',
 			headers: {
@@ -59,7 +59,7 @@ export async function post(req, res, next) {
 		});
 		let json = await response.json();
 		if (json.message && json.message.length > 0) {
-			console.log("gh json", json);
+			// console.log("gh json", json);
 			json.success = false;
 			json.error = "GH: " + json.message;
 			doRename = false;
@@ -69,9 +69,10 @@ export async function post(req, res, next) {
 			let toDelete = {
 				message: "Scryline file rename",
 				sha: data.sha,
+				branch: toPut.branch
 			};
-			let dPath = `lines/${path}/${originalSlug}.yaml`;
-			let dResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${dPath}`, {
+			let dSuffix = `lines/${path}/${originalSlug}.yaml`;
+			let dResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${dSuffix}`, {
 				method: 'DELETE',
 				headers: {
 					"Content-Type": "application/json",
@@ -103,12 +104,12 @@ export async function del(req, res, next) {
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
 		data.slug = util.slugize(data.title);
-		let user = req.session.sUser;
-		let path = user.username ? user.username : util.hash8(user.email)
+		let path = util.getPathFor(req.session.sUser, data.path);
 		let suffix = `lines/${path}/${data.slug}.yaml`;
 		let toDel = {
 			message: "Scryline delete",
 			sha: data.sha,
+			branch: data.branch ? data.branch : "main"
 		};
 		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${suffix}`, {
 			method: 'DELETE',
@@ -147,3 +148,4 @@ export async function get(req, res, next) {
 		res.end(JSON.stringify({success:false, params:params, error:error}));
 	}
 }
+

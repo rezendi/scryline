@@ -75,7 +75,8 @@
     onMount(async () => {
       if (entry.url.startsWith("https://twitter.com/")) {
         let twitter_id = entry.url.split("/").splice(-1)[0];
-        window.twttr.widgets.createTweet(twitter_id, document.getElementById("entry_content_"+entry.id))
+        let twitter_options = { conversation:'none', dnt:true };
+        window.twttr.widgets.createTweet(twitter_id, document.getElementById("entry_content_"+entry.id), twitter_options)
         .then(res => {
           console.log("tweet added "+twitter_id);
           if (!res) { throw new Error("tweet not added"); }

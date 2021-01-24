@@ -10,6 +10,9 @@ export async function get(req, res, next) {
         if (check.length < 3) {
             return res.end(JSON.stringify({success:false, message:"Minimum length 3 characters"}));
         }
+        if (check.length.indexOf("/") >=0 ) { //TODO: check alphanumeric only
+            return res.end(JSON.stringify({success:false, message:"No slashes"}));
+        }
         let available = await DB.usernameAvailable(check);
         if (!available) {
             return res.end(JSON.stringify({success:false, message:"Not available"}));
@@ -28,6 +31,7 @@ export async function post(req, res, next) {
     try {
         let username = req.body.username;
         let row = await DB.setUsername(req.session.sUser.uid, username);
+        // TODO rename existing lines with old hash?
         res.end(JSON.stringify({success:true, username:row.username}));
         console.log("username", username);
     } catch(error) {

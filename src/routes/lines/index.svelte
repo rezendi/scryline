@@ -26,6 +26,8 @@
 
 <ul>
 	{#each lines as line}
-		<li><a rel="prefetch" href="lines/{line.path}/{line.slug}">{line.title}</a></li>
+		{#if !line.branch}
+			<li><a rel="prefetch" href="lines/{line.path}/{line.slug}">{line.title}</a></li>
+		{/if}
 	{/each}
 </ul>

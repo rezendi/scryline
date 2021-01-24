@@ -38,7 +38,7 @@ export async function post(req, res, next) {
 			data.title = data.originalTitle ? data.originalTitle : data.title;
 		}
 
-		if (data.originalTitle) {
+		if (data.originalTitle ) {
 			originalSlug = util.slugize(data.originalTitle);
 			doRename = originalSlug != data.slug;
 		}
@@ -84,9 +84,9 @@ export async function post(req, res, next) {
 			let dJSON = await dResponse.json();
 		}
 
-		let metadata = {originalTitle:`${data.originalTitle}`};
-		await DB.saveLine(data.title, data.userid, json.content.sha, metadata);
-		json.path = path;
+		let metadata = {originalTitle:data.originalTitle, branch:data.branch};
+		let dbVals = await DB.saveLine(data.title, req.session.sUser.uid, json.content.sha, metadata);
+		json.path = dbVals.path;
 		console.log("saved", suffix);
 		res.end(JSON.stringify(json));
 	} catch(error) {
@@ -143,6 +143,11 @@ export async function get(req, res, next) {
 		let user = await DB.getUserByUID(params.uid);
 		let line = await DB.getLineByUserAndSlug(user.id, slug);
 		let url = `https://raw.githubusercontent.com/${owner}/${repo}/main/lines/${line.path}/${slug}.yaml`
+		console.log("b", params.b);
+		if (params.b) {
+			url = url.replace("main", `${params.b}`);
+		}
+		console.log("url", url);
 		res.end(JSON.stringify({success:true, url:url}));
 	} catch(error) {
 		res.end(JSON.stringify({success:false, params:params, error:error}));

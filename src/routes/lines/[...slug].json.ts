@@ -32,7 +32,8 @@ export async function get(req, res, next) {
 	}
 
 	let api_url = `https://api.github.com/repos/${owner}/${repo}/${path}/${slug}.yaml`;
-	api_url = req.query.b ? api_url+`?ref=${slug}%2F${username}` : api_url; // our standard for branch names
+	api_url = req.query.b ? api_url + `?ref=${encodeURIComponent(req.query.b)}` : api_url;
+	// TODO ensure user can't access someone else's branch? obviously they won't be able to if a private repo anyhow
 	console.log("get url", api_url);
 
 	try {
@@ -46,13 +47,13 @@ export async function get(req, res, next) {
 			},
 		});
 		let json = await response.json();
-		// console.log("json", json);
 
 		// got data, build response
 		let converted = base64.decode(json.content);
 		let retval = yaml.safeLoad(converted);
 		retval.sha = json.sha;
-		retval.path = json.path.replace("lines/","").substring(0,json.path.lastIndexOf("/"));
+		retval.path = json.path.split("/").slice(1,-1).join("/");
+		retval.branch = req.query.b;
 		retval.userid = req.query.b ? user.uid : retval.userid;
 
 		res.end(JSON.stringify({success:true, line:retval}));

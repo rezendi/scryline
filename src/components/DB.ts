@@ -71,10 +71,7 @@ async function saveLine(title:string, userid:string, sha:string, metadata:{[key:
   try {
     let user = await db.oneOrNone("SELECT * FROM Users WHERE uid=$1", userid);
     var path = user.username ? user.username : util.hash8(user.email);
-    if (metadata.path) {
-      path = metadata.path;
-      delete metadata['path'];
-    }
+    path = metadata.branch ? metadata.branch.split("/")[0] : path;
 
     let rename = metadata.originalTitle && metadata.originalTitle != title;
     let originalSlug = rename ? util.slugize(metadata.originalTitle) : util.slugize(title);
@@ -91,6 +88,7 @@ async function saveLine(title:string, userid:string, sha:string, metadata:{[key:
     }
   } catch(error) {
     console.log("DB error saving line", error);
+    throw(error);
   }
 }
 

@@ -26,7 +26,7 @@ export async function post(req, res, next) {
         let sha = json.object ? json.object.sha : null;
 
         let user = req.session.sUser;
-        let newBranch = `${slug}/${user.username ? user.username : util.hash8(user.email)}`;
+        let newBranch = `${originalUsername}/${slug}/${user.username ? user.username : util.hash8(user.email)}`;
         let newResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/refs`, {
             method: 'POST',
             headers: {
@@ -39,7 +39,7 @@ export async function post(req, res, next) {
         let newJson = await newResponse.json();
         
         // now save new line to DB
-		await DB.saveLine(data.title, user.uid, data.line.sha, {branch:newBranch, path:originalUsername});
+		await DB.saveLine(data.title, user.uid, data.line.sha, {branch:newBranch});
 		res.end(JSON.stringify({success:true, url:newJson.url}));
 	} catch(error) {
         console.log("error", error);

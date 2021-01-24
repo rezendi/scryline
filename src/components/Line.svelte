@@ -311,12 +311,18 @@
   }
 
   const goToRepo = async () => {
-    let url = `/save.json?title=${encodeURI(line.title)}&uid=${line.userid}`
+    // note that this is a GET
+    let url = `/save.json?title=${encodeURI(line.title)}&uid=${line.userid}&b=${line.branch}`
     let response = await fetch(url);
     let json = await response.json();
     if (json.url) {
       window.location.href = json.url;
     }
+  }
+
+  const goToOriginal = () => {
+    let originalUrl = window.location.href.split('?')[0];
+    window.location.href = originalUrl;
   }
 
   const forkRepo = async () => {
@@ -327,7 +333,7 @@
     });
     let json = await response.json();
     if (json.url) {
-      window.location.href = json.url;
+      window.location.href = "/my";
     }
   }
 
@@ -488,10 +494,12 @@
   </div>
 </Modal> 
 
+<button on:click={goToRepo}>View raw data on GitHub</button>
+{#if line.branch}
+<button on:click={goToOriginal}>Go to original timeline</button>
+{/if}
 {#if usersLine}
   <button id="deleteLine" style="float:right;" on:click={deleteLine}>Delete This Timeline</button>
+{:else}
+  <button style="float:right;" on:click={forkRepo}>Fork this repo</button>
 {/if}
-<br/>
-<button on:click={goToRepo}>View raw data on GitHub</button>
-<button on:click={forkRepo}>Fork this repo</button>
-<br/>

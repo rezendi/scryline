@@ -149,6 +149,18 @@
 
 <ul>
 	{#each lines as line}
-		<li><a rel="prefetch" href="lines/{line.path}/{line.slug}?b={line.branch}">{line.slug}</a></li>
+		{#if !line.branch}
+			<li><a rel="prefetch" href="lines/{line.path}/{line.slug}}">{line.slug}</a></li>
+		{/if}
+	{/each}
+</ul>
+
+<h2>My Forks</h2>
+
+<ul>
+	{#each lines as line}
+		{#if line.branch}
+			<li><a rel="prefetch" href="lines/{line.path}/{line.slug}?b={line.branch}">{line.slug}</a></li>
+		{/if}
 	{/each}
 </ul>

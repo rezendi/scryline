@@ -103,13 +103,37 @@ export async function del(req, res, next) {
 	try {
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
+
+		if (data.branch) {
+			// we branch per-file, so just delete the whole branch
+			let api_url = `https://api.github.com/repos/${owner}/${repo}/git/refs/${data.branch}`;
+			console.log("api_url", api_url);
+			let response = await fetch(api_url, {
+				method: 'DELETE',
+				headers: {
+					"Content-Type": "application/json",
+					"Accept": "application/vnd.github.v3+json",
+					"Authorization": `Basic ${base64.encode(`${owner}:${process.env.GITHUB_TOKEN}`)}`
+				},
+			});
+			let json = await response.json();
+			console.log("response", json);
+			if (response.status==204) {
+				console.log("branch deleted", data.branch);
+				DB.deleteLine(data.title, data.userid);
+				return res.end(JSON.stringify({json, ...{ success: true}}));
+			} else {
+				return res.end(JSON.stringify({json, ...{ success: false}}));
+			}
+		}
+
 		data.slug = util.slugize(data.title);
 		let path = util.getPathFor(req.session.sUser, data.path);
 		let suffix = `lines/${path}/${data.slug}.yaml`;
 		let toDel = {
 			message: "Scryline delete",
 			sha: data.sha,
-			branch: data.branch ? data.branch : "main"
+			branch: "main"
 		};
 		let response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${suffix}`, {
 			method: 'DELETE',
@@ -121,7 +145,7 @@ export async function del(req, res, next) {
 			body: JSON.stringify(toDel)
 		});
 		let json = await response.json();
-		DB.deleteLine(data.title, data.userid);
+		DB.deleteLine(data.title, req.session.sUser.uid);
 		console.log("deleted");
 		res.end(JSON.stringify({json, ...{ success: true}}));
 	} catch(error) {
@@ -140,8 +164,7 @@ export async function get(req, res, next) {
 		let owner = process.env.GITHUB_ACCOUNT;
 		let repo = process.env.GITHUB_REPO;
 		let slug = util.slugize(params.title);
-		let user = await DB.getUserByUID(params.uid);
-		let line = await DB.getLineByUserAndSlug(user.id, slug);
+		let line = await DB.getLineByUIDAndSlug(params.uid, slug);
 		let url = `https://raw.githubusercontent.com/${owner}/${repo}/main/lines/${line.path}/${slug}.yaml`
 		console.log("b", params.b);
 		if (params.b) {

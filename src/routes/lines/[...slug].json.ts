@@ -34,7 +34,7 @@ export async function get(req, res, next) {
 	let api_url = `https://api.github.com/repos/${owner}/${repo}/${path}/${slug}.yaml`;
 	api_url = req.query.b ? api_url + `?ref=${encodeURIComponent(req.query.b)}` : api_url;
 	// TODO ensure user can't access someone else's branch? obviously they won't be able to if a private repo anyhow
-	console.log("get url", api_url);
+	// console.log("get url", api_url);
 
 	try {
 		let email = req.session.sUser ? req.session.sUser.email || '' : '';

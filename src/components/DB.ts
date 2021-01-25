@@ -99,9 +99,11 @@ async function deleteLine(title:string, userid:string) {
   return await db.any(query, [slug, user.id]);
 }
 
-async function getLineByUserAndSlug(id:number, slug:string) {
+async function getLineByUIDAndSlug(userid:string, slug:string) {
+  let user = await db.oneOrNone("SELECT id FROM Users WHERE uid=$1", userid);
+  if (!user) { return null; }
   let query = "SELECT * FROM Lines WHERE user_id = $1 AND slug = $2";
-  return await db.oneOrNone(query, [id, slug]);
+  return await db.oneOrNone(query, [user.id, slug]);
 }
 
 /* Users */
@@ -162,5 +164,5 @@ export default {
   usernameAvailable,
   setUsername,
   getUserByUID,
-  getLineByUserAndSlug,
+  getLineByUIDAndSlug
 }

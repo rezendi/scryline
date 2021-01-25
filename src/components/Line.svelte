@@ -24,10 +24,11 @@
   let oldUrl: string = '';
   let newUrl: string = '';
 
+  // set forked IDs negative to distinguish them
   const nextId = function () {
     let ids = line.entries.map(entry => entry.id);
-    let maxId = ids.reduce((a,b) => {return a < b ? b : a}, 0);
-    return maxId + 1;
+    let maxId = ids.reduce((a,b) => {return Math.abs(a) < Math.abs(b) ? Math.abs(b) : Math.abs(a)}, 0);
+    return line.branch ? (-1 - maxId) : maxId + 1;
   }
 
   const refresh = function() {
@@ -332,7 +333,7 @@
         body: JSON.stringify({title:line.title, uid:line.userid, line:line})
     });
     let json = await response.json();
-    if (json.url) {
+    if (json.url || json.existing) {
       window.location.href = "/my";
     }
   }
@@ -496,10 +497,11 @@
 
 <button on:click={goToRepo}>View raw data on GitHub</button>
 {#if line.branch}
-<button on:click={goToOriginal}>Go to original timeline</button>
+  <button on:click={goToOriginal}>Go to original timeline</button>
+  <button on:click={goToOriginal}>Submit Changes</button>
 {/if}
 {#if usersLine}
-  <button id="deleteLine" style="float:right;" on:click={deleteLine}>Delete This Timeline</button>
+  <button id="deleteLine" style="float:right;" on:click={deleteLine}>Delete This {line.branch ? "Fork" : "Timeline"}</button>
 {:else}
   <button style="float:right;" on:click={forkRepo}>Fork this repo</button>
 {/if}

@@ -13,11 +13,17 @@ export async function post(req, res, next) {
 	try {
 		let owner = process.env.GITHUB_ACCOUNT;
         let repo = process.env.GITHUB_REPO;
-        
-        // get master 
+
+        // return existing repo if any
 		let slug = util.slugize(data.title);
-		let originalUser = await DB.getUserByUID(data.uid);
-        let original = await DB.getLineByUserAndSlug(originalUser.id, slug);
+        let existing = await DB.getLineByUIDAndSlug(req.session.sUser.uid, slug);
+        if (existing) {
+            return res.end(JSON.stringify({success:false, existing:true, ...existing}));
+        }
+
+        // get master 
+        let originalUser = await DB.getUserByUID(data.uid);
+        let original = await DB.getLineByUIDAndSlug(data.uid, slug);
         let originalUsername = originalUser.username ? originalUser.username : util.hash8(originalUser.email);
         
         let branch = original.metadata && original.metadata.branch ? original.metadata.branch : 'main';
@@ -37,6 +43,7 @@ export async function post(req, res, next) {
             body: JSON.stringify({ ref:`refs/heads/${newBranch}`, sha:sha})
         });
         let newJson = await newResponse.json();
+        console.log("newJson", newJson);
         
         // now save new line to DB
 		await DB.saveLine(data.title, user.uid, data.line.sha, {branch:newBranch});

@@ -22,6 +22,7 @@
     "firebase-app": "0.0.1",
     "firebase-auth": "^0.1.2",
     "js-yaml": "^3.14.0",
+    "kafkajs": "^2.2.0",
     "luxon": "^1.25.0",
     "metascraper": "^5.14.22",
     "metascraper-author": "^5.14.22",

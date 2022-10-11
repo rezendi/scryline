@@ -1,8 +1,8 @@
 const fetch = require('node-fetch');
 const base64 = require('universal-base64');
 
-import DB from '../components/DB';
-import util from "../components/util";
+import DB from '../../components/DB';
+import util from "../../components/util";
 
 export async function post(req, res, next) {
 	console.log("branching repo");

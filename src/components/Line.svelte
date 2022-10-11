@@ -327,7 +327,7 @@
   }
 
   const forkRepo = async () => {
-    let response = await fetch('/fork.json', {
+    let response = await fetch('/lines/fork.json', {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({title:line.title, uid:line.userid, line:line})

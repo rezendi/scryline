@@ -9,6 +9,7 @@ export async function post(req, res, next) {
 		'Content-Type': 'application/json'
 	});
     let data = req.body;
+    console.log("fetching for", data);
     const producer = kafka.producer();
     await producer.connect();
     await producer.send({

@@ -1,12 +1,21 @@
 <script lang="ts">
     import { stores } from '@sapper/app';
 	const { session } = stores();
-    let subject = '', duration = '', interval = ''
+    let subject = '', search = '', duration = '', interval = ''
     let durations = ["1 month", "3 months", "6 months", "1 year", "2 years", "5 years", "10 years"];
     let intervals = ["1 day", "1 week", "1 month"];
 
     async function fetchLine() {
-        // server call goes here
+		console.log("Starting fetch");
+		let response = await fetch('/lines/fetch.json', {
+			method: 'POST',
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({subject,search,duration,interval})
+		});
+		let json = await response.json();
+		if (json.success) {
+			console.log("success");
+		}
     }
 </script>
 
@@ -17,6 +26,7 @@
 <h2>Fetch New Scryline</h2>
 
 <input id="subject" placeholder="Subject to fetch news about" name="subject" size="80" bind:value={subject}>
+<input id="search" placeholder="Search string to use" name="subject" size="80" bind:value={search}>
 <hr/>
 <b>Duration</b>
 {#each durations as duration}
@@ -35,5 +45,3 @@
 {/each}
 <hr/>
 <button style="float:right;" on:click={fetchLine}>Start Fetch</button>
-
-

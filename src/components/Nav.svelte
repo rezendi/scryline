@@ -121,6 +121,10 @@
 		window.location.href="/lines/new";
 	}
 
+	function fetchLine() {
+		window.location.href="/lines/fetch";
+	}
+
 </script>
 
 <style>
@@ -155,7 +159,7 @@
 		margin:10px 0px 10px 0px;
 	}
 
-	.loginButtons button {
+	.groupedButtons button {
 		border: 0px;
 		margin:0px;
 	}
@@ -192,16 +196,22 @@
 			{#if loggedIn}
 				<Overlay closeOnClickOutside>
 					<button slot="parent" class="defaultButton" let:toggle on:click={toggle}>My &#x25BC;</button>
-					<div slot="content" class="loginButtons" let:close>
+					<div slot="content" class="groupedButtons" let:close>
 						<button on:click={goToMy}>Scrylines</button>
 						<button class="defaultButton" on:click={logout}>Logout</button>
 					</div>
 				</Overlay>
-				<button id="new_line" class="defaultButton" on:click={newLine}>New</button>
-			{:else}
+				<Overlay closeOnClickOutside>
+					<button slot="parent" class="defaultButton" let:toggle on:click={toggle}>New &#x25BC;</button>
+					<div slot="content" class="groupedButtons" let:close>
+						<button on:click={newLine}>Curate</button>
+						<button on:click={fetchLine}>Fetch</button>
+					</div>
+				</Overlay>
+				{:else}
 				<Overlay closeOnClickOutside>
 					<button slot="parent" class="defaultButton" let:toggle on:click={toggle}>Login &#x25BC;</button>
-					<div slot="content" class="loginButtons" let:close>
+					<div slot="content" class="groupedButtons" let:close>
 						<button on:click={loginWithGoogle}>Google</button>
 						<button on:click={loginWithGitHub}>GitHub</button>
 					</div>

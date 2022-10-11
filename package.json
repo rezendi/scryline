@@ -9,7 +9,8 @@
     "start": "node __sapper__/build",
     "validate": "svelte-check --ignore src/node_modules/@sapper",
     "test": "SAPPER_ENV=test sapper dev",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "kafka": "ts-node src/kafka-consume"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

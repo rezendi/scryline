@@ -3,6 +3,7 @@ const kafka = new Kafka({
     clientId: 'scryline',
     brokers: ['localhost:9092']
 });
+const topic = 'create-scrylines';
 
 export async function post(req, res, next) {
 	res.writeHead(200, {
@@ -13,7 +14,7 @@ export async function post(req, res, next) {
     const producer = kafka.producer();
     await producer.connect();
     await producer.send({
-        topic: 'create-scrylines',
+        topic: topic,
         messages: [
             { value: `${data.subject}||${data.duration}||${data.interval}` },
         ],

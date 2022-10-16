@@ -16,7 +16,7 @@ export async function post(req, res, next) {
     await producer.send({
         topic: topic,
         messages: [
-            { value: `${data.subject}||${data.duration}||${data.interval}` },
+            { value: JSON.stringify(data) },
         ],
     });    
     res.end(JSON.stringify({success:true}));

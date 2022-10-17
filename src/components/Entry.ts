@@ -1,4 +1,20 @@
 export default class Entry {
+    id: number;
+    originalUrl: string;
+    url: string;
+    when: string;
+    originalWhen: string;
+    author: string;
+    source: string;
+    logo: string;
+    image: string;
+    title: string;
+    summary: string;
+    comments: string;
+    suggestions: string;
+    tags: string;
+    chapter: string;
+
     constructor(vals) {
         this.id = vals.id || -1;
         this.originalUrl = vals.originalUrl || '';

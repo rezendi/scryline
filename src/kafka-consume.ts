@@ -2,6 +2,7 @@ import { Kafka, EachMessagePayload } from 'kafkajs';
 import Entry from './components/Entry';
 import Repo from './components/Repo';
 import DB from './components/DB';
+import util from "./components/util";
 
 require('dotenv').config();
 const fetch = require('node-fetch');
@@ -16,13 +17,25 @@ const consumer = kafka.consumer({ groupId: 'consumer-group' });
 
 const fetchTimeline = async (values) => {
   // subject, search, duration, interval
-  // DB create timeline with subject if none currently exists
-  // call out to Bing News API to get some news, skip duration/interval for now
-  // plug all that news into the new timeline
+  // user (email, uid, username), existing (slug), iteration
+
+  let slug = values.existing ? values.existing.slug : util.slugize(values.subject);
+  let line = await DB.getLineByUIDAndSlug(values.user.uid, values.existing.slug);
+  if (!line) {
+    line = {
+      email: values.user.email,
+      title: values.subject,
+      userid: values.user.uid,
+      byline: values.user.username,
+      path: util.getPathFor(values.user, ""),
+      editable:false,
+      entries: []
+    };
+  }
+
   let news_api_url = `https://newsapi.org/v2/everything?q=${values.search}&apiKey=${process.env.NEWS_API_KEY}`
   let response = await fetch(news_api_url);
   let json = await response.json();
-  let entries = [];
   json.articles.map((a, idx) => {
     let entry = new Entry({
         id: idx,
@@ -33,21 +46,13 @@ const fetchTimeline = async (values) => {
         image: a.urlToImage,
         when: a.pubishedAt
     });
-    entries.push(entry);
+    line.entries.push(entry);
   });
-  let line = {
-    email: "test@example.com",
-    title: "Kafka test",
-    path: "kafka/test",
-    userid: "kafka",
-    byline: "Franz Joseph Kafka",
-    editable:false,
-    entries: entries
-  };
-  let path = "kafka/test";
-  let repo = await Repo.saveLine(line, path);
-  let dbVals = await DB.saveLine(line.title, "kafka", repo.json.content.sha, repo.metadata);
-  console.log("dbpath", dbVals.path);
+
+  let repo = await Repo.saveLine(line, line.path);
+  let dbVals = await DB.saveLine(line.title, values.user.uid, repo.json.content.sha, repo.metadata);
+  console.log("saved kafka line", values.iteration);
+  // fire off another iteration
 }
 
 const consume = async () => {

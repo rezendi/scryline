@@ -201,7 +201,7 @@
 <div class="timeline_card card" id="entry_{entry.id}">
     <div class="upper_controls">
       {#if editable}
-        <span class="close" data-entry-id={entry.id} on:click={doDelete}></span>
+        <span class="close" data-entry-id={entry.id} on:click={doDelete} on:keyup={doDelete}></span>
       {/if}
     </div>
     <div class="card_inherent_content" id="entry_content_{entry.id}">
@@ -250,6 +250,6 @@
         </div>
     </div>
     {#if editable}
-      <span class="add_button" style="float:right; margin-right:-10px;" on:click={doCommentary}></span>
+      <span class="add_button" style="float:right; margin-right:-10px;" on:click={doCommentary} on:keyup={doCommentary}></span>
     {/if}
   </div>

@@ -25,7 +25,7 @@ const fetchTimeline = async (values) => {
   let entries = [];
   json.articles.map((a, idx) => {
     let entry = new Entry({
-        id: idx(),
+        id: idx,
         source: a.source.name,
         title: a.title,
         summary: a.description,

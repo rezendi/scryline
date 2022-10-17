@@ -2,6 +2,7 @@ require('dotenv').config();
 const yaml = require('js-yaml');
 const base64 = require('universal-base64');
 import util from "../components/util";
+const fetch = require('node-fetch');
 
 async function saveLine(data, path) {
     data.slug = util.slugize(data.title);

@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 import sirv from 'sirv';
-import polka from 'polka';
+import express from "express";
 import compression from 'compression';
 import * as sapper from '@sapper/server';
 
@@ -21,7 +21,7 @@ const { json } = require('body-parser');
 
 console.log("running in", process.env.NODE_ENV);
 
-polka()
+express()
 	.use(
 		compression({ threshold: 0 }),
 		json({limit: '50mb'}),

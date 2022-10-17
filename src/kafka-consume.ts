@@ -15,12 +15,12 @@ const kafka = new Kafka({
 const topic = 'create-scrylines';
 const consumer = kafka.consumer({ groupId: 'consumer-group' });
 
-const fetchTimeline = async (values) => {
-  // subject, search, duration, interval
-  // user (email, uid, username), existing (slug), iteration
-
+const fetchTimeline = async (valueString) => {
+  // subject, search, duration, interval user (email, uid, username), existing (slug), iteration
+  let values = JSON.parse(valueString);
+  console.log("values", values);
   let slug = values.existing ? values.existing.slug : util.slugize(values.subject);
-  let line = await DB.getLineByUIDAndSlug(values.user.uid, values.existing.slug);
+  let line = await DB.getLineByUIDAndSlug(values.user.uid, slug);
   if (!line) {
     line = {
       email: values.user.email,
@@ -64,7 +64,7 @@ const consume = async () => {
           const { topic, partition, message } = messagePayload
           const prefix = `${topic}[${partition} | ${message.offset}] / ${message.timestamp}`
           console.log(`- ${prefix} ${message.key}#${message.value}`)
-          fetchTimeline(message.value);
+          fetchTimeline(`${message.value}`);
         }
 	});
 }

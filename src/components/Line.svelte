@@ -7,7 +7,7 @@
   
   // TODO maintain a separate "status" for the line and key behavior on that, as this all is getting complex
 
-  export let line: { title:string, sha:string, path:string, branch:string, userid:string, byline:string, editable:boolean, entries: Entry[]};
+  export let line: { email:string, title:string, sha:string, path:string, branch:string, userid:string, byline:string, editable:boolean, entries: Entry[]};
   let versions:string[] = [JSON.stringify(line)], redoVersions:string[] = [];
   let originalTitle = line.title;
 
@@ -224,7 +224,7 @@
     }
 
     // OK, we're actually going to save it
-    line["email"] = $session.sUser.email;
+    line.email = $session.sUser.email;
     line.userid = $session.sUser.uid;
     line.byline = $session.sUser.name;
     line.editable = false; // TODO make this configurable

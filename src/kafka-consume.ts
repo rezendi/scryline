@@ -19,8 +19,17 @@ const fetchTimeline = async (valueString) => {
   // subject, search, duration, interval user (email, uid, username), existing (slug), iteration
   let values = JSON.parse(valueString);
   console.log("values", values);
+
   let slug = values.existing ? values.existing.slug : util.slugize(values.subject);
   let line = await DB.getLineByUIDAndSlug(values.user.uid, slug);
+
+  // temporarily, just confirm that we can produce from within a consumer
+  if (values.iteration > 0) {
+    console.log("Consumed message produced within previous consumption, woo-hoo");
+    console.log("Found existing line", line);
+    return;
+  }
+
   if (!line) {
     line = {
       email: values.user.email,
@@ -51,8 +60,19 @@ const fetchTimeline = async (valueString) => {
 
   let repo = await Repo.saveLine(line, line.path);
   let dbVals = await DB.saveLine(line.title, values.user.uid, repo.json.content.sha, repo.metadata);
-  console.log("saved kafka line", values.iteration);
-  // fire off another iteration
+
+  values.iteration = values.iteration + 1;
+  values.existing = { slug: slug };
+  console.log("outgoing values", values);
+
+  const producer = kafka.producer();
+  await producer.connect();
+  await producer.send({
+      topic: topic,
+      messages: [
+          { value: JSON.stringify(values) },
+      ],
+  });    
 }
 
 const consume = async () => {

@@ -1,4 +1,5 @@
 import { Kafka, EachMessagePayload } from 'kafkajs';
+import { addYears, addMonths, addWeeks, addDays, formatWithOptions, isAfter } from 'date-fns/fp'
 import Entry from './components/Entry';
 import Repo from './components/Repo';
 import DB from './components/DB';
@@ -16,24 +17,23 @@ const topic = 'create-scrylines';
 const consumer = kafka.consumer({ groupId: 'consumer-group' });
 
 const fetchTimeline = async (valueString) => {
-  // subject, search, duration, interval user (email, uid, username), existing (slug), iteration
+  // title, search, duration, interval, user (email, uid, username), existing (slug), iteration
   let values = JSON.parse(valueString);
   console.log("values", values);
 
-  let slug = values.existing ? values.existing.slug : util.slugize(values.subject);
+  let slug = values.existing ? values.existing.slug : util.slugize(values.title);
   let line = await DB.getLineByUIDAndSlug(values.user.uid, slug);
 
   // temporarily, just confirm that we can produce from within a consumer
   if (values.iteration > 0) {
     console.log("Consumed message produced within previous consumption, woo-hoo");
     console.log("Found existing line", line);
-    return;
   }
 
   if (!line) {
     line = {
       email: values.user.email,
-      title: values.subject,
+      title: values.title,
       userid: values.user.uid,
       byline: values.user.username,
       path: util.getPathFor(values.user, ""),
@@ -42,7 +42,28 @@ const fetchTimeline = async (valueString) => {
     };
   }
 
-  let news_api_url = `https://newsapi.org/v2/everything?q=${values.search}&apiKey=${process.env.NEWS_API_KEY}`
+  // get from and to for API query. from: now - duration + (iteration) intervals, to: from + interval
+  let addFun = values.duration.indexOf("year") > 0 ? addYears : addMonths;
+  let since = parseInt(values.duration.split(" ")[0]);
+  let now = new Date();
+  let start = addFun(0-since)(now); // 0- because we gotta subtract
+  let intervalFun = values.interval.indexOf("day") > 0 ? addDays : values.interval.indexOf("week") > 0 ? addWeeks : addMonths;
+  let from_date = intervalFun(values.iteration)(start);
+  let to_date = intervalFun(1)(start);
+  let toString = formatWithOptions({}, 'yyyy-MM-dd')
+  let from = toString(from_date);
+  let to = toString(to_date);
+  
+  // OK, now go query
+  let api_query = `apiKey=${process.env.NEWS_API_KEY}&q=${values.search}&from=${from}&to=${to}`;
+  console.log("api_query", api_query);
+
+  if (isAfter(now, from_date)) {
+    console.log("Cannot get news from the future", from);
+    return;
+  }
+
+  let news_api_url = 'https://newsapi.org/v2/everything?' + api_query;
   let response = await fetch(news_api_url);
   let json = await response.json();
   json.articles.map((a, idx) => {
@@ -67,12 +88,14 @@ const fetchTimeline = async (valueString) => {
 
   const producer = kafka.producer();
   await producer.connect();
-  await producer.send({
-      topic: topic,
-      messages: [
-          { value: JSON.stringify(values) },
-      ],
-  });    
+  setTimeout(async () => {
+    await producer.send({
+        topic: topic,
+        messages: [
+            { value: JSON.stringify(values) },
+        ],
+    });    
+  }, 10000);
 }
 
 const consume = async () => {
